@@ -1,0 +1,104 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color-level-1: hsl(213, 41%, 8%);
+    --bg-color-level-2: hsl(213, 41%, 14%);
+    --bg-color-level-3: hsl(213, 41%, 58%);
+    --bg-color-level-4: hsl(213, 41%, 78%);
+    --bg-color-level-5: hsl(213, 41%, 94%);
+  
+    --color-level-1: hsl(212, 24%, 90%);
+    --color-level-2: hsl(212, 24%, 70%);
+    --color-level-3: hsl(212, 24%, 50%);
+    --color-level-4: hsl(213, 41%, 30%);
+    --color-level-5: hsl(213, 41%, 10%);
+    
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-light-gray: #cccccc;
+    --color-dark-gray: #4d4d4d;
+    --color-red: hsl(0, 72%, 56%);
+    --color-orange: #fb923c;
+    --color-yellow: hsl(63, 100%, 50%);
+    --color-lime: hsl(120, 100%, 50%);
+    --color-green: hsl(120, 100%, 39%);
+    --color-emerald: #34d399;
+    --color-teal: hsl(172, 66%, 55%);
+    --color-cyan: hsl(187, 100%, 53%);
+    --color-sky: hsl(198, 93%, 60%);
+    --color-blue: hsl(217, 91%, 65%);
+    --color-indigo: #818cf8;
+    --color-violet: #bc3eff;
+    --color-purple: hsl(271, 91%, 70%);
+    --color-fuchsia: #d946ef;
+    --color-pink: #f472b6;
+    --color-rose: #f43f5e;
+  
+    --color-navy: hsl(248, 99%, 47%);
+  
+    --color-alert-success: hsl(120, 100%, 39%);
+    --bg-color-alert-success: hsl(120, 100%, 6%);
+    --color-alert-info: hsl(187, 100%, 53%);
+    --bg-color-alert-info: hsl(187, 100%, 6%);
+    --color-alert-warning: hsl(63, 100%, 50%);
+    --bg-color-alert-warning: hsl(63, 100%, 5%);
+    --color-alert-danger: hsl(0, 72%, 56%);
+    --bg-color-alert-danger: hsl(0, 72%, 6%);
+  
+    --brightness: brightness(125%);
+  }
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-color-level-1: hsl(213, 41%, 94%);
+    --bg-color-level-2: hsl(213, 41%, 78%);
+    --bg-color-level-3: hsl(213, 41%, 58%);
+    --bg-color-level-4: hsl(213, 41%, 14%);
+    --bg-color-level-5: hsl(213, 41%, 8%);
+  
+    --color-level-1: hsl(213, 41%, 10%);
+    --color-level-2: hsl(213, 41%, 30%);
+    --color-level-3: hsl(212, 24%, 50%);
+    --color-level-4: hsl(212, 24%, 70%);
+    --color-level-5: hsl(212, 24%, 90%);
+  
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-light-gray: #cccccc;
+    --color-dark-gray: #4d4d4d;
+    --color-red: hsl(0, 72%, 41%);
+    --color-orange: #fb923c;
+    --color-yellow: hsl(63, 100%, 35%);
+    --color-lime: hsl(120, 100%, 45%);
+    --color-green: hsl(120, 100%, 24%);
+    --color-emerald: #34d399;
+    --color-teal: hsl(172, 66%, 40%);
+    --color-cyan: hsl(187, 100%, 38%);
+    --color-sky: hsl(198, 93%, 45%);
+    --color-blue: hsl(217, 91%, 50%);
+    --color-indigo: #818cf8;
+    --color-violet: #bc3eff;
+    --color-purple: hsl(271, 91%, 55%);
+    --color-fuchsia: #d946ef;
+    --color-pink: #f472b6;
+    --color-rose: #f43f5e;
+    
+    --color-navy: hsl(248, 99%, 32%);
+  
+    --color-alert-success: hsl(120, 100%, 19%);
+    --bg-color-alert-success: hsl(120, 100%, 96%);
+    --color-alert-info: hsl(187, 100%, 22%);
+    --bg-color-alert-info: hsl(187, 100%, 96%);
+    --color-alert-warning: hsl(63, 100%, 25%);
+    --bg-color-alert-warning: hsl(63, 100%, 95%);
+    --color-alert-danger: hsl(0, 72%, 36%);
+    --bg-color-alert-danger: hsl(0, 72%, 96%);
+  
+    --brightness: brightness(75%);
+  }
+}
+
+html {
+  background-color: var(--bg-color-level-1);
+  color: var(--color-level-3);
+  transition: all .2s ease-in-out;
+}

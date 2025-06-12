@@ -1,0 +1,15 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "sqlite_nuxt",
+            "group": "nuxt",
+            "database": "database.sqlite3"
+        }
+    ],
+    "sqltools.useNodeRuntime": true,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false
+}

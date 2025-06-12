@@ -1,0 +1,7 @@
+.container {
+  --width: min(1350px, 90%);
+  --margin: 5rem auto;
+  width: var(--width);
+  max-width: var(--width);
+  margin: var(--margin);
+}
