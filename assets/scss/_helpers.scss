@@ -1,0 +1,115 @@
+.container {
+  --width: min(1350px, 90%);
+  --margin: 5rem auto;
+  width: var(--width);
+  max-width: var(--width);
+  margin: var(--margin);
+}
+
+.skeleton {
+  --color: var(--color-level-30);
+  --border-radius: var(--radius);
+  --speed: 2s;
+
+  > * {
+    color: transparent !important;
+    fill: transparent !important;
+    border-color: transparent !important;
+    border-radius: var(--border-radius) !important;
+    background-image: none !important;
+    animation: background-pulse var(--speed) infinite ease-in-out;
+
+    &::before, &::after, *, *::before, *::after {
+      opacity: 0;
+    }
+
+    &::before {
+      background-color: var(--color) !important;
+    }
+  }
+}
+
+.bg-grid {
+  background: var(--color-level-10);
+  --gap: 3rem;
+  --line: 1px;
+  --color: var(--color-level-20);
+
+  background-image: linear-gradient(
+      -90deg,
+      transparent calc(var(--gap) - var(--line)),
+      var(--color) calc(var(--gap) - var(--line) + 1px),
+      var(--color) var(--gap)
+    ),
+    linear-gradient(
+      0deg,
+      transparent calc(var(--gap) - var(--line)),
+      var(--color) calc(var(--gap) - var(--line) + 1px),
+      var(--color) var(--gap)
+    );
+  background-size: var(--gap) var(--gap);
+}
+
+.neo-arise {
+    --padding: 1rem;
+    padding: var(--padding);
+    background-color: var(--color-platinum);
+    border: 1px #d1d9e6 solid;
+    box-shadow: var(--neo2);
+    border-radius: .5rem;
+    transition: all .3s ease-in-out;
+    
+    &.hover:hover {
+        transition: all .3s ease-in-out;
+        background-color: var(--color-platinum);
+        border: 1px var(--color-platinum) solid;
+        box-shadow: var(--neo2-hover);
+    }
+}
+
+.neo-sink {
+    --padding: 1rem;
+    padding: var(--padding);
+    background-color: var(--color-platinum);
+    border: 1px var(--color-platinum) solid;
+    box-shadow: var(--neo2-hover);
+    border-radius: .5rem;
+    transition: all .3s ease-in-out;
+
+    &.hover:hover {
+        background-color: var(--color-platinum);
+        border: 1px #d1d9e6 solid;
+        box-shadow: var(--neo2);
+    }
+}
+
+@keyframes background-pulse {
+	0%, 100% {
+		background-color: var(--color);
+	}
+	50% {
+		background-color: rgb(from var(--color) r g b / 40%);
+	}
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

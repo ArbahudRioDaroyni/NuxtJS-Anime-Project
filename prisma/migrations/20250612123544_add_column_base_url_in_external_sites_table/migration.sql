@@ -1,0 +1,1 @@
+ALTER TABLE "external_sites" ADD COLUMN     "base_url" TEXT;

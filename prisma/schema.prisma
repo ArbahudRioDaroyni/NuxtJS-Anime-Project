@@ -1,0 +1,362 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  // provider  = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model release_media_types {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique // @db.VarChar(20)
+  description String? // @db.Text
+  anime       anime[] // Opposite relation field for anime.media_type
+  sourceFor   anime[] @relation("SourceMediaType") // Relation for source_media_type
+
+  @@index([name], name: "idx_release_media_types") // Index for faster lookups by name
+  @@map("release_media_types") // Maps the model to the 'release_media_types' table in the database
+}
+
+model release_formats {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique // @db.VarChar(10)
+  stands_for  String? // @db.VarChar(50)
+  description String? // @db.Text
+  anime       anime[] // Opposite relation field for anime.release_format
+
+  @@index([name], name: "idx_release_formats_name") // Index for faster lookups by name
+  @@map("release_formats") // Maps the model to the 'release_formats' table in the database
+}
+
+model release_status_types {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique // @db.VarChar(25)
+  description String? // @db.Text
+  anime       anime[] // Opposite relation field for anime.status_type
+
+  @@index([name], name: "idx_release_status_types_name") // Index for faster lookups by name
+  @@map("release_status_types") // Maps the model to the 'release_status_types' table in the database
+}
+
+model seasons {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique // @db.VarChar(10)
+  description String? // @db.Text
+  anime       anime[] // Opposite relation field for anime.season
+
+  @@index([name], name: "idx_seasons_name") // Index for faster lookups by name
+  @@map("seasons") // Maps the model to the 'seasons' table in the database
+}
+
+model anime {
+  id                                          Int                                      @id @default(autoincrement())
+  slug                                        String                                   @unique
+  title_romaji                                String? // @db.VarChar(255)
+  title_english                               String? // @db.VarChar(255)
+  title_native                                String? // @db.VarChar(255)
+  release_media_type_id                       Int? // @db.Integer
+  release_format_id                           Int? // @db.Integer
+  release_status_type_id                      Int? // @db.Integer
+  source_media_type_id                        Int? // @db.Integer
+  description                                 String? // @db.Text
+  year                                        String? // @db.Char(4)
+  season_id                                   Int? // @db.Integer
+  start_date                                  String? // @db.VarChar(10) // Format: YYYY-MM-DD
+  end_date                                    String? // @db.VarChar(10) // Format: YYYY-MM-DD
+  episodes                                    Int? // @db.MediumInt
+  chapters                                    String? // @db.VarChar(50)
+  volumes                                     String? // @db.VarChar(50)
+  origin                                      String? // @db.Char(2)
+  duration                                    Int? // @db.SmallInt
+  duration_unit                               String? // @db.Char(1)
+  synonyms                                    String? // @db.Text
+  hashtag                                     String? // @db.VarChar(50)
+  trailer_url                                 String? // @db.VarChar(255)
+  picture_image_url                           String? // @db.VarChar(255)
+  extra_large_cover_image_url                 String? // @db.VarChar(255)
+  large_cover_image_url                       String? // @db.VarChar(255)
+  medium_cover_image_url                      String? // @db.VarChar(255)
+  thumbnail_image_url                         String? // @db.VarChar(255)
+  banner_image_url                            String? // @db.VarChar(255)
+  color_image                                 String? // @db.Char(7) // hex format e.g., '#FFFFFF'
+  arithmetic_geometric_mean_score             Float?
+  arithmetic_harmonic_mean                    Float?
+  arithmetic_mean_score                       Float?
+  geometric_mean_score                        Float?
+  harmonic_mean_score                         Float?
+  weighted_mean_score                         Float?
+  median_score                                Float?
+  mean_score                                  Float?
+  popularity                                  Int? // @db.MediumInt
+  trending                                    Int? // @db.MediumInt
+  favorites                                   Int? // @db.MediumInt
+  is_licensed                                 Boolean?                                 @default(true)
+  is_adult                                    Boolean?                                 @default(false)
+  is_locked                                   Boolean?                                 @default(false)
+  created_at                                  DateTime?                                @default(now())
+  updated_at                                  DateTime?                                @updatedAt
+  deleted_at                                  DateTime?
+  media_type                                  release_media_types?                     @relation(fields: [release_media_type_id], references: [id])
+  release_format                              release_formats?                         @relation(fields: [release_format_id], references: [id])
+  status_type                                 release_status_types?                    @relation(fields: [release_status_type_id], references: [id])
+  source_media_type                           release_media_types?                     @relation("SourceMediaType", fields: [source_media_type_id], references: [id])
+  season                                      seasons?                                 @relation(fields: [season_id], references: [id])
+  anime_studio_relations                      anime_studio_relations[]
+  anime_genre_relations                       anime_genre_relations[]
+  anime_external_site_relations               anime_external_site_relations[]
+  anime_relation_relations_as_anime           anime_relation_relations[]               @relation("AnimeRelationAnimeId")
+  anime_relation_relations_as_reference_anime anime_relation_relations[]               @relation("AnimeRelationReferenceAnimeId")
+  anime_tag_relations                         anime_tag_relations[]
+  anime_characters_voice_actor_relations      anime_characters_voice_actor_relations[]
+  anime_staff_relations                       anime_staff_relations[]
+
+  @@index([slug], name: "idx_anime_slug")
+  @@index([title_romaji], name: "idx_anime_title_romaji")
+  @@map("anime") // Maps the model to the 'anime' table in the database
+}
+
+model studios {
+  id                     Int                      @id @default(autoincrement())
+  name                   String                   @unique // @db.Char(100)
+  favorites              Int                      @default(0) // @db.MediumInt
+  is_animation_studio    Boolean                  @default(false)
+  anime_studio_relations anime_studio_relations[] // Opposite relation field for anime_studio_relations.studio
+
+  @@index([name], name: "idx_studios_name") // Index for faster lookups by name
+  @@map("studios") // Maps the model to the 'studios' table in the database
+}
+
+model anime_studio_relations {
+  id        Int     @id @default(autoincrement())
+  anime_id  Int // @db.Integer
+  studio_id Int // @db.Integer
+  is_main   Boolean @default(false)
+
+  anime  anime   @relation(fields: [anime_id], references: [id])
+  studio studios @relation(fields: [studio_id], references: [id])
+
+  @@map("anime_studio_relations") // Maps the model to the 'anime_studio_relations' table in the database
+}
+
+model genres {
+  id                    Int                     @id @default(autoincrement())
+  name                  String                  @unique // @db.VarChar(25)
+  description           String? // @db.Text
+  slug                  String                  @unique // @db.VarChar(255)
+  anime_genre_relations anime_genre_relations[]
+
+  @@index([name], name: "idx_genres_name") // Index for faster lookups by name
+  @@map("genres") // Maps the model to the 'genres' table in the database
+}
+
+model anime_genre_relations {
+  id       Int @id @default(autoincrement())
+  anime_id Int // @db.Integer
+  genre_id Int // @db.Integer
+
+  anime anime  @relation(fields: [anime_id], references: [id])
+  genre genres @relation(fields: [genre_id], references: [id])
+
+  @@map("anime_genres") // Maps the model to the 'anime_genres' table in the database
+}
+
+model external_sites {
+  id                            Int                             @id @default(autoincrement())
+  name                          String                          @unique // @db.VarChar(100)
+  icon                          String? // @db.VarChar(255)
+  language                      String? // @db.VarChar(25)
+  base_url                      String? // @db.VarChar(255)
+  anime_external_site_relations anime_external_site_relations[]
+
+  @@index([name], name: "idx_external_sites_name") // Index for faster lookups by name
+  @@map("external_sites") // Maps the model to the 'external_sites' table in the database
+}
+
+model anime_external_site_relations {
+  id               Int    @id @default(autoincrement())
+  anime_id         Int // @db.Integer
+  external_site_id Int // @db.Integer
+  url              String // @db.Text
+
+  anime         anime          @relation(fields: [anime_id], references: [id])
+  external_site external_sites @relation(fields: [external_site_id], references: [id])
+
+  @@map("anime_external_site_relations") // Maps the model to the 'anime_external_site_relations' table in the database
+}
+
+model relation_types {
+  id                       Int                        @id @default(autoincrement())
+  name                     String                     @unique // @db.VarChar(12)
+  description              String? // @db.Text
+  anime_relation_relations anime_relation_relations[]
+
+  @@index([name], name: "idx_relation_types_name") // Index for faster lookups by name
+  @@map("relation_types") // Maps the model to the 'relation_types' table in the database
+}
+
+model anime_relation_relations {
+  id                 Int @id @default(autoincrement())
+  anime_id           Int // @db.Integer
+  reference_anime_id Int // @db.Integer
+  reference_type_id  Int // @db.Integer
+
+  anime           anime          @relation("AnimeRelationAnimeId", fields: [anime_id], references: [id])
+  reference_anime anime          @relation("AnimeRelationReferenceAnimeId", fields: [reference_anime_id], references: [id])
+  reference_type  relation_types @relation(fields: [reference_type_id], references: [id])
+
+  @@map("anime_relation_relations") // Maps the model to the 'anime_relation_relations' table in the database
+}
+
+model tags {
+  id                 Int     @id @default(autoincrement())
+  name               String  @unique // @db.VarChar(100)
+  description        String? // @db.Text
+  tag_category_id    Int? // Foreign key to tag_categories table
+  is_general_spoiler Boolean @default(false)
+
+  tag_category        tag_categories?       @relation(fields: [tag_category_id], references: [id])
+  anime_tag_relations anime_tag_relations[]
+
+  @@index([name], name: "idx_tags_name") // Index for faster lookups by name
+  @@map("tags") // Maps the model to the 'tags' table in the database
+}
+
+model tag_categories {
+  id   Int    @id @default(autoincrement())
+  name String @unique // @db.VarChar(100)
+  tags tags[]
+
+  @@index([name], name: "idx_tag_categories_name") // Index for faster lookups by name
+  @@map("tag_categories") // Maps the model to the 'tag_categories' table in the database
+}
+
+model anime_tag_relations {
+  id         Int     @id @default(autoincrement())
+  anime_id   Int // @db.Integer
+  tag_id     Int // @db.Integer
+  rank       Int? // Rank of the tag for the anime
+  is_spoiler Boolean @default(false) // Indicates if the tag is a spoiler
+
+  anime anime @relation(fields: [anime_id], references: [id])
+  tag   tags  @relation(fields: [tag_id], references: [id])
+
+  @@map("anime_tag_relations") // Maps the model to the 'anime_tag_relations' table in the database
+}
+
+model voice_actors {
+  id                                     Int                                      @id @default(autoincrement())
+  name                                   String
+  name_native                            String? // @db.VarChar(250)
+  large_image_url                        String? // @db.Text
+  medium_image_url                       String? // @db.Text
+  description                            String? // @db.Text // If provider is not SQLite, you can specify
+  gender                                 String? // @db.VarChar(10)
+  date_of_birth                          String? // @db.VarChar(10) // Format: YYYY-MM-DD
+  age                                    String? // @db.TinyInt
+  home_town                              String? // @db.VarChar(150)
+  favorites                              Int                                      @default(0) // @db.MediumInt
+  anime_characters_voice_actor_relations anime_characters_voice_actor_relations[]
+
+  @@index([name], name: "idx_voice_actors_name") // Index for faster lookups by name
+  @@map("voice_actors") // Maps the model to the 'voice_actors' table in the database
+}
+
+model characters {
+  id                                     Int                                      @id @default(autoincrement())
+  name                                   String // @db.VarChar(100)
+  name_native                            String? // @db.VarChar(250)
+  large_image_url                        String? // @db.Text
+  medium_image_url                       String? // @db.Text
+  description                            String? // @db.Text
+  gender                                 String? // @db.VarChar(10)
+  date_of_birth                          String? // @db.VarChar(10) // Format: YYYY-MM-DD
+  age                                    String?
+  home_town                              String? // @db.VarChar(150)
+  favorites                              Int                                      @default(0) // @db.MediumInt
+  anime_characters_voice_actor_relations anime_characters_voice_actor_relations[]
+
+  @@index([name], name: "idx_characters_name") // Index for faster lookups by name
+  @@map("characters") // Maps the model to the 'characters' table in the database
+}
+
+model character_roles {
+  id                                     Int                                      @id @default(autoincrement())
+  name                                   String // @db.VarChar(50)
+  description                            String? // @db.Text
+  anime_characters_voice_actor_relations anime_characters_voice_actor_relations[]
+
+  @@index([name], name: "idx_character_roles_name") // Index for faster lookups by name
+  @@map("character_roles") // Maps the model to the 'character_roles' table in the database
+}
+
+model anime_characters_voice_actor_relations {
+  id                Int  @id @default(autoincrement())
+  anime_id          Int // @db.Integer
+  character_id      Int // @db.Integer
+  character_role_id Int? // @db.Integer
+  voice_actor_id    Int // @db.Integer
+
+  anime          anime            @relation(fields: [anime_id], references: [id])
+  character      characters       @relation(fields: [character_id], references: [id])
+  character_role character_roles? @relation(fields: [character_role_id], references: [id])
+  voice_actor    voice_actors     @relation(fields: [voice_actor_id], references: [id])
+
+  @@map("anime_characters_voice_actor_relations") // Maps the model to the 'anime_characters_voice_actor_relations' table in the database
+}
+
+model staff {
+  id                    Int                     @id @default(autoincrement())
+  name                  String // @db.VarChar(150)
+  name_native           String? // @db.VarChar(150)
+  large_image_url       String? // @db.VarChar(200)
+  medium_image_url      String? // @db.VarChar(200)
+  description           String? // @db.Text
+  gender                String? // @db.VarChar(10)
+  date_of_birth         String? // @db.Date // Format: YYYY-MM-DD
+  age                   String? // @db.VarChar(150)
+  home_town             String? // @db.VarChar(150)
+  favorites             Int                     @default(0) // @db.MediumInt
+  anime_staff_relations anime_staff_relations[]
+
+  @@index([name], name: "idx_staff_name") // Index for faster lookups by name
+  @@map("staff") // Maps the model to the 'staff' table in the database
+}
+
+model staff_roles {
+  id                    Int                     @id @default(autoincrement())
+  name                  String                  @unique // @db.VarChar(50)
+  description           String? // @db.Text
+  anime_staff_relations anime_staff_relations[]
+
+  @@index([name], name: "idx_staff_roles_name") // Index for faster lookups by name
+  @@map("staff_roles") // Maps the model to the 'staff_roles' table in the database
+}
+
+model anime_staff_relations {
+  id              Int     @id @default(autoincrement())
+  anime_id        Int // @db.Integer
+  staff_id        Int // @db.Integer
+  staff_role_id   Int? // @db.Integer
+  language        String? // @db.VarChar(50)
+  version         String? // @db.VarChar(50)
+  episodes        String? // @db.Text
+  openings        String? // @db.Text
+  endings         String? // @db.Text
+  promotions      String? // @db.Text
+  additional_info String? // @db.Text
+
+  anime      anime        @relation(fields: [anime_id], references: [id])
+  staff      staff        @relation(fields: [staff_id], references: [id])
+  staff_role staff_roles? @relation(fields: [staff_role_id], references: [id])
+
+  @@map("anime_staff_relations") // Maps the model to the 'anime_staff_relations' table in the database
+}

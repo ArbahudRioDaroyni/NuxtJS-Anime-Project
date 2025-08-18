@@ -1,0 +1,174 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: hsl(213, 41%, 20%);
+    
+    --color-level-8: hsl(213, 41%, 8%);
+    --color-level-10: hsl(213, 41%, 10%);
+    --color-level-14: hsl(213, 41%, 14%);
+    --color-level-20: hsl(213, 41%, 20%);
+    --color-level-26: hsl(213, 41%, 26%);
+    --color-level-30: hsl(213, 41%, 30%);
+    --color-level-50: hsl(213, 41%, 50%);
+    --color-level-60: hsl(213, 41%, 60%);
+    --color-level-70: hsl(213, 41%, 70%);
+    --color-level-80: hsl(213, 41%, 80%);
+    --color-level-90: hsl(213, 41%, 90%);
+    --primary-color-code: 213, 41%;
+    
+    --color-black: hsl(0, 0%, 0%);
+    --color-white: hsl(0, 0%, 100%);
+    --color-white-smoke: hsl(0, 0%, 96%);
+    --color-anti-flash: hsl(213, 41%, 94%);
+    --color-light-gray: hsl(0, 0%, 80%);
+    --color-light-steel-blue: hsl(214, 41%, 78%);
+    --color-gray: hsl(0, 0%, 60%);
+    --color-dark-gray: hsl(0, 0%, 30%);
+    --color-red: hsl(0, 72%, 56%);
+    --color-light-coral: hsl(6, 100%, 80%);
+    --color-orange: hsl(27, 96%, 61%);
+    --color-desert-sand: hsl(30, 100%, 80%);
+    --color-blonde: hsl(36, 100%, 80%);
+    --color-light-goldenrod-yellow: hsl(36, 100%, 90%);
+    --color-orange-peel: hsl(36, 100%, 50%);
+    --color-jasmine: hsl(48, 100%, 50%);
+    --color-lemon-yellow: hsl(54, 100%, 50%);
+    --color-yellow: hsl(63, 100%, 50%);
+    --color-malachite: hsl(120, 93%, 79%);
+    --color-green: hsl(120, 100%, 39%);
+    --color-lime: hsl(120, 100%, 50%);
+    --color-dark-pastel-green: hsl(122, 39%, 49%);
+    --color-aero-green: hsl(144, 100%, 89%);
+    --color-seasalt: hsl(158, 64%, 95%);
+    --color-middle-main: hsl(158, 64%, 80%);
+    --color-emerald: hsl(160, 100%, 57%);
+    --color-magic-mint: hsl(162, 100%, 80%);
+    --color-teal: hsl(172, 66%, 55%);
+    --color-dark-torquoise: hsl(174, 97%, 43%);
+    --color-celeste: hsl(176, 57%, 89%);
+    --color-water: hsl(180, 100%, 50%);
+    --color-cyan: hsl(187, 100%, 53%);
+    --color-vivid-sky-blue: hsl(190, 94%, 51%);
+    --color-aquamarine: hsl(190, 100%, 50%);
+    --color-sky: hsl(198, 93%, 60%);
+    --color-midnight-blue: hsl(213, 41%, 8%);
+    --color-rock-blue: hsl(216, 32%, 71%);
+    --color-blue: hsl(217, 91%, 65%);
+    --color-pastel-blue: hsl(212, 96%, 78%);
+    --color-lavender: hsl(240, 100%, 80%);
+    --color-indigo: hsl(255, 92%, 76%);
+    --color-languid-lavender: hsl(258, 29%, 85%);
+    --color-bright-gray: hsl(265, 29%, 92%);
+    --color-navy: hsl(248, 99%, 32%);
+    --color-electric-indigo: hsl(265, 100%, 46%);
+    --color-violet: hsl(279, 100%, 62%);
+    --color-purple: hsl(271, 91%, 70%);
+    --color-fuchsia: hsl(292, 84%, 61%);
+    --color-pink: hsl(329, 86%, 70%);
+    --color-cameo-pink: hsl(330, 100%, 90%);
+    --color-cyclamen: hsl(334, 82%, 66%);
+    --color-pink-red: hsl(342, 91%, 54%);
+    --color-rose: hsl(350, 89%, 60%);
+    --color-scarlet: hsl(349, 100%, 35%);
+
+    --gradient-megatron: linear-gradient(
+      135deg, var(--color-aero-green), var(--color-jasmine), var(--color-light-coral)
+    );
+    --gradient-tranquil: linear-gradient(
+      135deg, var(--color-desert-sand), var(--color-cyclamen)
+    );
+    --gradient-oceanic: linear-gradient(
+      135deg, var(--color-celeste), var(--color-teal)
+    );
+    --gradient-maldives: linear-gradient(
+      135deg, var(--color-celeste), var(--color-vivid-sky-blue)
+    );
+    --gradient-martini: linear-gradient(
+      135deg, var(--color-lemon-yellow), var(--color-malachite)
+    );
+    --gradient-arctic: linear-gradient(
+        135deg, var(--color-pastel-blue), var(--color-indigo)
+    );
+    --gradient-cloudy: linear-gradient(
+      135deg, var(--color-anti-flash), var(--color-light-steel-blue)
+    );
+    --gradient-sky: linear-gradient(
+      135deg, var(--color-sky), var(--color-pastel-blue)
+    );
+    --gradient-margo: linear-gradient(
+      135deg, var(--color-blonde), var(--color-white)
+    );
+    --gradient-limeade: linear-gradient(
+      135deg, var(--color-magic-mint), var(--color-light-goldenrod-yellow)
+    );
+    --gradient-apple: linear-gradient(
+      135deg, var(--color-seasalt), var(--color-middle-main)
+    );
+    --gradient-delicate: linear-gradient(
+      135deg, var(--color-languid-lavender), var(--color-bright-gray)
+    );
+    --gradient-blossom: linear-gradient(
+      135deg, var(--color-languid-lavender), var(--color-cameo-pink)
+    );
+  
+    --color-alert-success: hsl(120, 100%, 39%);
+    --bg-color-alert-success: hsl(120, 100%, 6%);
+    --color-alert-info: hsl(187, 100%, 53%);
+    --bg-color-alert-info: hsl(187, 100%, 6%);
+    --color-alert-warning: hsl(63, 100%, 50%);
+    --bg-color-alert-warning: hsl(63, 100%, 5%);
+    --color-alert-danger: hsl(0, 72%, 56%);
+    --bg-color-alert-danger: hsl(0, 72%, 6%);
+  
+    --brightness: brightness(125%);
+    --radius: 6px;
+
+    --neo1: -8px -6px 15px 0 var(--color-seasalt), 6px 8px 15px 0 var(--color-middle-main);
+    --neo1-hover: inset -8px -7px 10px 0 var(--color-seasalt), inset 7px 8px 10px 0 var(--color-middle-main);
+    --neo2: 3px 3px 6px var(--color-middle-main), -3px -3px 6px var(--color-seasalt);
+    --neo2-hover: inset 2px 2px 5px var(--color-middle-main), inset -3px -3px 7px var(--color-seasalt);
+  }
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-color-level-1: hsl(213, 41%, 94%);
+    --bg-color-level-2: hsl(213, 41%, 78%);
+    --bg-color-level-3: hsl(213, 41%, 58%);
+    --bg-color-level-4: hsl(213, 41%, 14%);
+    --bg-color-level-5: hsl(213, 41%, 8%);
+  
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-light-gray: #cccccc;
+    --color-dark-gray: #4d4d4d;
+    --color-red: hsl(0, 72%, 41%);
+    --color-orange: #fb923c;
+    --color-yellow: hsl(63, 100%, 35%);
+    --color-lime: hsl(120, 100%, 45%);
+    --color-green: hsl(120, 100%, 24%);
+    --color-emerald: #34d399;
+    --color-teal: hsl(172, 66%, 40%);
+    --color-cyan: hsl(187, 100%, 38%);
+    --color-sky: hsl(198, 93%, 45%);
+    --color-blue: hsl(217, 91%, 50%);
+    --color-indigo: #818cf8;
+    --color-violet: #bc3eff;
+    --color-purple: hsl(271, 91%, 55%);
+    --color-fuchsia: #d946ef;
+    --color-pink: #f472b6;
+    --color-rose: #f43f5e;
+    
+    --color-navy: hsl(248, 99%, 32%);
+  
+    --color-alert-success: hsl(120, 100%, 19%);
+    --bg-color-alert-success: hsl(120, 100%, 96%);
+    --color-alert-info: hsl(187, 100%, 22%);
+    --bg-color-alert-info: hsl(187, 100%, 96%);
+    --color-alert-warning: hsl(63, 100%, 25%);
+    --bg-color-alert-warning: hsl(63, 100%, 95%);
+    --color-alert-danger: hsl(0, 72%, 36%);
+    --bg-color-alert-danger: hsl(0, 72%, 96%);
+  
+    --brightness: brightness(75%);
+    --radius: 6px;
+  }
+}
