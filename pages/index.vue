@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { UICardDarkNeomorpisme } from '#components';
-
-definePageMeta({
-  layout: 'no-navigation'
-})
 </script>
 
 <template>
