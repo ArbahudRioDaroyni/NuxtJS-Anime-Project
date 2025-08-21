@@ -51,7 +51,7 @@ export const descriptionParser = (raw: string) => {
   while ((linkMatch = linkRegex.exec(raw)) !== null) {
     result.links.push({ label: linkMatch[1] ?? '', url: linkMatch[2] ?? '' })
   }
-//TEST
+
   // Get story before any roles section
   // Check various formats: __Non-Anime Roles:__, **Non-Anime Roles:**, or Non-Anime Roles
   let storyMatch = raw
