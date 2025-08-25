@@ -42,7 +42,7 @@
         >
           ×
         </button>
-        <NuxtImg
+        <BaseImageResponsive
           :src="src"
           :alt="Array.isArray(alt) ? alt.join(', ') : (alt || 'Image')"
           :format="format"
