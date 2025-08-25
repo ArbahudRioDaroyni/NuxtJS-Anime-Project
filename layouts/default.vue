@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col justify-between">
+  <div>
     <NuxtLoadingIndicator color="var(--color-level-50)" />
     <CommonHeader />
     <slot />
