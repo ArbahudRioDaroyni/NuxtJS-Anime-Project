@@ -1,41 +1,16 @@
-<script setup lang="ts">
-// Set the error status code
-setResponseStatus(404)
-
-// SEO meta for 404 page
-useSeoMeta({
-  title: '404 - Page Not Found | AniWorld',
-  description: 'The page you are looking for could not be found. Browse our anime collection or return to the homepage.',
-  ogTitle: '404 - Page Not Found | AniWorld',
-  ogDescription: 'The page you are looking for could not be found.',
-  ogType: 'website',
-  twitterCard: 'summary',
-  twitterTitle: '404 - Page Not Found | AniWorld',
-  twitterDescription: 'The page you are looking for could not be found.'
-})
-
-// Navigation function
-const router = useRouter()
-const goBack = () => {
-  if (import.meta.client && window.history.length > 1) {
-    router.back()
-  } else {
-    router.push('/')
-  }
-}
-</script>
-
 <template>
   <div class="error-page">
     <div class="error-container">
-      <!-- 404 Animation/Icon -->
+      <!-- Dynamic Error Icon based on status code -->
       <div class="error-icon">
-        <div class="number-404">
-          <span class="four">4</span>
-          <span class="zero">0</span>
-          <span class="four">4</span>
+        <div class="number-display">
+          <span v-for="digit in error.statusCode.toString().split('')" :key="digit" class="digit">
+            {{ digit }}
+          </span>
         </div>
-        <div class="anime-character">
+        
+        <!-- Show anime character only for 404 -->
+        <div v-if="error.statusCode === 404" class="anime-character">
           <div class="character-face">
             <div class="eyes">
               <div class="eye left" />
@@ -48,10 +23,11 @@ const goBack = () => {
 
       <!-- Error Message -->
       <div class="error-content">
-        <h1 class="error-title">Oops! Page Not Found</h1>
+        <h1 class="error-title">
+          {{ error.statusCode === 404 ? 'Oops! Page Not Found' : 'Something Went Wrong' }}
+        </h1>
         <p class="error-description">
-          The anime page you're looking for seems to have disappeared into another dimension.
-          Don't worry, even the best anime characters get lost sometimes!
+          {{ errorDescription }}
         </p>
         
         <!-- Action Buttons -->
@@ -63,6 +39,13 @@ const goBack = () => {
             Go Back
           </button>
           
+          <button v-if="error.statusCode === 500" class="btn btn-warning" @click="handleClearError">
+            <svg xmlns="http://www.w3.org/2000/svg" class="btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Try Again
+          </button>
+          
           <NuxtLink to="/" class="btn btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" class="btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -71,8 +54,8 @@ const goBack = () => {
           </NuxtLink>
         </div>
 
-        <!-- Popular Links -->
-        <div class="popular-links">
+        <!-- Popular Links (only show for 404) -->
+        <div v-if="error.statusCode === 404" class="popular-links">
           <h3>Popular Sections:</h3>
           <div class="links-grid">
             <NuxtLink to="/" class="popular-link">
@@ -93,6 +76,72 @@ const goBack = () => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+interface ErrorProps {
+  statusCode: number
+  statusMessage: string
+}
+
+const props = defineProps<{
+  error: ErrorProps
+}>()
+
+// Set response status
+if (import.meta.server) {
+  setResponseStatus(props.error.statusCode)
+}
+
+// SEO meta based on error type
+const errorTitle = computed(() => {
+  switch (props.error.statusCode) {
+    case 404:
+      return '404 - Page Not Found | AniWorld'
+    case 500:
+      return '500 - Server Error | AniWorld'
+    default:
+      return `${props.error.statusCode} - Error | AniWorld`
+  }
+})
+
+const errorDescription = computed(() => {
+  switch (props.error.statusCode) {
+    case 404:
+      return 'The page you are looking for could not be found. Browse our anime collection or return to the homepage.'
+    case 500:
+      return 'We are experiencing technical difficulties. Please try again later.'
+    default:
+      return props.error.statusMessage || 'An unexpected error occurred.'
+  }
+})
+
+useSeoMeta({
+  title: errorTitle.value,
+  description: errorDescription.value,
+  ogTitle: errorTitle.value,
+  ogDescription: errorDescription.value,
+  ogType: 'website',
+  twitterCard: 'summary',
+  twitterTitle: errorTitle.value,
+  twitterDescription: errorDescription.value,
+  robots: 'noindex, nofollow'
+})
+
+// Navigation function
+const router = useRouter()
+const goBack = () => {
+  if (import.meta.client && window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/')
+  }
+}
+
+// Handle error clearing
+const handleClearError = () => {
+  clearError({ redirect: '/' })
+}
+</script>
 
 <style scoped>
 .error-page {
@@ -135,7 +184,7 @@ const goBack = () => {
   position: relative;
 }
 
-.number-404 {
+.number-display {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -143,7 +192,7 @@ const goBack = () => {
   margin-bottom: 1rem;
 }
 
-.number-404 span {
+.digit {
   font-size: 4rem;
   font-weight: bold;
   color: #667eea;
@@ -151,11 +200,11 @@ const goBack = () => {
   animation: bounce 2s infinite;
 }
 
-.number-404 .zero {
+.digit:nth-child(2) {
   animation-delay: 0.2s;
 }
 
-.number-404 .four:last-child {
+.digit:last-child {
   animation-delay: 0.4s;
 }
 
@@ -296,6 +345,18 @@ const goBack = () => {
   transform: translateY(-2px);
 }
 
+.btn-warning {
+  background: rgba(255, 193, 7, 0.1);
+  color: #dc3545;
+  border: 2px solid #dc3545;
+}
+
+.btn-warning:hover {
+  background: #dc3545;
+  color: white;
+  transform: translateY(-2px);
+}
+
 .popular-links {
   text-align: center;
 }
@@ -343,7 +404,7 @@ const goBack = () => {
     margin: 1rem;
   }
   
-  .number-404 span {
+  .digit {
     font-size: 3rem;
   }
   
@@ -371,7 +432,7 @@ const goBack = () => {
     padding: 1.5rem 1rem;
   }
   
-  .number-404 span {
+  .digit {
     font-size: 2.5rem;
   }
   
