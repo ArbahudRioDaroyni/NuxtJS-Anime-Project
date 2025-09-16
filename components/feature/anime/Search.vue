@@ -1,16 +1,18 @@
 <template>
   <div class="anime-search-wrapper">
     <div class="search-container">
-      <input
+      <BaseInput
         ref="searchInput"
         v-model="searchQuery"
         placeholder="Search anime by title... (typo-tolerant)"
         type="text"
-        class="search-input"
-        :class="{ 'searching': loading }"
+        size="md"
+        variant="default"
+        :loading="loading"
         @input="handleInput"
         @focus="showSuggestions = true"
-        @blur="hideSuggestions">
+        @blur="hideSuggestions"
+      />
       
       <div v-if="loading" class="search-indicator">
         <div class="loading-spinner">⟳</div>
