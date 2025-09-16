@@ -1,10 +1,5 @@
 <template>
-  <component
-    :is="tag"
-    :class="badgeClasses"
-    :style="badgeStyles"
-    v-bind="$attrs"
-  >
+  <component :is="tag" :class="badgeClasses" :style="badgeStyles" v-bind="$attrs">
     <template v-if="$slots.default">
       <slot />
     </template>
@@ -13,20 +8,11 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
-  text?: string
-  variant?: 'default' | string
-  size?: 'xs' | 'sm' | 'md' | 'lg'
-  rounded?: 'none' | 'sm' | 'md' | 'lg' | 'full'
-  tag?: string
-  color?: string
-  backgroundColor?: string
-  customClass?: string
-}
+import type { Badge } from '~/types/components';
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Badge>(), {
   text: 'default badge',
-  variant: 'default',
+  variant: 'cloudy',
   size: 'sm',
   rounded: 'sm',
   tag: 'span',
@@ -37,31 +23,31 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Generate badge classes
 const badgeClasses = computed(() => [
-  'base-badge',
-  `base-badge--${props.variant}`,
-  `base-badge--size-${props.size}`,
-  `base-badge--rounded-${props.rounded}`,
+  'badge',
+  `badge__${props.variant}`,
+  `badge__size-${props.size}`,
+  `badge__rounded-${props.rounded}`,
   props.customClass
 ])
 
 // Dynamic styles for custom colors
 const badgeStyles = computed(() => {
   const styles: Record<string, string> = {}
-  
+
   if (props.color) {
     styles.color = `rgb(from ${props.color} r g b / 0%)`
   }
-  
+
   if (props.backgroundColor) {
     styles.backgroundColor = `rgb(from ${props.backgroundColor} r g b / 0%)`
   }
-  
+
   return styles
 })
 </script>
 
 <style scoped lang="scss">
-.base-badge {
+.badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -70,155 +56,159 @@ const badgeStyles = computed(() => {
   text-transform: capitalize;
   white-space: nowrap;
   transition: all 0.2s ease;
-  
+
   // Size variants
-  &--size-xs {
-    font-size: 0.625rem;
-    padding: 0.0625rem 0.375rem;
-    min-height: 1rem;
+  &__size {
+    &-xs {
+      font-size: 0.625rem;
+      padding: 0.0625rem 0.375rem;
+      min-height: 1rem;
+    }
+
+    &-sm {
+      font-size: 0.75rem;
+      padding: 0.125rem 0.5rem;
+      min-height: 1.25rem;
+    }
+
+    &-md {
+      font-size: 0.875rem;
+      padding: 0.25rem 0.75rem;
+      min-height: 1.5rem;
+    }
+
+    &-lg {
+      font-size: 1rem;
+      padding: 0.375rem 1rem;
+      min-height: 2rem;
+    }
   }
-  
-  &--size-sm {
-    font-size: 0.75rem;
-    padding: 0.125rem 0.5rem;
-    min-height: 1.25rem;
-  }
-  
-  &--size-md {
-    font-size: 0.875rem;
-    padding: 0.25rem 0.75rem;
-    min-height: 1.5rem;
-  }
-  
-  &--size-lg {
-    font-size: 1rem;
-    padding: 0.375rem 1rem;
-    min-height: 2rem;
-  }
-  
+
   // Rounded variants
-  &--rounded-none {
-    border-radius: 0;
-  }
+  &__rounded {
+    &-none {
+      border-radius: 0;
+    }
+    &-sm {
+      border-radius: 0.25rem;
+    }
   
-  &--rounded-sm {
-    border-radius: 0.25rem;
-  }
+    &-md {
+      border-radius: 0.375rem;
+    }
   
-  &--rounded-md {
-    border-radius: 0.375rem;
-  }
+    &-lg {
+      border-radius: 0.5rem;
+    }
   
-  &--rounded-lg {
-    border-radius: 0.5rem;
+    &-full {
+      border-radius: 50%;
+    }
   }
-  
-  &--rounded-full {
-    border-radius: 50%;
-  }
-  
+
+
   // Gradient variants
-  &--megatron {
+  &__megatron {
     color: var(--color-black, #000000);
     background: var(--gradient-megatron);
   }
 
-  &--tranquil {
+  &__tranquil {
     color: var(--color-black, #000000);
     background: var(--gradient-tranquil);
   }
 
-  &--oceanic {
+  &__oceanic {
     color: var(--color-black, #000000);
     background: var(--gradient-oceanic);
   }
 
-  &--maldives {
+  &__maldives {
     color: var(--color-black, #000000);
     background: var(--gradient-maldives);
   }
 
-  &--martini {
+  &__martini {
     color: var(--color-black, #000000);
     background: var(--gradient-martini);
   }
 
-  &--arctic {
+  &__arctic {
     color: var(--color-black, #000000);
     background: var(--gradient-arctic);
   }
 
-  &--cloudy {
+  &__cloudy {
     color: var(--color-black, #000000);
     background: var(--gradient-cloudy);
   }
 
-  &--sky {
+  &__sky {
     color: var(--color-black, #000000);
     background: var(--gradient-sky);
   }
 
-  &--margo {
+  &__margo {
     color: var(--color-black, #000000);
     background: var(--gradient-margo);
   }
 
-  &--limeade {
+  &__limeade {
     color: var(--color-black, #000000);
     background: var(--gradient-limeade);
   }
 
-  &--apple {
+  &__apple {
     color: var(--color-black, #000000);
     background: var(--gradient-apple);
   }
 
-  &--delicate {
+  &__delicate {
     color: var(--color-black, #000000);
     background: var(--gradient-delicate);
   }
 
-  &--blossom {
+  &__blossom {
     color: var(--color-black, #000000);
     background: var(--gradient-blossom);
   }
-  
+
   // Status variants
-  &--success {
+  &__success {
     color: var(--color-white, #ffffff);
     background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
   }
-  
-  &--warning {
+
+  &__warning {
     color: var(--color-black, #000000);
     background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
   }
-  
-  &--danger {
+
+  &__danger {
     color: var(--color-white, #ffffff);
     background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
   }
-  
-  &--info {
+
+  &__info {
     color: var(--color-white, #ffffff);
     background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
   }
-  
+
   // Neutral variants
-  &--light {
+  &__light {
     color: var(--color-level-10);
     background: var(--color-level-95);
-    
+
     @media (prefers-color-scheme: dark) {
       color: var(--color-level-90);
       background: var(--color-level-20);
     }
   }
-  
-  &--dark {
+
+  &__dark {
     color: var(--color-level-90);
     background: var(--color-level-10);
-    
+
     @media (prefers-color-scheme: dark) {
       color: var(--color-level-10);
       background: var(--color-level-90);

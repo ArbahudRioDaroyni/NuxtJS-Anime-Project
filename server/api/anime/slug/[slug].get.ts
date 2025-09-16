@@ -111,6 +111,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
               select: {
                 id: true,
                 name: true,
+                name_native: true,
                 medium_image_url: true
               }
             },
@@ -118,6 +119,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
               select: {
                 id: true,
                 name: true,
+                name_native: true,
                 medium_image_url: true,
                 home_town: true,
               }
@@ -130,12 +132,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         },
         anime_staff_relations: {
           select: {
-            staff: {
-              select: {
-                name: true,
-                medium_image_url: true
-              }
-            },
+            staff: true,
             staff_role: { select: { name: true } }
           },
           // take: 10

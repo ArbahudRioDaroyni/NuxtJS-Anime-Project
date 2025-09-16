@@ -8,13 +8,13 @@
       <!-- Header Section -->
       <section class="staff-header">
         <div class="staff-image">
-          <!-- <BaseImageClickable
+          <BaseImageClickable
             :src="staff.large_image_url || staff.medium_image_url || '/image/image-230x345.webp'"
             :alt="staff.name"
             :width="300"
             :height="450"
             :enable-preview="true"
-          /> -->
+          />
         </div>
         
         <div class="staff-info">
@@ -63,27 +63,29 @@
             :key="`${voiceRole?.anime?.slug}-${voiceRole?.character?.id}`"
             class="voice-role-card"
           >
-            <BaseCardTwin
-              :left-item="{
-                id: voiceRole?.character?.id,
-                name: voiceRole?.character?.name,
-                image: voiceRole?.character?.medium_image_url,
-                subtitle: voiceRole.character_role?.name || 'Unknown Role',
-                slug: `/character/${voiceRole?.character?.id}-${voiceRole?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
-                badge: {
-                  text: voiceRole.character_role?.name || 'Other',
-                  variant: getBadgeVariant(voiceRole.character_role?.name)
+            <BaseCardGeneric
+              :items="[
+                {
+                  id: voiceRole?.character?.id,
+                  name: voiceRole?.character?.name,
+                  image: voiceRole?.character?.medium_image_url,
+                  subtitle: voiceRole.character_role?.name || 'Unknown Role',
+                  slug: `/character/${voiceRole?.character?.id}-${voiceRole?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
+                  badge: {
+                    text: voiceRole.character_role?.name || 'Other',
+                    variant: getBadgeVariant(voiceRole.character_role?.name)
+                  },
+                  link: { to: `/character/${voiceRole?.character?.id}-${voiceRole?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}` }
                 },
-                link: { to: `/character/${voiceRole?.character?.id}-${voiceRole?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}` }
-              }"
-              :right-item="{
-                id: voiceRole?.anime?.id,
-                name: voiceRole?.anime?.title_romaji || 'Unknown Anime',
-                image: voiceRole?.anime?.medium_cover_image_url || '/image/image-230x345.webp',
-                subtitle: 'Subtitle',
-                slug: `/${voiceRole?.anime?.slug}`,
-                link: { to: `/${voiceRole?.anime?.slug}` }
-              }"
+                {
+                  id: voiceRole?.anime?.id,
+                  name: voiceRole?.anime?.title_romaji || 'Unknown Anime',
+                  image: voiceRole?.anime?.medium_cover_image_url || '/image/image-230x345.webp',
+                  subtitle: 'Subtitle',
+                  slug: `/${voiceRole?.anime?.slug}`,
+                  link: { to: `/${voiceRole?.anime?.slug}` }
+                }
+              ]"
               :aria-label="`Anime character: ${voiceRole?.character?.name}, Voice Actor: ${voiceRole?.voice_actor?.name}`"
             />
           </div>
