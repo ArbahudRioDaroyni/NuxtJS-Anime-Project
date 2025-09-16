@@ -250,6 +250,11 @@ const applySuggestion = async (suggestion: string) => {
   // Set flag to indicate suggestion was applied
   appliedSuggestion.value = true
   
+  // Clear timeout to prevent pending searches
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+  
   // Update query
   searchQuery.value = suggestion
   
@@ -267,6 +272,11 @@ const applySuggestion = async (suggestion: string) => {
   
   // Keep suggestions dropdown open to show results
   showSuggestions.value = true
+  
+  // Reset flag after search is complete
+  setTimeout(() => {
+    appliedSuggestion.value = false
+  }, 100)
 }
 
 const selectAnime = (anime: AnimeSearchResult) => {
@@ -314,22 +324,20 @@ watch(searchQuery, (newQuery, oldQuery) => {
     searchStats.value = undefined
     appliedSuggestion.value = false
   } else if (newQuery !== oldQuery) {
-    // Reset flag when user types manually (not from applying suggestion)
+    // Skip if suggestion is being applied
     if (!appliedSuggestion.value) {
-      // This is manual typing, allow suggestions
-      handleSearch()
-    } else {
-      // This was from applying suggestion, trigger search but keep flag
       handleSearch()
     }
+    // Don't trigger search if appliedSuggestion is true
   }
 })
 
 // Watch for user input events to detect manual typing
 const handleInput = () => {
-  // Reset flag when user types manually
-  appliedSuggestion.value = false
-  handleSearch()
+  // Only reset flag and search if not currently applying suggestion
+  if (!appliedSuggestion.value) {
+    handleSearch()
+  }
 }
 
 // Auto-focus input when component mounts

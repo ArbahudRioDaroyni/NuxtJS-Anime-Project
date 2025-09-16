@@ -1,76 +1,15 @@
-<script setup lang="ts">
-// Extract ID and name from slug (format: id-name)
-const route = useRoute()
-const slug = route.params.slug as string
-
-// Parse slug to get character ID
-const characterId = computed(() => {
-  const parts = slug.split('-')
-  return parts[0] ? parseInt(parts[0]) : null
-})
-
-// SEO Meta
-useSeoMeta({
-  title: `Character Details - AniWorld`,
-  description: 'View detailed information about this anime character'
-})
-
-// Fetch character data
-const { data: character, pending, error } = await useLazyFetch(`/api/character/${characterId.value}`, {
-  key: `character-${characterId.value}`,
-  server: true,
-  default: () => ({ success: false, code: 404, message: 'Character not found', data: null })
-})
-
-// Handle not found
-if (error.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: 'Character not found'
-  })
-}
-
-// Computed SEO meta - better than watchEffect
-const seoTitle = computed(() => {
-  if (character.value && 'name' in character.value) {
-    return `${character.value.name} - Character Details`
-  }
-  return 'Character Details - AniWorld'
-})
-
-const seoDescription = computed(() => {
-  if (character.value && 'name' in character.value) {
-    return `View detailed information about ${character.value.name}, an anime character`
-  }
-  return 'View detailed information about this anime character'
-})
-
-// Update SEO meta reactively
-useSeoMeta({
-  title: seoTitle,
-  description: seoDescription,
-  ogTitle: seoTitle,
-  ogDescription: seoDescription
-})
-</script>
-
 <template>
-  <div class="character-detail-page">
+  <BaseContainer>
     <!-- Loading State -->
-    <div v-if="pending" class="loading-container">
-      <div class="loading-spinner">
-        <div class="spinner"></div>
-        <p>Loading character details...</p>
-      </div>
-    </div>
-
+    <CommonLoading v-if="pending" type="spinner" size="md" message="Loading character details..." overlay center />
+    
     <!-- Character Details -->
-    <div v-else-if="character && 'name' in character" class="character-content">
+    <div v-else-if="character && !isNotFound" class="character-content">
       <!-- Header Section -->
       <section class="character-header">
         <div class="character-image">
           <BaseImageClickable
-            :src="character.image || '/image/image-230x345.webp'"
+            :src="character.large_image_url || character.medium_image_url || '/image/image-230x345.webp'"
             :alt="character.name"
             :width="300"
             :height="450"
@@ -96,9 +35,13 @@ useSeoMeta({
               <span class="stat-label">Gender:</span>
               <span class="stat-value">{{ character.gender }}</span>
             </div>
-            <div v-if="character.birth_date" class="stat-item">
+            <div v-if="character.date_of_birth" class="stat-item">
               <span class="stat-label">Birthday:</span>
-              <span class="stat-value">{{ character.birth_date }}</span>
+              <span class="stat-value">{{ character.date_of_birth }}</span>
+            </div>
+            <div v-if="character.home_town" class="stat-item">
+              <span class="stat-label">Hometown:</span>
+              <span class="stat-value">{{ character.home_town }}</span>
             </div>
           </div>
         </div>
@@ -106,58 +49,45 @@ useSeoMeta({
 
       <!-- Description Section -->
       <section v-if="character.description" class="character-description">
-        <h2>Description</h2>
-        <div class="description-content" v-html="character.description"></div>
+        <h2>Biography</h2>
+        <div class="description-content">{{ character.description }}</div>
       </section>
 
-      <!-- Anime Appearances -->
-      <section v-if="character.anime_appearances?.length" class="anime-appearances">
-        <h2>Anime Appearances</h2>
-        <div class="anime-grid">
+      <!-- Voice Acting Roles -->
+      <section v-if="character.anime_characters_voice_actor_relations?.length" class="voice-roles">
+        <h2>Voice Acting Roles</h2>
+        
+        <div class="voice-roles-grid">
           <div 
-            v-for="appearance in character.anime_appearances" 
-            :key="appearance.anime.id"
-            class="anime-card"
+            v-for="voiceRole in character.anime_characters_voice_actor_relations" 
+            :key="`${voiceRole?.anime?.slug}-${voiceRole?.character?.id}`"
+            class="voice-role-card"
           >
-            <NuxtLink :to="`/anime/${appearance.anime.id}`">
-              <BaseImageClickable
-                :src="appearance.anime.image"
-                :alt="appearance.anime.title"
-                :width="150"
-                :height="200"
-              />
-              <div class="anime-info">
-                <h3>{{ appearance.anime.title }}</h3>
-                <span class="character-role">{{ appearance.role }}</span>
-                <span v-if="appearance.anime.year" class="anime-year">{{ appearance.anime.year }}</span>
-              </div>
-            </NuxtLink>
-          </div>
-        </div>
-      </section>
-
-      <!-- Voice Actors -->
-      <section v-if="character.voice_actors?.length" class="voice-actors">
-        <h2>Voice Actors</h2>
-        <div class="voice-actors-grid">
-          <div 
-            v-for="va in character.voice_actors" 
-            :key="va.id"
-            class="voice-actor-card"
-          >
-            <NuxtLink :to="`/staff/${va.id}-${va.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`">
-              <BaseImageClickable
-                :src="va.image"
-                :alt="va.name"
-                :width="100"
-                :height="150"
-              />
-              <div class="va-info">
-                <h3>{{ va.name }}</h3>
-                <span class="va-language">{{ va.language }}</span>
-                <span v-if="va.hometown" class="va-hometown">{{ va.hometown }}</span>
-              </div>
-            </NuxtLink>
+            <BaseCardGeneric
+              :items="[
+                {
+                  id: voiceRole?.voice_actor?.id,
+                  name: voiceRole?.voice_actor?.name,
+                  image: voiceRole?.voice_actor?.medium_image_url,
+                  subtitle: voiceRole.character_role?.name || 'Unknown Role',
+                  slug: `/character/${voiceRole?.voice_actor?.id}-${voiceRole?.voice_actor?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
+                  badge: {
+                    text: voiceRole.character_role?.name || 'Other',
+                    variant: getBadgeVariant(voiceRole.character_role?.name)
+                  },
+                  link: { to: `/character/${voiceRole?.voice_actor?.id}-${voiceRole?.voice_actor?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}` }
+                },
+                {
+                  id: voiceRole?.anime?.id,
+                  name: voiceRole?.anime?.title_romaji || 'Unknown Anime',
+                  image: voiceRole?.anime?.medium_cover_image_url || '/image/image-230x345.webp',
+                  subtitle: 'Subtitle',
+                  slug: `/${voiceRole?.anime?.slug}`,
+                  link: { to: `/${voiceRole?.anime?.slug}` }
+                }
+              ]"
+              :aria-label="`Anime character: ${voiceRole?.voice_actor?.name}, Voice Actor: ${voiceRole?.voice_actor?.name}`"
+            />
           </div>
         </div>
       </section>
@@ -171,56 +101,104 @@ useSeoMeta({
     </div>
 
     <!-- Error State -->
-    <div v-else class="error-container">
+    <div v-else-if="isNotFound" class="error-container">
       <div class="error-content">
-        <h2>Character Not Found</h2>
-        <p>The character you're looking for doesn't exist or has been removed.</p>
+        <h2>Character Member Not Found</h2>
+        <p>The character member you're looking for doesn't exist or has been removed.</p>
         <NuxtLink to="/" class="btn-back">
           ← Back to Home
         </NuxtLink>
       </div>
     </div>
-  </div>
+  </BaseContainer>
 </template>
 
-<style scoped lang="scss">
-.character-detail-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+<script setup lang="ts">
+import type { ResponseType } from '~/types/database'
+import type { AnimeCharacterVoiceActorRelation } from '~/types/relations'
+import type { Character } from '~/types/metadata'
+
+interface CharacterData extends Character {
+  anime_characters_voice_actor_relations: AnimeCharacterVoiceActorRelation[]
 }
 
-.loading-container,
+const route = useRoute()
+const slug = computed(() => route.params.slug as string)
+
+const characterId = computed(() => {
+  const parts = slug.value.split('-')
+  return parts[0] ? parseInt(parts[0]) : null
+})
+
+// Fetch character data
+const { data: response, pending, error } = await useFetch<ResponseType>(`/api/character/${characterId.value}`, {
+  key: `character-${characterId.value}`,
+  server: true,
+  default: () => ({ success: false, code: 404, message: 'character member not found', length: 0, data: [] })
+})
+
+// Extract character data from response
+const character = computed(() => response.value?.data?.[0] as CharacterData | undefined)
+const description = computed(() => descriptionParser(character.value?.description || ''))
+
+// Reactive error state
+const isNotFound = computed(() => {
+  return error.value || !response.value?.success || !character.value
+})
+
+// Computed SEO meta - better than watchEffect
+const meta = computed(() => {
+  const title = character.value?.name || 'Unknown Character Member'
+  const description = character.value?.description || 'No description available for this character member.'
+  const image = character.value?.large_image_url || character.value?.medium_image_url || '/image/image-230x345.webp'
+  
+  return {
+    title: `${title} - Character Details`,
+    description: description.slice(0, 160) + '...',
+    keywords: [
+      title,
+      character.value?.name_native || '',
+      'anime', 'character', 'details'
+    ].filter(Boolean).join(', '),
+    image: image,
+  }
+})
+
+function getBadgeVariant(role?: string): string {
+  if (!role) return 'arctic'
+  
+  const roleMap = {
+    MAIN: 'oceanic',
+    SUPPORTING: 'megatron', 
+    BACKGROUND: 'tranquil'
+  } as const
+  
+  return roleMap[role.toUpperCase() as keyof typeof roleMap] || 'arctic'
+}
+
+useHead({script: [ { innerHTML: `console.log(${JSON.stringify(character.value, null, 2)})` }, { innerHTML: `console.log(${JSON.stringify(description.value, null, 2)})` } ]})
+
+useSeoMeta({
+  title: meta.value.title,
+  description: meta.value.description,
+  keywords: meta.value.keywords,
+  ogTitle: meta.value.title,
+  ogDescription: meta.value.description,
+  ogImage: meta.value.image,
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: meta.value.title,
+  twitterDescription: meta.value.description,
+  twitterImage: meta.value.image
+})
+</script>
+
+<style scoped lang="scss">
 .error-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 400px;
-}
-
-.loading-spinner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid var(--color-level-80);
-    border-top: 4px solid var(--color-primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-  
-  p {
-    color: var(--color-level-40);
-  }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 .character-content {
@@ -293,7 +271,7 @@ useSeoMeta({
 .stat-label {
   font-weight: 600;
   color: var(--color-level-20);
-  min-width: 80px;
+  min-width: 120px;
 
   @media (prefers-color-scheme: dark) {
     color: var(--color-level-80);
@@ -330,9 +308,8 @@ useSeoMeta({
   }
 }
 
-// Anime Appearances
-.anime-appearances,
-.voice-actors {
+// Voice Acting Roles
+.voice-roles {
   h2 {
     font-size: 1.75rem;
     margin-bottom: 1.5rem;
@@ -344,104 +321,22 @@ useSeoMeta({
   }
 }
 
-.anime-grid {
+.voice-roles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 2rem;
 }
 
-.anime-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-
-  a {
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.2s ease;
-
-    &:hover {
-      transform: translateY(-4px);
-    }
-  }
-}
-
-.anime-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-
-  h3 {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color-level-10);
-    margin: 0;
-
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-level-90);
-    }
-  }
-}
-
-.character-role,
-.anime-year {
-  font-size: 0.75rem;
-  color: var(--color-level-40);
-  text-transform: capitalize;
+.voice-role-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--color-level-95);
+  border-radius: var(--radius);
 
   @media (prefers-color-scheme: dark) {
-    color: var(--color-level-60);
-  }
-}
-
-// Voice Actors
-.voice-actors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 1.5rem;
-}
-
-.voice-actor-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-
-  a {
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.2s ease;
-
-    &:hover {
-      transform: translateY(-4px);
-    }
-  }
-}
-
-.va-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  text-align: center;
-
-  h3 {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color-level-10);
-    margin: 0;
-
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-level-90);
-    }
-  }
-}
-
-.va-language,
-.va-hometown {
-  font-size: 0.75rem;
-  color: var(--color-level-40);
-
-  @media (prefers-color-scheme: dark) {
-    color: var(--color-level-60);
+    background: var(--color-level-5);
   }
 }
 

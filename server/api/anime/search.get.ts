@@ -1,5 +1,6 @@
 import type { H3Event } from 'h3'
 import type { ResponseType } from '~/types/database'
+import type { Anime } from '~/types/anime'
 import { getPrismaClient } from '~/server/utils/prisma'
 import { advancedFuzzyMatch, keyboardAwareFuzzyMatch, correctTypos } from '~/server/utils/advancedFuzzySearch'
 
@@ -23,14 +24,14 @@ interface AnimeWithScore {
 
 // Helper function to safely convert Prisma result to our interface
 function convertToAnimeWithScore(
-  anime: any,
+  anime: Anime,
   score: number,
   algorithm: string,
   confidence: number
 ): AnimeWithScore {
   return {
     id: anime.id,
-    slug: anime.slug,
+    slug: anime.slug || `anime-${anime.id}`,
     title_romaji: anime.title_romaji || 'Unknown Title',
     title_english: anime.title_english || undefined,
     title_native: anime.title_native || undefined,

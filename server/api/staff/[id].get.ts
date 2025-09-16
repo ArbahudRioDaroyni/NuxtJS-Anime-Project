@@ -18,7 +18,6 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
       }
     }
 
-    // Validate staff ID format
     if (isNaN(Number(staffId))) {
       return {
         success: false,
@@ -54,7 +53,15 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
             character_role: {
               select: { name: true }
             },
-            anime: true
+            anime: {
+              select: {
+                id: true,
+                slug: true,
+                title_romaji: true,
+                medium_cover_image_url: true,
+                extra_large_cover_image_url: true,
+              }
+            }
           },
           // take: 15
         },

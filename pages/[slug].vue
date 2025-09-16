@@ -1,17 +1,14 @@
 <template>
   <div>
-    <!-- Loading State -->
     <div v-if="pending">
       <CommonLoadingSpinner />
     </div>
     
-    <!-- Error State -->
     <div v-else-if="error">
       <CommonError :error="error" />
     </div>
     
-    <!-- Content -->
-    <FeatureAnime v-else :anime="anime" />
+    <MediaAnimeDetail v-else :anime="anime" />
   </div>
 </template>
 
