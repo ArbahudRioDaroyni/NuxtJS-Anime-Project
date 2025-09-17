@@ -24,8 +24,6 @@ logs
 .env.*
 !.env.example
 
-/generated/prisma
-
 # private
 ai.txt
 explanation.MD
