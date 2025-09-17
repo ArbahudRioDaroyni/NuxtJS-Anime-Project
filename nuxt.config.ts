@@ -9,7 +9,10 @@ export default defineNuxtConfig({
     provider: 'ipx',
     dir: 'public'
   },
-  css: ['@/assets/scss/main.scss'],
+  css: [
+    '@/assets/css/main.css',
+    '@/assets/scss/main.scss'
+  ],
   nitro: {
     externals: {
       inline: [],
@@ -23,18 +26,13 @@ export default defineNuxtConfig({
         scss: {
           additionalData: `
             @use "@/assets/scss/theme.scss" as *;
-            @use "@/assets/scss/colours.scss" as *;
             @use "@/assets/scss/helpers.scss" as *;
           `
         }
       }
     },
-    // ssr: {
-    //   noExternal: ['@prisma/client', '.prisma/client'],
-    // },
   },
   modules: [
-    '@nuxt/content',
     '@nuxt/eslint',
     '@nuxt/image',
     '@nuxt/scripts',

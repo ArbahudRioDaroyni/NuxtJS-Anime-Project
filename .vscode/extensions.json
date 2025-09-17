@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "PKief.material-icon-theme",
+    "Prisma.prisma",
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    "dbaeumer.vscode-eslint",
+    "qwtel.sqlite-viewer",
+    "Vue.volar",
+    "ms-vscode.js-debug-companion"
+  ]
+}

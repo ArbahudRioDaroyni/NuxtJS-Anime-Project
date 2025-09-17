@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import { useRuntimeConfig } from '#imports';
+import type { ResponseType } from '~/types/database'
 
 const config = useRuntimeConfig();
 const TABLE_NAME = 'anime';
@@ -8,13 +8,6 @@ export const db = new Database(config.databasePath, {
 	// verbose: console.log
 });
 
-interface resultType {
-	data: unknown[];
-	length: number;
-	status?: number;
-	message?: string;
-}
-
 /**
  * Fetch all records with optional search, field selection, limit, and offset.
  * @param {string} search - Search string for title_romaji.
@@ -22,7 +15,7 @@ interface resultType {
  * @param {number} limit - Maximum number of records to fetch.
  * @param {number} offset - Number of records to skip.
  * @param {string} [tableName=TABLE_NAME] - Table name to query.
- * @returns {Promise<resultType>} - Result object with data, length, status, and message.
+ * @returns {Promise<ResponseType>} - Result object with data, length, status, and message.
  * @throws {Error} - Throws an error if the search string exceeds the maximum length or if invalid fields are requested.
  * @example
  * const result = await getAll('Naruto', 'id,title_romaji,episodes', 10, 0);
@@ -33,7 +26,7 @@ export const getAll = async (
   limit: number,
   offset: number,
   tableName: string = TABLE_NAME
-): Promise<resultType> => {
+): Promise<ResponseType> => {
   try {
     const maxSearchLength = 50;
     if (search.length > maxSearchLength) {
@@ -70,14 +63,16 @@ export const getAll = async (
     return {
       data: rows,
       length: rows.length,
-      status: 200,
+      code: 200,
+      success: true,
       message: 'Records fetched successfully.'
     };
   } catch (error: unknown) {
     return {
       data: [],
       length: 0,
-      status: 500,
+      code: 500,
+      success: false,
       message: error instanceof Error
         ? error.message
         : 'There was an error fetching the data, please try again later.',
@@ -90,7 +85,7 @@ export const getAll = async (
  * This function retrieves a single record from the database based on the provided ID.
  * @param {number} id - The ID of the record to fetch.
  * @param {string} [tableName=TABLE_NAME] - The name of the table to query. Defaults to 'anime'.
- * @returns {Promise<resultType>} - A promise that resolves to an object containing the fetched record, its length, status code, and a message.
+ * @returns {Promise<ResponseType>} - A promise that resolves to an object containing the fetched record, its length, status code, and a message.
  * @throws {Error} - Throws an error if no record is found with the given ID or if there is an issue with the database query.
  * @example
  * const result = await getById(1);
@@ -98,7 +93,7 @@ export const getAll = async (
 export const getById = async (
   id: number,
   tableName: string = TABLE_NAME
-): Promise<resultType> => {
+): Promise<ResponseType> => {
   try {
     const sql = `SELECT * FROM "${tableName}" WHERE id = ?`;
     const row = db.prepare(sql).get(id);
@@ -110,14 +105,16 @@ export const getById = async (
     return {
       data: [row],
       length: 1,
-      status: 200,
+      code: 200,
+      success: true,
       message: 'Record fetched successfully.',
     };
   } catch (error: unknown) {
     return {
       data: [],
       length: 0,
-      status: 404,
+      code: 404,
+      success: false,
       message:
         error instanceof Error
           ? error.message
@@ -126,7 +123,7 @@ export const getById = async (
   }
 };
 
-export const getDetailsAnimeById = async (id: number, tableName: string = TABLE_NAME): Promise<resultType> => {
+export const getDetailsAnimeById = async (id: number, tableName: string = TABLE_NAME): Promise<ResponseType> => {
 	try {
 		const sql = `
 			SELECT 
@@ -166,14 +163,16 @@ export const getDetailsAnimeById = async (id: number, tableName: string = TABLE_
 					: []
 			}],
 			length: 1,
-			status: 200,
+			code: 200,
+      success: true,
 			message: 'Record fetched successfully.',
 		};
 	} catch (error: unknown) {
 		return {
 			data: [],
 			length: 0,
-			status: 404,
+			code: 404,
+      success: false,
 			message: (error instanceof Error ? error.message : 'There was an error fetching the data, please try again later.'),
 		};
 	}
@@ -185,7 +184,7 @@ export const getDetailsAnimeById = async (id: number, tableName: string = TABLE_
  * @param {string} row - The name of the row to search by.
  * @param {string | number} value - The value to search for in the specified row.
  * @param {string} [tableName=TABLE_NAME] - The name of the table to query. Defaults to 'anime'.
- * @returns {Promise<resultType>} - A promise that resolves to an object containing the fetched record, its length, status code, and a message.
+ * @returns {Promise<ResponseType>} - A promise that resolves to an object containing the fetched record, its length, status code, and a message.
  * @throws {Error} - Throws an error if no record is found with the given row name and value, or if there is an issue with the database query.
  * @example
  * const result = await getByRowName('title', 'Naruto');
@@ -194,7 +193,7 @@ export const getByRowName = async (
   row: string,
   value: string | number,
   tableName: string = TABLE_NAME
-): Promise<resultType> => {
+): Promise<ResponseType> => {
   try {
     // Validate column name
     const tableInfo = db.prepare(`PRAGMA table_info(${tableName})`).all() as TableInfoRow[];
@@ -213,14 +212,16 @@ export const getByRowName = async (
     return {
       data: [rowData],
       length: 1,
-      status: 200,
+      code: 200,
+      success: true,
       message: 'Record fetched successfully.'
     };
   } catch (error: unknown) {
     return {
       data: [],
       length: 0,
-      status: 404,
+      code: 404,
+      success: false,
       message:
         error instanceof Error
           ? error.message
@@ -234,7 +235,7 @@ export const getByRowName = async (
  * This function inserts a new record into the specified table with the provided object data.
  * @param {Record<string, unknown>} object - The object containing the data to insert into the table.
  * @param {string} [tableName=TABLE_NAME] - The name of the table to insert the record into. Defaults to 'anime'.
- * @returns {Promise<resultType>} - A promise that resolves to an object containing the ID of the newly created record, its length, status code, and a message.
+ * @returns {Promise<ResponseType>} - A promise that resolves to an object containing the ID of the newly created record, its length, status code, and a message.
  * @throws {Error} - Throws an error if the insert operation fails or if there is an issue with the database query.
  * @example
  * const newRecord = { title: 'Naruto', genre: 'Action', episodes: 220 };
@@ -243,7 +244,7 @@ export const getByRowName = async (
 export const create = async (
   object: Record<string, unknown>,
   tableName: string = TABLE_NAME
-): Promise<resultType> => {
+): Promise<ResponseType> => {
   try {
     const keys = Object.keys(object);
     if (keys.length === 0) {
@@ -264,14 +265,16 @@ export const create = async (
     return {
       data: [{ id: info.lastInsertRowid }],
       length: 1,
-      status: 201,
+      code: 200,
+      success: true,
       message: 'Record created successfully.'
     };
   } catch (error: unknown) {
     return {
       data: [],
       length: 0,
-      status: 500,
+      code: 500,
+      success: false,
       message:
         error instanceof Error
           ? error.message
@@ -285,7 +288,7 @@ export const create = async (
  * This function inserts multiple records into the specified table with the provided array of objects.
  * @param {Record<string, unknown>[]} objects - An array of objects containing the data to insert into the table.
  * @param {string} [tableName=TABLE_NAME] - The name of the table to insert the records into. Defaults to 'anime'.
- * @returns {Promise<resultType>} - A promise that resolves to an object containing the number of records created, their last inserted row ID, status code, and a message.
+ * @returns {Promise<ResponseType>} - A promise that resolves to an object containing the number of records created, their last inserted row ID, status code, and a message.
  * @throws {Error} - Throws an error if the bulk insert operation fails or if there is an issue with the database query.
  * @example
  * const newRecords = [
@@ -297,7 +300,7 @@ export const create = async (
 export const bulkCreate = async (
   objects: Record<string, unknown>[],
   tableName: string = TABLE_NAME
-): Promise<resultType> => {
+): Promise<ResponseType> => {
   try {
     if (!Array.isArray(objects) || objects.length === 0) {
       throw new Error('No records provided for bulk creation.');
@@ -323,14 +326,16 @@ export const bulkCreate = async (
     return {
       data: [{ changes: info.changes, lastInsertRowid: info.lastInsertRowid }],
       length: info.changes,
-      status: 201,
+      code: 200,
+      success: true,
       message: 'Records created successfully.'
     };
   } catch (error: unknown) {
     return {
       data: [],
       length: 0,
-      status: 500,
+      code: 500,
+      success: false,
       message: error instanceof Error
         ? error.message
         : 'There was an error creating the records, please try again later.',
@@ -344,7 +349,7 @@ export const bulkCreate = async (
  * @param {number} id - The ID of the record to update.
  * @param {Record<string, unknown>} object - The object containing the data to update in the record.
  * @param {string} [tableName=TABLE_NAME] - The name of the table to update. Defaults to 'anime'.
- * @returns {Promise<resultType>} - A promise that resolves to an object containing the number of records updated, status code, and a message.
+ * @returns {Promise<ResponseType>} - A promise that resolves to an object containing the number of records updated, status code, and a message.
  * @throws {Error} - Throws an error if no record is found with the given ID or if there is an issue with the database query.
  * @example
  * const updatedRecord = { title: 'Naruto Shippuden', genre: 'Action', episodes: 500 };
@@ -354,7 +359,7 @@ export const update = async (
   id: number,
   object: Record<string, unknown>,
   tableName: string = TABLE_NAME
-): Promise<resultType> => {
+): Promise<ResponseType> => {
   try {
     const keys = Object.keys(object);
     if (keys.length === 0) {
@@ -374,14 +379,16 @@ export const update = async (
     return {
       data: [{ id }],
       length: 1,
-      status: 200,
+      code: 200,
+      success: true,
       message: 'Record updated successfully.'
     };
   } catch (error: unknown) {
     return {
       data: [],
       length: 0,
-      status: 500,
+      code: 500,
+      success: false,
       message: error instanceof Error
         ? error.message
         : 'There was an error updating the record, please try again later.',
@@ -395,7 +402,7 @@ export const update = async (
  * Each object must include an 'id' property to identify the record.
  * @param {Record<string, unknown>[]} objects - Array of objects to update (each must include 'id').
  * @param {string} [tableName=TABLE_NAME] - Table name to update. Defaults to 'anime'.
- * @returns {Promise<resultType>} - Result object with number of records updated, status, and message.
+ * @returns {Promise<ResponseType>} - Result object with number of records updated, status, and message.
  * @throws {Error} - Throws if no records provided, missing 'id', or update fails.
  * @example
  * const updates = [
@@ -407,7 +414,7 @@ export const update = async (
 export const bulkUpdate = async (
   objects: Record<string, unknown>[],
   tableName: string = TABLE_NAME
-): Promise<resultType> => {
+): Promise<ResponseType> => {
   try {
     if (!Array.isArray(objects) || objects.length === 0) {
       throw new Error('No records provided for bulk update.');
@@ -442,14 +449,16 @@ export const bulkUpdate = async (
     return {
       data: [{ changes: updates.length }],
       length: updates.length,
-      status: 200,
+      code: 200,
+      success: true,
       message: 'Records updated successfully.'
     };
   } catch (error: unknown) {
     return {
       data: [],
       length: 0,
-      status: 500,
+      code: 500,
+      success: false,
       message: error instanceof Error
         ? error.message
         : 'There was an error updating the records, please try again later.',
@@ -461,7 +470,7 @@ export const bulkUpdate = async (
  * Soft delete a record by its ID by setting the deleted_at timestamp.
  * @param {number} id - The ID of the record to soft delete.
  * @param {string} [tableName=TABLE_NAME] - The name of the table to update. Defaults to 'anime'.
- * @returns {Promise<resultType>} - Result object with id, deleted_at, status, and message.
+ * @returns {Promise<ResponseType>} - Result object with id, deleted_at, status, and message.
  * @throws {Error} - Throws if no record is found or update fails.
  * @example
  * const result = await softDelete(1);
@@ -469,7 +478,7 @@ export const bulkUpdate = async (
 export const softDelete = async (
   id: number,
   tableName: string = TABLE_NAME
-): Promise<resultType> => {
+): Promise<ResponseType> => {
   try {
     const deletedAt = new Date().toISOString();
     const sql = `UPDATE "${tableName}" SET deleted_at = ? WHERE id = ?`;
@@ -482,14 +491,16 @@ export const softDelete = async (
     return {
       data: [{ id, deleted_at: deletedAt }],
       length: 1,
-      status: 200,
+      code: 200,
+      success: true,
       message: 'Record soft-deleted successfully.'
     };
   } catch (error: unknown) {
     return {
       data: [],
       length: 0,
-      status: 500,
+      code: 500,
+      success: false,
       message: error instanceof Error
         ? error.message
         : 'There was an error soft-deleting the record, please try again later.',
@@ -502,7 +513,7 @@ export const softDelete = async (
  * Deletes a record from the specified table based on the provided ID.
  * @param {number} id - The ID of the record to delete.
  * @param {string} [tableName=TABLE_NAME] - The name of the table to delete from. Defaults to 'anime'.
- * @returns {Promise<resultType>} - Result object with id, length, status, and message.
+ * @returns {Promise<ResponseType>} - Result object with id, length, status, and message.
  * @throws {Error} - Throws if no record is found or delete fails.
  * @example
  * const result = await destroy(1);
@@ -510,7 +521,7 @@ export const softDelete = async (
 export const destroy = async (
   id: number,
   tableName: string = TABLE_NAME
-): Promise<resultType> => {
+): Promise<ResponseType> => {
   try {
     const sql = `DELETE FROM "${tableName}" WHERE id = ?`;
     const info = db.prepare(sql).run(id);
@@ -522,14 +533,16 @@ export const destroy = async (
     return {
       data: [{ id }],
       length: 1,
-      status: 200,
+      code: 200,
+      success: true,
       message: 'Record deleted successfully.',
     };
   } catch (error: unknown) {
     return {
       data: [],
       length: 0,
-      status: 500,
+      code: 500,
+      success: false,
       message:
         error instanceof Error
           ? error.message

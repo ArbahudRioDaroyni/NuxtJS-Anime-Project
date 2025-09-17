@@ -174,7 +174,7 @@ model external_sites {
   name                          String                          @unique // @db.VarChar(100)
   icon                          String? // @db.VarChar(255)
   language                      String? // @db.VarChar(25)
-  base_url                      String?
+  base_url                      String? // @db.VarChar(255)
   anime_external_site_relations anime_external_site_relations[]
 
   @@index([name], name: "idx_external_sites_name") // Index for faster lookups by name

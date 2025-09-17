@@ -1,10 +1,11 @@
 module.exports = {
   content: [
-    './components/**/*.{vue,js}',
-    './layouts/**/*.vue',
-    './pages/**/*.vue',
-    './app.vue',
-    './plugins/**/*.{js,ts}',
+    "./components/**/*.{js,vue,ts}",
+    "./layouts/**/*.vue",
+    "./pages/**/*.vue",
+    "./plugins/**/*.{js,ts}",
+    "./app.vue",
+    "./error.vue"
   ],
   purge: [],
   darkMode: false, // or 'media' or 'class'

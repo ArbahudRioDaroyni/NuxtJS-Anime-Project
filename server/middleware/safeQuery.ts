@@ -1,18 +1,6 @@
 import type { H3Event } from 'h3'
-import { isFields } from '~/server/utils/validation'
-
-interface QueryType {
-  search?: string | number;
-  fields?: string;
-  limit?: number;
-  offset?: number;
-}
-
-interface ResultType {
-  isValid: boolean;
-  message: string;
-  data?: unknown;
-}
+import type { QueryType } from '~/types/database'
+import { getPrismaModelFields } from '~/server/utils/prisma'
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -25,7 +13,10 @@ export default defineEventHandler(async (event: H3Event) => {
     event.context.safeOffset = Number(offset) || 0;
 
     // Fields
-    const validFields = isFields(event, fields) as ResultType;
+    const url = event.node.req.url ?? '';
+    const baseUrl = url.split('?')[0] || '';
+    const table = baseUrl.split('/')[2] || '';
+    const validFields = getPrismaModelFields(table, fields);
     if (!validFields.isValid) {
       throw new Error(validFields.message);
     }
