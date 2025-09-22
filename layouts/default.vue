@@ -1,10 +1,7 @@
 <template>
-  <div>
-    <NuxtLoadingIndicator color="var(--color-level-50)" />
-    <CommonHeader />
+  <LayoutDefault>
     <slot />
-    <CommonFooter />
-  </div>
+  </LayoutDefault>
 </template>
 
 <style>

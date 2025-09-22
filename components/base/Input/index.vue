@@ -1,6 +1,5 @@
 <template>
   <input
-    :id="inputId"
     ref="inputElement"
     :type="type"
     :value="modelValue"
@@ -56,8 +55,6 @@ defineExpose({
   select: () => inputElement.value?.select(),
   element: inputElement
 })
-
-const inputId = computed(() => `input-${Math.random().toString(36).substr(2, 9)}`)
 
 const inputClasses = computed(() => [
   'input',

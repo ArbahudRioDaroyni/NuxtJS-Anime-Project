@@ -14,7 +14,7 @@
     </aside>
 
     <!-- Content Area -->
-    <main class="content tabs-wrapper">
+    <section class="content tabs-wrapper">
       <CommonTabs
         :tabs="animeTabs"
         variant="underline"
@@ -22,7 +22,7 @@
         :centered="true"
         @change="onTabChange"
       />
-    </main>
+    </section>
   </BaseContainer>
 </template>
 
