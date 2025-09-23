@@ -1,29 +1,36 @@
 <template>
-  <BaseImageResponsive
-    :src="anime?.banner_image_url || '/image/test.jpg'"
-    :alt="$route.params.slug"
-    :height="200"
-    :width="1200"
-    class="banner-img"
-  />
+  <CommonLoadingSpinner v-if="onLoad" />
 
-  <BaseContainer v-if="anime" class="main-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <FeatureAnimeSidebar :anime="anime" />
-    </aside>
+  <CommonError v-else-if="onError" :error="onError" />
 
-    <!-- Content Area -->
-    <section class="content tabs-wrapper">
-      <CommonTabs
-        :tabs="animeTabs"
-        variant="underline"
-        size="md"
-        :centered="true"
-        @change="onTabChange"
-      />
-    </section>
-  </BaseContainer>
+  <template v-else>
+    <BaseImageResponsive
+      v-if="anime"
+      :src="anime?.banner_image_url || '/image/test.jpg'"
+      :alt="$route.params.slug"
+      :height="200"
+      :width="1200"
+      class="banner-img"
+    />
+
+    <BaseContainer v-if="anime" class="main-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <FeatureAnimeSidebar :anime="anime" />
+      </aside>
+  
+      <!-- Content Area -->
+      <main class="content tabs-wrapper">
+        <CommonTabs
+          :tabs="animeTabs"
+          variant="underline"
+          size="md"
+          :centered="true"
+          @change="onTabChange"
+        />
+      </main>
+    </BaseContainer>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -33,6 +40,8 @@ import type { Tab } from '~/types/components'
 
 interface Props {
   anime?: AnimeDetails | null
+  onLoad?: boolean
+  onError?: Error | null
 }
 
 const props = defineProps<Props>()
@@ -111,8 +120,6 @@ const onTabChange = (_index: number, tab: Tab) => {
   gap: 1rem;
   padding: 0.5rem;
   flex: 1;
-  max-width: 1400px;
-  margin: 0 auto;
   width: 100%;
   overflow: hidden;
   box-sizing: border-box;

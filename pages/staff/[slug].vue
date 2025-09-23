@@ -1,5 +1,5 @@
 <template>
-  <BaseContainer>
+  <BaseContainer class="staff-page">
     <!-- Loading State -->
     <CommonLoading v-if="pending" type="spinner" size="md" message="Loading staff details..." overlay center />
     
@@ -199,6 +199,10 @@ useSeoMeta({
   justify-content: center;
   align-items: center;
   min-height: 400px;
+}
+
+.staff-page {
+  margin-top: 5rem;
 }
 
 .staff-content {

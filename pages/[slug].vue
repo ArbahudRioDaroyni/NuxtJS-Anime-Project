@@ -1,15 +1,5 @@
 <template>
-  <div>
-    <div v-if="pending">
-      <CommonLoadingSpinner />
-    </div>
-    
-    <div v-else-if="error">
-      <CommonError :error="error" />
-    </div>
-    
-    <MediaAnimeDetail v-else :anime="anime" />
-  </div>
+  <MediaAnimeDetail :anime="anime" :on-load="pending" :on-error="error" />
 </template>
 
 <script setup lang="ts">
@@ -30,6 +20,18 @@ const { data: response, pending, error } = await useFetch<ResponseType>(
     timeout: 10000,
   }
 )
+
+// Only for development: simulate loading for 5 seconds
+// const simulateLoading = ref(false)
+// const isLoading = computed(() => pending.value || simulateLoading.value)
+
+// if (import.meta.dev) {
+//   simulateLoading.value = true
+//   setTimeout(() => {
+//     simulateLoading.value = false
+//   }, 2000)
+// }
+// End simulation
 
 const anime = computed(() => response.value?.data?.[0] as AnimeDetails | undefined)
 

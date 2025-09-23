@@ -48,52 +48,52 @@ const containerStyles = computed(() => {
 
 <style lang="scss" scoped>
 .base-container {
-  width: 100%;
+  --width: 100%;
+  width: var(--width);
+  max-width: var(--width);
+  margin: 0 auto;
   box-sizing: border-box;
-  
+
   &--default {
-    width: min(1200px, 90%);
-    margin: 0 auto;
+    --width: min(1200px, 90%);
   }
-  
+
   &--fluid {
-    width: min(1400px, 90%);
-    max-width: none;
+    --width: min(1400px, 90%);
   }
-  
+
   &--narrow {
-    max-width: min(800px, 90%);
-    margin: 0 auto;
+    --width: min(800px, 90%);
   }
-  
+
   &--padding-none {
     padding: 0;
   }
-  
+
   &--padding-sm {
     padding: 0.5rem;
   }
-  
+
   &--padding-md {
     padding: 1rem;
   }
-  
+
   &--padding-lg {
     padding: 2rem;
   }
-  
+
   &--margin-none {
     margin: 0 auto;
   }
-  
+
   &--margin-sm {
     margin: 0.5rem auto;
   }
-  
+
   &--margin-md {
     margin: 1rem auto;
   }
-  
+
   &--margin-lg {
     margin: 2rem auto;
   }
