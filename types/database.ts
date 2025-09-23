@@ -21,16 +21,17 @@ export interface ResponseType {
 // Query parameters
 export interface QueryType {
   search?: string | number
-  fields?: string
   limit?: number
   offset?: number
   page?: number
+  perPage?: number
   season?: string
   year?: string
   genre?: string
   status?: string
   sort?: string
   order?: 'asc' | 'desc'
+  fields?: string
 }
 
 // Pagination
