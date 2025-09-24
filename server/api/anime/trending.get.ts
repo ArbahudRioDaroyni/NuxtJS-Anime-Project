@@ -1,77 +1,98 @@
 import type { H3Event } from 'h3'
-import type { ResponseType, QueryType } from '~/types/database'
+import type { ResponseType } from '~/types/database'
 import { getPrismaClient } from '~/server/utils/prisma'
 
 const prisma = getPrismaClient()
 
+function generatePaginationURLs(baseURL: string, page: number, perPage: number, totalCount: number, search?: string, fields?: string) {
+  const hasNext = (page * perPage) < totalCount;
+  const hasPrev = page > 1;
+  const nextPage = hasNext ? page + 1 : null;
+  const prevPage = hasPrev ? page - 1 : null;
+  const nextURL = hasNext ? `${baseURL}?page=${nextPage}&perPage=${perPage}${search ? `&search=${encodeURIComponent(search)}` : ''}${fields ? `&fields=${encodeURIComponent(fields)}` : ''}` : null;
+  const prevURL = hasPrev ? `${baseURL}?page=${prevPage}&perPage=${perPage}${search ? `&search=${encodeURIComponent(search)}` : ''}${fields ? `&fields=${encodeURIComponent(fields)}` : ''}` : null;
+  return { nextURL, prevURL, hasNext, hasPrev, nextPage, prevPage };
+}
+
 export default defineEventHandler(async (event: H3Event): Promise<ResponseType> => {
   try {
-    const { page = 1, perPage = 10, search = '' } = getQuery(event) as QueryType
-    const limit = Math.max(1, Math.min(Number(perPage), 100))
-    const offset = (Math.max(1, Number(page)) - 1) * limit
+    const { safeSearch, safePerPage, safePage, safeFields } = event.context
+    const query = getQuery(event);
+    const limit = Math.max(1, Math.min(Number(safePerPage), 100))
+    const offset = (Math.max(1, Number(safePage)) - 1) * limit
+    const whereClause: Record<string, unknown> = safeSearch
+    ? {
+      AND: [
+        {
+          deleted_at: null,
+          trending: { gt: 0 }
+        },
+        {
+          OR: [
+            { title_romaji: { contains: safeSearch.toString(), mode: 'insensitive' } },
+            { title_english: { contains: safeSearch.toString(), mode: 'insensitive' } },
+            { title_native: { contains: safeSearch.toString(), mode: 'insensitive' } }
+          ]
+        }
+      ]
+    }
+    : {
+      deleted_at: null,
+      trending: { gt: 0 }
+    }
 
     const totalCount = await prisma.anime.count({
-      where: search ? {
-        AND: [
-          {
-            deleted_at: null,
-            trending: { gt: 0 }
-          },
-          {
-            OR: [
-              { title_romaji: { contains: search.toString(), mode: 'insensitive' } },
-              { title_english: { contains: search.toString(), mode: 'insensitive' } },
-              { title_native: { contains: search.toString(), mode: 'insensitive' } }
-            ]
-          }
-        ]
-      } : {
-        deleted_at: null,
-        trending: { gt: 0 }
-      }
+      where: whereClause
     })
 
     if (totalCount === 0) {
       throw new Error('No trending anime found.', { cause: 404 })
     }
     
-    const trendingAnime = await prisma.anime.findMany({
-      where: search ? {
-        AND: [
-          {
-            deleted_at: null,
-            trending: { gt: 0 }
-          },
-          {
-            OR: [
-              { title_romaji: { contains: search.toString(), mode: 'insensitive' } },
-              { title_english: { contains: search.toString(), mode: 'insensitive' } },
-              { title_native: { contains: search.toString(), mode: 'insensitive' } }
-            ]
-          }
-        ]
-      } : {
-        deleted_at: null,
-        trending: { gt: 0 }
-      },
-      take: limit,
-      skip: offset,
-      orderBy: [
-        { trending: 'desc' },
-        { updated_at: 'desc' }
-      ],
-      include: {
-        media_type: true,
-        release_format: true,
-        status_type: true,
-        source_media_type: true,
-        season: true
-      }
-    })
+    let trendingAnime;
+    if (safeFields) {
+      trendingAnime = await prisma.anime.findMany({
+        where: whereClause,
+        take: limit,
+        skip: offset,
+        orderBy: [
+          { trending: 'desc' },
+          { updated_at: 'desc' }
+        ],
+        select: safeFields
+      });
+    } else {
+      trendingAnime = await prisma.anime.findMany({
+        where: whereClause,
+        take: limit,
+        skip: offset,
+        orderBy: [
+          { trending: 'desc' },
+          { updated_at: 'desc' }
+        ],
+        include: {
+          media_type: true,
+          release_format: true,
+          status_type: true,
+          source_media_type: true,
+          season: true
+        }
+      });
+    }
 
     if (trendingAnime.length === 0) {
       throw new Error('No trending anime found.', { cause: 404 })
     }
+
+    const baseURL = '/api/anime/trending';
+    const pagination = generatePaginationURLs(
+      baseURL,
+      Number(safePage),
+      limit,
+      totalCount,
+      safeSearch ? safeSearch.toString() : undefined,
+      query.fields ? (query.fields as string) : undefined
+    );
 
     return {
       success: true,
@@ -80,19 +101,18 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
       length: trendingAnime.length,
       meta: {
         total: totalCount,
-        page: Number(page),
+        page: Number(safePage),
+        totalPages: Math.ceil(totalCount / limit),
         perPage: limit,
-        hasNext: offset + limit < totalCount,
-        hasPrev: offset > 0,
-        totalPages: Math.ceil(totalCount / limit)
+        ...pagination
       },
       data: trendingAnime
     }
   } catch (e: unknown) {
-    event.node.res.statusCode = e instanceof Error && e.cause === 404 ? 404 : 500
+    event.node.res.statusCode = e instanceof Error && typeof e.cause === 'number' ? e.cause : 500
     return {
       success: false,
-      code: e instanceof Error && e.cause === 404 ? 404 : 500,
+      code: e instanceof Error && typeof e.cause === 'number' ? e.cause : 500,
       message: e instanceof Error ? e.message : 'An error occurred while retrieving trending anime.',
       length: 0,
       data: []
