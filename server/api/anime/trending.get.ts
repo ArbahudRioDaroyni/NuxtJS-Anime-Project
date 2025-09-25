@@ -21,25 +21,25 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     const limit = Math.max(1, Math.min(Number(safePerPage), 100))
     const offset = (Math.max(1, Number(safePage)) - 1) * limit
     const whereClause: Record<string, unknown> = safeSearch
-    ? {
-      AND: [
-        {
-          deleted_at: null,
-          trending: { gt: 0 }
-        },
-        {
-          OR: [
-            { title_romaji: { contains: safeSearch.toString(), mode: 'insensitive' } },
-            { title_english: { contains: safeSearch.toString(), mode: 'insensitive' } },
-            { title_native: { contains: safeSearch.toString(), mode: 'insensitive' } }
-          ]
-        }
-      ]
-    }
-    : {
-      deleted_at: null,
-      trending: { gt: 0 }
-    }
+      ? {
+        AND: [
+          {
+            deleted_at: null,
+            trending: { gt: 0 }
+          },
+          {
+            OR: [
+              { title_romaji: { contains: safeSearch.toString(), mode: 'insensitive' } },
+              { title_english: { contains: safeSearch.toString(), mode: 'insensitive' } },
+              { title_native: { contains: safeSearch.toString(), mode: 'insensitive' } }
+            ]
+          }
+        ]
+      }
+      : {
+        deleted_at: null,
+        trending: { gt: 0 }
+      }
 
     const totalCount = await prisma.anime.count({
       where: whereClause
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     if (totalCount === 0) {
       throw new Error('No trending anime found.', { cause: 404 })
     }
-    
+
     let trendingAnime;
     if (safeFields) {
       trendingAnime = await prisma.anime.findMany({

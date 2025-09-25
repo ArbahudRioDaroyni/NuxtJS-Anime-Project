@@ -10,7 +10,7 @@ const route = useRoute()
 const slug = computed(() => route.params.slug as string)
 
 const { data: response, pending, error } = await useFetch<ResponseType>(
-  `/api/anime/slug/${slug.value}`, 
+  `/api/anime/${slug.value}?search-by=slug`, 
   {
     key: `anime-${slug.value}`,
     server: true,
