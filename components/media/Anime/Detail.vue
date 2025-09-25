@@ -16,7 +16,7 @@
     <BaseContainer v-if="anime" class="main-layout">
       <!-- Sidebar -->
       <aside class="sidebar">
-        <FeatureAnimeSidebar :anime="anime" />
+        <MediaAnimeSidebar :anime="anime" />
       </aside>
   
       <!-- Content Area -->

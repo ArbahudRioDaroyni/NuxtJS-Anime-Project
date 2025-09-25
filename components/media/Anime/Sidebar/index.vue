@@ -109,7 +109,7 @@ const externalSites = computed(() => props.anime?.anime_external_site_relations)
 <template>
   <aside v-if="props.anime" class="sidebar-container">
     <!-- Search Component -->
-    <FeatureAnimeSearch />
+    <CommonSearch />
 
     <!-- Rankings -->
     <Rankings />
