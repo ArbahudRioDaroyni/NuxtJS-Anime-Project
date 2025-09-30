@@ -115,15 +115,15 @@ const externalSites = computed(() => props.anime?.anime_external_site_relations)
     <Rankings />
 
     <!-- Main Details Card -->
-    <BaseCardNeomorphism variant="outer" class="card-details">
+    <V1Card class="card-details" variant="outer" padding="sm">
       <!-- Next Episode Countdown -->
-      <BaseCardNeomorphism v-if="nextEpisodeCountdown" variant="inner" class="countdown">
+      <V1Card v-if="nextEpisodeCountdown" variant="inner" class="countdown">
         {{ nextEpisodeCountdown }}
-      </BaseCardNeomorphism>
+      </V1Card>
 
       <!-- Anime Details Grid -->
       <div class="details-grid">
-        <BaseCardNeomorphism 
+        <V1Card 
           v-for="(detail, index) in animeDetails" 
           :key="`${detail.label}-${index}`"
           variant="inner"
@@ -132,9 +132,9 @@ const externalSites = computed(() => props.anime?.anime_external_site_relations)
         >
           <span class="label">{{ detail.label }}</span>
           <span class="value">{{ detail.value }}</span>
-        </BaseCardNeomorphism>
+        </V1Card>
       </div>
-    </BaseCardNeomorphism>
+    </V1Card>
 
     <ExternalSites :external-sites="externalSites" class="card-details" />
   </aside>
@@ -145,6 +145,7 @@ const externalSites = computed(() => props.anime?.anime_external_site_relations)
 
 <style lang="scss" scoped>
 .sidebar-container {
+  padding: 1rem;
   display: grid;
   gap: 1.5rem;
   // contain: layout style paint; // CSS containment for performance
@@ -174,7 +175,6 @@ const externalSites = computed(() => props.anime?.anime_external_site_relations)
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.25rem;
-  padding: 0.5rem;
 }
 
 .countdown {

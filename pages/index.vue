@@ -6,6 +6,9 @@ import { UICardDarkNeomorpisme } from '#components';
     <!-- middle item list center -->
     <section class="container flex flex-col w-full h-full items-center justify-center gap-4">
       <Search />
+      <V1Card variant="outer">
+        <h1 class="text-2xl font-bold">Welcome to AniWorld</h1>
+      </V1Card>
       <p class="mt-5">Hello, this is the home page!</p>
       <UICardNeon />
       <UICardDarkNeomorpisme />

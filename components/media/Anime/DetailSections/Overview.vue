@@ -49,7 +49,7 @@ const staffs = computed(() => {
       <!-- Trailer Section -->
       <section v-if="trailerUrl">
         <h2 class="overview-title">Trailer</h2>
-        <BaseCardNeomorphism variant="inner">
+        <V1Card variant="inner">
           <iframe
             width="560"
             height="315"
@@ -60,7 +60,7 @@ const staffs = computed(() => {
             referrerpolicy="strict-origin-when-cross-origin"
             allowfullscreen
           />
-        </BaseCardNeomorphism>
+        </V1Card>
       </section>
     </div>
   </div>

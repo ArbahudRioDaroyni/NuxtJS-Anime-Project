@@ -1,19 +1,56 @@
 <template>
-  <section class="card-relation-list">
-    <div class="relation-grid">
-      <BaseCardGeneric
-        v-for="(item, index) in convertedRelations"
-        :key="`relation-${index}`"
-        :items="[item]"
-        :aria-label="`Anime relation: ${item.name}, Type: ${item.badge?.text}`"
-        min-height="140px"
+  <V1Grid tag="ul" gap="1rem">
+    <V1Card
+      v-for="(anime, index) in orderedRelations"
+      :key="`relation-${index}`"
+      :title="anime?.name"
+      :aria-label="`Related anime: ${anime?.name}, Relation type: ${anime?.relation_name}`"
+      variant="both"
+      clickable
+      :href="anime?.slug"
+      tag="li"
+      @click="trackClick"
+    >
+      <BaseImageClickable
+        :src="anime?.image"
+        :alt="anime?.name"
+        min-width="72px"
+        :is-background="true"
       />
-    </div>
-  </section>
+
+      <div>
+        <NuxtLink :to="anime?.slug">
+          {{ anime?.name }}
+        </NuxtLink>
+        <V1Badge
+          v-if="anime?.relation_type"
+          :variant="getGradientBadgeColor(anime?.relation_name)"
+          :text="anime?.relation_name"
+        />
+        <div>
+          <span 
+            role="note"
+            :aria-label="`Source: ${anime?.source_media_type_name}`"
+            style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; opacity: 0.8;"
+          >
+            {{ anime?.source_media_type_name }}
+          </span>
+          <span 
+            role="status"
+            :aria-label="`Status: ${anime?.status_type_name}`"
+            style="font-weight: 500; font-size: 0.75rem; border-radius: 0.25rem; margin-left: 0.5rem;"
+          >
+            {{ anime?.status_type_name }}
+          </span>
+        </div>
+      </div>
+    </V1Card>
+  </V1Grid>
 </template>
 
 <script setup lang="ts">
 import type { AnimeRelationRelation } from '~/types/relations'
+import type { AnimeDetails } from '~/types/anime'
 
 const props = defineProps<{
   data?: AnimeRelationRelation[]
@@ -43,6 +80,10 @@ const getGradientBadgeColor = (type: string) => {
     default:
       return 'cloudy'
   }
+}
+
+const trackClick = () => {
+  // console.log('Card interaction tracked')
 }
 
 const orderedRelations = computed(() => {
@@ -78,58 +119,19 @@ const orderedRelations = computed(() => {
       return bYear.localeCompare(aYear)
     })
     .slice(0, props.countShow || Object.values(props.data).length)
-})
-
-// Convert to card items
-const convertedRelations = computed(() => {
-  return orderedRelations.value.map((relation) => {
-    const anime = relation?.reference_anime
-    
-    return {
-      id: anime?.slug || Math.random().toString(),
-      name: anime?.title_english || anime?.title_romaji || anime?.title_native || 'Unknown Anime',
-      image: anime?.medium_cover_image_url || anime?.thumbnail_image_url || '/image/image-230x345.webp',
-      subtitle: '',
-      slug: anime?.slug || '#',
-      badge: {
-        text: relation?.reference_type?.name || 'Unknown',
-        variant: getGradientBadgeColor(relation?.reference_type?.name || 'Unknown')
-      },
-      link: anime?.slug
-        ? { to: `${anime.slug}` }
-        : undefined,
-      additionalInfo: `
-        <span 
-          role="note"
-          aria-label="Source: ${(anime as { source_media_type?: { name?: string } })?.source_media_type?.name || 'Unknown'}"
-          style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; opacity: 0.8;"
-        >
-          ${(anime as { source_media_type?: { name?: string } })?.source_media_type?.name || 'Unknown'}
-        </span>
-        <span 
-          role="status"
-          aria-label="Status: ${(anime as { status_type?: { name?: string } })?.status_type?.name || 'Unknown'}"
-          style="font-weight: 500; font-size: 0.75rem; border-radius: 0.25rem; margin-left: 0.5rem;"
-        >
-          ${(anime as { status_type?: { name?: string } })?.status_type?.name || 'Unknown'}
-        </span>
-      `
-    }
-  })
+    .map((relation) => {
+      const anime = relation?.reference_anime
+      
+      return {
+        id: anime?.slug || Math.random().toString(),
+        name: anime?.title_english || anime?.title_romaji || anime?.title_native || 'Unknown Anime',
+        image: anime?.medium_cover_image_url || anime?.thumbnail_image_url || '/image/image-230x345.webp',
+        slug: anime?.slug || '#',
+        relation_type: relation?.reference_type,
+        relation_name: relation?.reference_type?.name || 'Unknown',
+        status_type_name: (anime as AnimeDetails)?.status_type?.name || 'Unknown',
+        source_media_type_name: (anime as AnimeDetails)?.source_media_type?.name || 'Unknown',
+      }
+    })
 })
 </script>
-
-<style scoped lang="scss">
-.card-relation-list {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-}
-
-.relation-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
-  gap: 1rem;
-}
-</style>

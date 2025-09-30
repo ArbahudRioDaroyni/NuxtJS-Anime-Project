@@ -1,5 +1,5 @@
 <template>
-  <figure v-if="!isBackground" class="responsive-image-container">
+  <figure v-if="!isBackground" class="responsive-image-container" v-bind="$attrs">
     <BaseImageResponsive
       :src="src"
       :alt="alt || 'Image'"
@@ -22,12 +22,13 @@
     :title="alt || 'Image'"
     role="banner"
     :aria-label="alt || 'Image'"
+    v-bind="$attrs"
     @click="enablePreview ? openModal() : null"
   />
 
   <!-- Modal Preview -->
   <Teleport to="body">
-    <div 
+    <div
       v-if="isModalOpen" 
       class="image-preview-modal"
       role="dialog"
@@ -85,7 +86,7 @@ withDefaults(defineProps<Props>(), {
   format: 'webp',
   placeholder: 'blur',
   customClass: '',
-  enablePreview: true,
+  enablePreview: false,
   isBackground: false,
   backgroundSize: 'cover',
   backgroundPosition: 'center',

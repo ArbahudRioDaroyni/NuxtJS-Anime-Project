@@ -1,15 +1,31 @@
 <template>
-  <section class="card-staff-list">
-    <div class="staff-grid">
-      <BaseCardGeneric
-        v-for="(staff, index) in convertedStaffs"
-        :key="`staff-${index}`"
-        :items="[staff]"
-        :aria-label="`Staff: ${staff.name}, Role: ${staff.id}`"
-        min-height="140px"
+  <V1Grid tag="ul" gap="1rem">
+    <V1Card
+      v-for="(staff, index) in orderedStaffs"
+      :key="`staff-${index}`"
+      :title="staff?.name"
+      variant="both"
+      clickable
+      :href="staff?.slug || '#'"
+      tag="li"
+      @click="trackClick"
+    >
+      <BaseImageClickable
+        :src="staff?.image"
+        :alt="staff?.name"
+        min-width="72px"
+        :is-background="true"
       />
-    </div>
-  </section>
+      <div>
+        <NuxtLink :to="staff?.slug || '#'">
+          {{ staff?.name }}
+        </NuxtLink>
+        <span class="card-subtitle">
+          {{ staff?.role }}
+        </span>
+      </div>
+    </V1Card>
+  </V1Grid>
 </template>
 
 <script setup lang="ts">
@@ -19,6 +35,10 @@ const props = defineProps<{
   data?: AnimeStaffRelation[]
   countShow?: number
 }>()
+
+const trackClick = () => {
+  // console.log('Card interaction tracked')
+}
 
 const orderedStaffs = computed(() => {
   if (!props.data) return []
@@ -53,39 +73,15 @@ const orderedStaffs = computed(() => {
       return aName.localeCompare(bName)
     })
     .slice(0, props.countShow || Object.values(props.data).length)
-})
-
-const convertedStaffs = computed(() => {
-  return orderedStaffs.value.map(relation => {
-    const staff = relation.staff;
-    return {
-      id: staff?.id,
-      name: staff?.name || 'Anonymous',
-      image: staff?.medium_image_url || '/image/image-230x345.webp',
-      subtitle: relation.staff_role?.name || 'Not specified',
-      slug: `/staff/${staff?.id}-${staff?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
-      link: staff?.id
-        ? { to: `/staff/${staff.id}-${staff?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}` }
-        : undefined,
-    }
+    .map(relation => {
+      const staff = relation.staff;
+      return {
+        id: staff?.id || null,
+        name: staff?.name || 'Anonymous',
+        image: staff?.medium_image_url || '/image/image-230x345.webp',
+        role: relation.staff_role?.name || 'Not specified',
+        slug: `/staff/${staff?.id}-${staff?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`
+      }
   })
 })
 </script>
-
-<style scoped lang="scss">
-.card-staff-list {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-}
-.staff-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
-  gap: 1rem;
-
-  @media (max-width: 480px) {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-}
-</style>

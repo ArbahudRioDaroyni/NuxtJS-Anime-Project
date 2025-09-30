@@ -189,6 +189,7 @@ const onTabChange = (_index: number, tab: Tab) => {
   width: 100%;
   overflow: hidden;
   max-width: 100%;
+  padding: 1rem;
 
   @media (min-width: 768px) {
     order: 2;

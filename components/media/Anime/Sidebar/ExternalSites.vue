@@ -11,8 +11,8 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <BaseCardNeomorphism v-if="externalSites && externalSites.length" variant="outer">
-    <BaseCardNeomorphism 
+  <V1Card v-if="externalSites && externalSites.length" variant="outer">
+    <V1Card 
       v-for="site in externalSites" 
       :key="site.external_site?.id" 
       variant="inner"
@@ -35,8 +35,8 @@ withDefaults(defineProps<Props>(), {
           {{ site.external_site.name }}
         </span>
       </a>
-    </BaseCardNeomorphism>
-  </BaseCardNeomorphism>
+    </V1Card>
+  </V1Card>
 </template>
 
 <style scoped>

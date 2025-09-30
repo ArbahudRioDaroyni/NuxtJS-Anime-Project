@@ -56,40 +56,51 @@
       <!-- Voice Acting Roles -->
       <section v-if="staff.anime_characters_voice_actor_relations?.length" class="voice-roles">
         <h2>Voice Acting Roles</h2>
-        
-        <div class="voice-roles-grid">
-          <div 
-            v-for="voiceRole in staff.anime_characters_voice_actor_relations" 
-            :key="`${voiceRole?.anime?.slug}-${voiceRole?.character?.id}`"
-            class="voice-role-card"
+        <V1Grid tag="ul" gap="3rem 2rem">
+          <V1Card
+            v-for="(item, index) in staff.anime_characters_voice_actor_relations"
+            :key="`character-${index}`"
+            :title="item?.character?.name"
+            :aria-label="`Anime character: ${item?.character?.name}, Role: ${item.character_role?.name}, Voice actor: ${item?.anime?.title_romaji}`"
+            variant="both"
+            layout="twin"
+            tag="li"
           >
-            <BaseCardGeneric
-              :items="[
-                {
-                  id: voiceRole?.character?.id,
-                  name: voiceRole?.character?.name,
-                  image: voiceRole?.character?.medium_image_url,
-                  subtitle: voiceRole.character_role?.name || 'Unknown Role',
-                  slug: `/character/${voiceRole?.character?.id}-${voiceRole?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
-                  badge: {
-                    text: voiceRole.character_role?.name || 'Other',
-                    variant: getBadgeVariant(voiceRole.character_role?.name)
-                  },
-                  link: { to: `/character/${voiceRole?.character?.id}-${voiceRole?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}` }
-                },
-                {
-                  id: voiceRole?.anime?.id,
-                  name: voiceRole?.anime?.title_romaji || 'Unknown Anime',
-                  image: voiceRole?.anime?.medium_cover_image_url || '/image/image-230x345.webp',
-                  subtitle: 'Subtitle',
-                  slug: `/${voiceRole?.anime?.slug}`,
-                  link: { to: `/${voiceRole?.anime?.slug}` }
-                }
-              ]"
-              :aria-label="`Anime character: ${voiceRole?.character?.name}, Voice Actor: ${voiceRole?.voice_actor?.name}`"
-            />
-          </div>
-        </div>
+            <div>
+              <BaseImageClickable
+              :src="item?.character?.medium_image_url"
+              :alt="item?.character?.name"
+              min-width="72px"
+              :is-background="true"
+              />
+              <div>
+                <NuxtLink :to="`/character/${item?.character?.id}-${item?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`">
+                  {{ item?.character?.name }}
+                </NuxtLink>
+                <V1Badge
+                  :variant="getGradientBadgeColor(item.character_role?.name || '')"
+                  :text="item.character_role?.name"
+                />
+              </div>
+            </div>
+            <div>
+              <BaseImageClickable
+              :src="item?.anime?.medium_cover_image_url"
+              :alt="item?.anime?.title_romaji"
+              min-width="72px"
+              :is-background="true"
+              />
+              <div>
+                <NuxtLink :to="'/'+item?.anime?.slug">
+                  {{ item?.anime?.title_romaji }}
+                </NuxtLink>
+                <span class="card-subtitle">
+                  Subtitle
+                </span>
+              </div>
+            </div>
+          </V1Card>
+        </V1Grid>
       </section>
 
       <!-- Back Link -->
@@ -164,7 +175,7 @@ const meta = computed(() => {
   }
 })
 
-function getBadgeVariant(role?: string): string {
+function getGradientBadgeColor(role?: string): string {
   if (!role) return 'arctic'
   
   const roleMap = {
@@ -325,24 +336,6 @@ useSeoMeta({
   }
 }
 
-.voice-roles-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 2rem;
-}
-
-.voice-role-card {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  padding: 1rem;
-  background: var(--color-level-95);
-  border-radius: var(--radius);
-
-  @media (prefers-color-scheme: dark) {
-    background: var(--color-level-5);
-  }
-}
 
 // Back Link
 .back-link {
