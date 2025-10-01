@@ -110,7 +110,7 @@ const orderedCharacters = computed(() => {
           image: voiceActor?.medium_image_url || '/image/image-230x345.webp',
           subtitle: voiceActor?.home_town?.split(',').at(-1)?.trim() || 'Unknown',
           slug: voiceActor?.id
-            ? `/staff/${voiceActor?.id}-${voiceActor?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`
+            ? `/voice-actor/${voiceActor?.id}-${voiceActor?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`
             : '#'
         }
       ];

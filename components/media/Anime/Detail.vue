@@ -13,7 +13,7 @@
       class="banner-img"
     />
 
-    <BaseContainer v-if="anime" class="main-layout">
+    <V1Container v-if="anime" class="main-layout">
       <!-- Sidebar -->
       <aside class="sidebar">
         <MediaAnimeSidebar :anime="anime" />
@@ -29,7 +29,7 @@
           @change="onTabChange"
         />
       </main>
-    </BaseContainer>
+    </V1Container>
   </template>
 </template>
 

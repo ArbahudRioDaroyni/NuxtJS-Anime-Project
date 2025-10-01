@@ -1,6 +1,7 @@
 import type { AnimeDetails } from '~/types/anime'
+import type { Staff } from '~/types/metadata'
 
-interface AnimeSeoMeta {
+interface useSeoMeta {
   title: string
   description: string
   keywords: string
@@ -14,9 +15,13 @@ interface AnimeSeoMeta {
   twitterImage: string
 }
 
+const stripHtmlTags = (html: string): string => {
+  return html.replace(/<[^>]*>/g, '')
+}
+
 export const useAnimeSeo = (anime: ComputedRef<AnimeDetails | undefined>) => {
-  const seoMeta = computed((): AnimeSeoMeta => {
-    const defaultMeta: AnimeSeoMeta = {
+  const seoMeta = computed((): useSeoMeta => {
+    const defaultMeta: useSeoMeta = {
       title: 'Anime not found',
       description: 'The requested anime could not be found.',
       keywords: 'anime, not found',
@@ -39,7 +44,7 @@ export const useAnimeSeo = (anime: ComputedRef<AnimeDetails | undefined>) => {
       title = title.slice(0, 60) + '...'
     }
 
-    const description = anime.value.description 
+    const description = anime.value.description
       ? stripHtmlTags(anime.value.description).slice(0, 160) + '...'
       : 'No description available for this anime.'
 
@@ -52,9 +57,9 @@ export const useAnimeSeo = (anime: ComputedRef<AnimeDetails | undefined>) => {
       ...synonyms,
       'anime', 'details', 'watch'
     ].filter(Boolean).join(', ')
-    
-    const image = anime.value.large_cover_image_url || 
-                 anime.value.medium_cover_image_url || 
+  
+    const image = anime.value.large_cover_image_url ||
+                 anime.value.medium_cover_image_url ||
                  '/image/image-230x345.webp'
 
     return {
@@ -75,6 +80,55 @@ export const useAnimeSeo = (anime: ComputedRef<AnimeDetails | undefined>) => {
   return { seoMeta }
 }
 
-const stripHtmlTags = (html: string): string => {
-  return html.replace(/<[^>]*>/g, '')
+export const useStaffSeo = (staff: ComputedRef<Staff | undefined>) => {
+  const seoMeta = computed((): useSeoMeta => {
+    const defaultMeta: useSeoMeta = {
+      title: 'Staff not found',
+      description: 'The requested staff member could not be found.',
+      keywords: 'staff, not found',
+      ogTitle: 'Staff not found',
+      ogDescription: 'The requested staff member could not be found.',
+      ogImage: '/image/image-230x345.webp',
+      ogType: 'website',
+      twitterCard: 'summary_large_image',
+      twitterTitle: 'Staff not found',
+      twitterDescription: 'The requested staff member could not be found.',
+      twitterImage: '/image/image-230x345.webp'
+    }
+
+    if (!staff.value) {
+      return defaultMeta
+    }
+
+    let title = staff.value.name || 'Unknown Staff'
+    if (title.length > 60) {
+      title = title.slice(0, 60) + '...'
+    }
+    const description = staff.value.description
+      ? stripHtmlTags(staff.value.description).slice(0, 160) + '...'
+      : 'No description available for this staff member.'
+    const keywords = [
+      staff.value.name,
+      staff.value.name_native,
+      'staff', 'profile'
+    ].filter(Boolean).join(', ')
+    const image = staff.value.medium_image_url ||
+                 staff.value.large_image_url ||
+                 '/image/image-230x345.webp'
+    return {
+      title,
+      description,
+      keywords,
+      ogTitle: title,
+      ogDescription: description,
+      ogImage: image,
+      ogType: 'website',
+      twitterCard: 'summary_large_image',
+      twitterTitle: title,
+      twitterDescription: description,
+      twitterImage: image
+    }
+  })
+
+  return { seoMeta }
 }

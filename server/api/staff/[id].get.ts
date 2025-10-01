@@ -28,43 +28,17 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
       }
     }
 
-    const staff = await prisma.voice_actors.findUnique({
+    const staff = await prisma.staff.findUnique({
       where: {
         id: parseInt(staffId)
       },
       include: {
-        anime_characters_voice_actor_relations: {
-          select: {
-            character: {
-              select: {
-                id: true,
-                name: true,
-                medium_image_url: true
-              }
-            },
-            voice_actor: {
-              select: {
-                id: true,
-                name: true,
-                medium_image_url: true,
-                home_town: true,
-              }
-            },
-            character_role: {
-              select: { name: true }
-            },
-            anime: {
-              select: {
-                id: true,
-                slug: true,
-                title_romaji: true,
-                medium_cover_image_url: true,
-                extra_large_cover_image_url: true,
-              }
-            }
-          },
-          // take: 15
-        },
+        anime_staff_relations: {
+          include: {
+            anime: true,
+            staff_role: true
+          }
+        }
       }
     })
 

@@ -6,39 +6,73 @@ const prisma = getPrismaClient()
 
 export default defineEventHandler(async (event: H3Event): Promise<ResponseType> => {
   try {
-    const voiceActorId = getRouterParam(event, 'id')
+    const staffId = getRouterParam(event, 'id')
 
-    if (!voiceActorId) {
+    if (!staffId) {
       return {
         success: false,
         code: 400,
-        message: 'Voice actor ID parameter is required',
+        message: 'Voice Actor ID parameter is required',
         length: 0,
         data: []
       }
     }
 
-    if (isNaN(Number(voiceActorId))) {
+    if (isNaN(Number(staffId))) {
       return {
         success: false,
         code: 400,
-        message: 'Invalid voiceActor ID format. Voice actor ID should be a number',
+        message: 'Invalid staff ID format. Voice Actor ID should be a number',
         length: 0,
         data: []
       }
     }
 
-    const voiceActor = await prisma.voice_actors.findUnique({
+    const staff = await prisma.voice_actors.findUnique({
       where: {
-        id: parseInt(voiceActorId)
+        id: parseInt(staffId)
       },
+      include: {
+        anime_characters_voice_actor_relations: {
+          select: {
+            character: {
+              select: {
+                id: true,
+                name: true,
+                medium_image_url: true
+              }
+            },
+            voice_actor: {
+              select: {
+                id: true,
+                name: true,
+                medium_image_url: true,
+                home_town: true,
+              }
+            },
+            character_role: {
+              select: { name: true }
+            },
+            anime: {
+              select: {
+                id: true,
+                slug: true,
+                title_romaji: true,
+                medium_cover_image_url: true,
+                extra_large_cover_image_url: true,
+              }
+            }
+          },
+          // take: 15
+        },
+      }
     })
 
-    if (!voiceActor) {
+    if (!staff) {
       return {
         success: false,
         code: 404,
-        message: `Voice actor member with ID "${voiceActorId}" not found`,
+        message: `Voice Actor member with ID "${staffId}" not found`,
         length: 0,
         data: []
       }
@@ -47,9 +81,9 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     return {
       success: true,
       code: 200,
-      message: 'Voice actor member fetched successfully',
+      message: 'Voice Actor member fetched successfully',
       length: 1,
-      data: [voiceActor]
+      data: [staff]
     }
   } catch (e: unknown) {
     console.error('Error fetching anime by slug:', e)

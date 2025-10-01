@@ -13,14 +13,14 @@
     
     <div v-if="showRetry || $slots.actions" class="error-actions">
       <slot name="actions">
-        <BaseButton
+        <V1Button
           v-if="showRetry"
           variant="primary"
           size="md"
           @click="handleRetry"
         >
           {{ retryText }}
-        </BaseButton>
+        </V1Button>
       </slot>
     </div>
   </div>

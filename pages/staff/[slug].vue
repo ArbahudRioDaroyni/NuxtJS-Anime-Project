@@ -1,136 +1,117 @@
 <template>
-  <BaseContainer class="staff-page">
+  <V1Container class="staff-profile-page">
     <!-- Loading State -->
-    <CommonLoading v-if="pending" type="spinner" size="md" message="Loading staff details..." overlay center />
+    <CommonLoading v-if="pending" type="spinner" size="md" message="Loading profile..." overlay center />
     
-    <!-- Staff Details -->
-    <div v-else-if="staff && !isNotFound" class="staff-content">
-      <!-- Header Section -->
-      <section class="staff-header">
-        <div class="staff-image">
-          <BaseImageClickable
-            :src="staff.large_image_url || staff.medium_image_url || '/image/image-230x345.webp'"
-            :alt="staff.name"
-            :width="300"
-            :height="450"
-            :enable-preview="true"
-          />
+    <!-- Profile Content -->
+    <template v-else>
+      <!-- Profile Header -->
+      <section class="profile-header">
+        <div class="profile-image-section">
+          <div class="profile-image-wrapper">
+            <BaseImageClickable
+              :src="'/image/image-230x345.webp'"
+              :alt="staff?.name"
+              :width="250"
+              :height="375"
+              :enable-preview="true"
+              class="profile-image"
+            />
+          </div>
         </div>
         
-        <div class="staff-info">
-          <h1 class="staff-name">{{ staff.name }}</h1>
-          <div class="staff-meta">
-            <div v-if="staff.name_native" class="staff-native">
-              {{ staff.name_native }}
-            </div>
+        <div class="profile-info-section">
+          <div class="profile-basic-info">
+            <h1 class="profile-name">{{ staff?.name }}</h1>
+            <h2 v-if="staff?.name_native" class="profile-native-name">{{ staff?.name_native }}</h2>
+            <p class="profile-role">{{ profileData.role }}</p>
           </div>
           
-          <!-- Staff Stats -->
-          <div class="staff-stats">
-            <div v-if="staff.age" class="stat-item">
-              <span class="stat-label">Age:</span>
-              <span class="stat-value">{{ staff.age }}</span>
+          <!-- Profile Stats Grid -->
+          <div class="profile-stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Age</div>
+              <div class="stat-value">{{ staff?.age }}</div>
             </div>
-            <div v-if="staff.gender" class="stat-item">
-              <span class="stat-label">Gender:</span>
-              <span class="stat-value">{{ staff.gender }}</span>
+            <div class="stat-card">
+              <div class="stat-label">Gender</div>
+              <div class="stat-value">{{ staff?.gender }}</div>
             </div>
-            <div v-if="staff.date_of_birth" class="stat-item">
-              <span class="stat-label">Birthday:</span>
-              <span class="stat-value">{{ staff.date_of_birth }}</span>
+            <div class="stat-card">
+              <div class="stat-label">Birthday</div>
+              <div class="stat-value">{{ staff?.date_of_birth }}</div>
             </div>
-            <div v-if="staff.home_town" class="stat-item">
-              <span class="stat-label">Hometown:</span>
-              <span class="stat-value">{{ staff.home_town }}</span>
+            <div class="stat-card">
+              <div class="stat-label">Hometown</div>
+              <div class="stat-value">{{ staff?.home_town }}</div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Description Section -->
-      <section v-if="staff.description" class="staff-description">
-        <h2>Biography</h2>
-        <div class="description-content">{{ staff.description }}</div>
+      <!-- Biography Section -->
+      <section class="biography-section">
+        <h3 class="section-title">Biography</h3>
+        <div class="biography-content">
+          <p class="biography-paragraph">
+            {{ staff?.description }}
+          </p>
+        </div>
       </section>
 
-      <!-- Voice Acting Roles -->
-      <section v-if="staff.anime_characters_voice_actor_relations?.length" class="voice-roles">
-        <h2>Voice Acting Roles</h2>
-        <V1Grid tag="ul" gap="3rem 2rem">
-          <V1Card
-            v-for="(item, index) in staff.anime_characters_voice_actor_relations"
-            :key="`character-${index}`"
-            :title="item?.character?.name"
-            :aria-label="`Anime character: ${item?.character?.name}, Role: ${item.character_role?.name}, Voice actor: ${item?.anime?.title_romaji}`"
-            variant="both"
-            layout="twin"
-            tag="li"
+      <!-- Social Links Section -->
+      <section class="social-links-section">
+        <h3 class="section-title">Social Links</h3>
+        <div class="social-links-grid">
+          <a 
+            v-for="link in profileData.socialLinks" 
+            :key="link.platform"
+            :href="link.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link-card"
           >
-            <div>
-              <BaseImageClickable
-              :src="item?.character?.medium_image_url"
-              :alt="item?.character?.name"
-              min-width="72px"
-              :is-background="true"
-              />
-              <div>
-                <NuxtLink :to="`/character/${item?.character?.id}-${item?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`">
-                  {{ item?.character?.name }}
-                </NuxtLink>
-                <V1Badge
-                  :variant="getGradientBadgeColor(item.character_role?.name || '')"
-                  :text="item.character_role?.name"
-                />
-              </div>
+            <div class="social-icon">
+              {{ link.emoji }}
             </div>
-            <div>
-              <BaseImageClickable
-              :src="item?.anime?.medium_cover_image_url"
-              :alt="item?.anime?.title_romaji"
-              min-width="72px"
-              :is-background="true"
-              />
-              <div>
-                <NuxtLink :to="'/'+item?.anime?.slug">
-                  {{ item?.anime?.title_romaji }}
-                </NuxtLink>
-                <span class="card-subtitle">
-                  Subtitle
-                </span>
-              </div>
+            <div class="social-info">
+              <div class="social-platform">{{ link.platform }}</div>
+              <div class="social-handle">{{ link.handle }}</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- Works Section -->
+      <V1Card tag="section" layout="none" variant="both" padding="lg">
+        <h3 class="section-title">Notable Works</h3>
+        <div class="works-grid">
+          <V1Card v-for="work in staff?.anime_staff_relations" :key="work.id" layout="none" variant="inner">
+            <BaseImageClickable
+              :src="work.anime?.medium_cover_image_url || '/image/anime-placeholder-1.webp'"
+              :alt="work.anime?.title_romaji"
+              :width="150"
+              :height="200"
+            />
+            <div class="work-info">
+              <h4 class="work-title">{{ work.anime?.title_romaji }}</h4>
+              <p class="work-role">{{ work.staff_role?.name }}</p>
+              <p class="work-year">{{ work.staff_role?.name }}</p>
             </div>
           </V1Card>
-        </V1Grid>
-      </section>
-
-      <!-- Back Link -->
-      <div class="back-link">
-        <NuxtLink to="/" class="btn-back">
-          ← Back to Home
-        </NuxtLink>
-      </div>
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="isNotFound" class="error-container">
-      <div class="error-content">
-        <h2>Staff Member Not Found</h2>
-        <p>The staff member you're looking for doesn't exist or has been removed.</p>
-        <NuxtLink to="/" class="btn-back">
-          ← Back to Home
-        </NuxtLink>
-      </div>
-    </div>
-  </BaseContainer>
+        </div>
+      </V1Card>
+    </template>
+  </V1Container>
 </template>
 
 <script setup lang="ts">
 import type { ResponseType } from '~/types/database'
-import type { AnimeCharacterVoiceActorRelation } from '~/types/relations'
+import type { AnimeStaffRelation } from '~/types/relations'
 import type { Staff } from '~/types/metadata'
 
 interface StaffData extends Staff {
-  anime_characters_voice_actor_relations: AnimeCharacterVoiceActorRelation[]
+  anime_staff_relations: AnimeStaffRelation[]
 }
 
 const route = useRoute()
@@ -141,253 +122,348 @@ const staffId = computed(() => {
   return parts[0] ? parseInt(parts[0]) : null
 })
 
-// Fetch staff data
-const { data: response, pending, error } = await useFetch<ResponseType>(`/api/staff/${staffId.value}`, {
+const { data: response, pending, error: _error } = await useFetch<ResponseType>(`/api/staff/${staffId.value}`, {
   key: `staff-${staffId.value}`,
   server: true,
   default: () => ({ success: false, code: 404, message: 'Staff member not found', length: 0, data: [] })
 })
 
-// Extract staff data from response
 const staff = computed(() => response.value?.data?.[0] as StaffData | undefined)
-const description = computed(() => descriptionParser(staff.value?.description || ''))
 
-// Reactive error state
-const isNotFound = computed(() => {
-  return error.value || !response.value?.success || !staff.value
+const profileData = reactive({
+  name: "Hiroshi Kamiya",
+  nativeName: "神谷 浩史",
+  role: "Voice Actor / Seiyuu",
+  imageUrl: "/image/staff-profile-placeholder.webp",
+  age: "48",
+  gender: "Male",
+  birthday: "January 28, 1975",
+  hometown: "Matsudo, Chiba, Japan",
+  bloodType: "A",
+  height: "167 cm",
+  biography: [
+    "Hiroshi Kamiya is a Japanese voice actor and singer affiliated with Aoni Production. He is known for his distinctive voice and has voiced many popular anime characters.",
+    "He won the Best Lead Actor Award at the 2nd Seiyu Awards in 2008 and the Best Supporting Actor Award at the 3rd Seiyu Awards in 2009. He is particularly famous for voicing Araragi Koyomi in the Monogatari series.",
+    "Kamiya has also been active as a radio personality and has released several character songs and albums. He is considered one of the most popular voice actors in Japan."
+  ],
+  socialLinks: [
+    {
+      platform: "Twitter",
+      handle: "@HiroshiKamiya_",
+      url: "https://twitter.com/HiroshiKamiya_",
+      emoji: "🐦"
+    },
+    {
+      platform: "Instagram",
+      handle: "@hiroshi_kamiya_official",
+      url: "https://instagram.com/hiroshi_kamiya_official",
+      emoji: "📸"
+    },
+    {
+      platform: "Official Website",
+      handle: "kamiya-hiroshi.com",
+      url: "https://kamiya-hiroshi.com",
+      emoji: "🌐"
+    }
+  ]
 })
 
-// Computed SEO meta - better than watchEffect
-const meta = computed(() => {
-  const title = staff.value?.name || 'Unknown Staff Member'
-  const description = staff.value?.description || 'No description available for this staff member.'
-  const image = staff.value?.large_image_url || staff.value?.medium_image_url || '/image/image-230x345.webp'
-  
-  return {
-    title: `${title} - Staff Details`,
-    description: description.slice(0, 160) + '...',
-    keywords: [
-      title,
-      staff.value?.name_native || '',
-      'anime', 'staff', 'details'
-    ].filter(Boolean).join(', '),
-    image: image,
-  }
-})
-
-function getGradientBadgeColor(role?: string): string {
-  if (!role) return 'arctic'
-  
-  const roleMap = {
-    MAIN: 'oceanic',
-    SUPPORTING: 'megatron', 
-    BACKGROUND: 'tranquil'
-  } as const
-  
-  return roleMap[role.toUpperCase() as keyof typeof roleMap] || 'arctic'
-}
-
-useHead({script: [ { innerHTML: `console.log(${JSON.stringify(description.value, null, 2)})` } ]})
-
-useSeoMeta({
-  title: meta.value.title,
-  description: meta.value.description,
-  keywords: meta.value.keywords,
-  ogTitle: meta.value.title,
-  ogDescription: meta.value.description,
-  ogImage: meta.value.image,
-  ogType: 'website',
-  twitterCard: 'summary_large_image',
-  twitterTitle: meta.value.title,
-  twitterDescription: meta.value.description,
-  twitterImage: meta.value.image
-})
+const { seoMeta } = useStaffSeo(staff)
+useSeoMeta(seoMeta.value)
 </script>
 
-<style scoped lang="scss">
-.error-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-}
-
-.staff-page {
-  margin-top: 5rem;
-}
-
-.staff-content {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-}
-
-// Header Section
-.staff-header {
-  display: grid;
-  grid-template-columns: 300px 1fr;
+<style scoped>
+.staff-profile-page {
+  min-height: 100vh;
+  padding: 5rem 0;
   gap: 2rem;
-  align-items: start;
+}
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    text-align: center;
+/* Profile Header */
+.profile-header {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  background-color: rgba(17, 24, 39, 0.5);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+@media (min-width: 1024px) {
+  .profile-header {
+    grid-template-columns: 1fr 2fr;
   }
 }
 
-.staff-image {
-  position: sticky;
-  top: 2rem;
+.profile-image-section {
+  display: flex;
+  justify-content: center;
 }
 
-.staff-info {
+@media (min-width: 1024px) {
+  .profile-image-section {
+    justify-content: flex-start;
+  }
+}
+
+.profile-image-wrapper {
+  position: relative;
+}
+
+.profile-image {
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 2px solid rgba(75, 85, 99, 0.5);
+  transition: all 0.3s ease;
+}
+
+.profile-image:hover {
+  border-color: rgb(59, 130, 246);
+}
+
+.profile-info-section {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.staff-name {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--color-level-10);
-  margin: 0;
-
-  @media (prefers-color-scheme: dark) {
-    color: var(--color-level-90);
-  }
-}
-
-.staff-meta {
+.profile-basic-info {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.staff-native {
-  font-size: 1.25rem;
-  color: var(--color-level-30);
+.profile-name {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: white;
+  line-height: 1.2;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color: var(--color-level-70);
+.profile-native-name {
+  font-size: 1.5rem;
+  color: rgb(209, 213, 219);
+  font-weight: 500;
+}
+
+.profile-role {
+  font-size: 1.125rem;
+  color: rgb(96, 165, 250);
+  font-weight: 600;
+}
+
+/* Stats Grid */
+.profile-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .profile-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-.staff-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.stat-card {
+  background-color: rgba(31, 41, 55, 0.6);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(75, 85, 99, 0.5);
+  transition: all 0.3s ease;
 }
 
-.stat-item {
-  display: flex;
-  gap: 0.5rem;
+.stat-card:hover {
+  border-color: rgb(59, 130, 246);
 }
 
 .stat-label {
-  font-weight: 600;
-  color: var(--color-level-20);
-  min-width: 120px;
-
-  @media (prefers-color-scheme: dark) {
-    color: var(--color-level-80);
-  }
+  font-size: 0.875rem;
+  color: rgb(156, 163, 175);
+  font-weight: 500;
 }
 
 .stat-value {
-  color: var(--color-level-10);
+  font-size: 1.125rem;
+  color: white;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color: var(--color-level-90);
+/* Section Styles */
+.section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(75, 85, 99, 0.5);
+  padding-bottom: 0.5rem;
+}
+
+/* Biography Section */
+.biography-section {
+  background-color: rgba(17, 24, 39, 0.5);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.biography-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.biography-paragraph {
+  color: rgb(209, 213, 219);
+  line-height: 1.75;
+  font-size: 1.125rem;
+}
+
+/* Social Links Section */
+.social-links-section {
+  background-color: rgba(17, 24, 39, 0.5);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.social-links-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .social-links-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-// Description Section
-.staff-description {
-  h2 {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
-    color: var(--color-level-10);
-
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-level-90);
-    }
+@media (min-width: 1024px) {
+  .social-links-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
-.description-content {
-  line-height: 1.6;
-  color: var(--color-level-20);
+.social-link-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: rgba(31, 41, 55, 0.6);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(75, 85, 99, 0.5);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color: var(--color-level-80);
+.social-link-card:hover {
+  border-color: rgb(59, 130, 246);
+  background-color: rgba(31, 41, 55, 0.8);
+}
+
+.social-icon {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: rgba(96, 165, 250, 0.1);
+  border-radius: 0.5rem;
+}
+
+.social-info {
+  flex: 1;
+}
+
+.social-platform {
+  color: white;
+  font-weight: 600;
+}
+
+.social-handle {
+  color: rgb(156, 163, 175);
+  font-size: 0.875rem;
+}
+
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .works-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
-// Voice Acting Roles
-.voice-roles {
-  h2 {
-    font-size: 1.75rem;
-    margin-bottom: 1.5rem;
-    color: var(--color-level-10);
-
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-level-90);
-    }
+@media (min-width: 1024px) {
+  .works-grid {
+    grid-template-columns: repeat(6, 1fr);
   }
 }
 
+.work-card {
+  background-color: rgba(31, 41, 55, 0.6);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(75, 85, 99, 0.5);
+  transition: all 0.3s ease;
+}
 
-// Back Link
-.back-link {
-  margin-top: 2rem;
+.work-card:hover {
+  border-color: rgb(59, 130, 246);
+  background-color: rgba(31, 41, 55, 0.8);
+}
+
+.work-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.work-title {
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.work-role {
+  color: rgb(96, 165, 250);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.work-year {
+  color: rgb(156, 163, 175);
+  font-size: 0.75rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-header {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
   
-  .btn-back {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.75rem 1.5rem;
-    background: var(--color-level-90);
-    color: var(--color-level-10);
-    text-decoration: none;
-    border-radius: var(--radius);
-    transition: all 0.2s ease;
-    
-    &:hover {
-      background: var(--color-level-80);
-      transform: translateX(-4px);
-    }
-    
-    @media (prefers-color-scheme: dark) {
-      background: var(--color-level-10);
-      color: var(--color-level-90);
-      
-      &:hover {
-        background: var(--color-level-20);
-      }
-    }
-  }
-}
-
-// Error State
-.error-content {
-  text-align: center;
-  
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: var(--color-level-20);
-
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-level-80);
-    }
+  .profile-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
   
-  p {
-    margin-bottom: 2rem;
-    color: var(--color-level-40);
-
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-level-60);
-    }
+  .works-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 </style>

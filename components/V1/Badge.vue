@@ -8,7 +8,16 @@
 </template>
 
 <script setup lang="ts">
-import type { Badge } from '~/types/components';
+export interface Badge {
+  tag?: keyof HTMLElementTagNameMap
+  text?: string
+  variant?: 'megatron' | 'tranquil' | 'oceanic' | 'maldives' | 'martini' | 'arctic' | 'cloudy' | 'sky' | 'margo' | 'limeade' | 'apple' | 'delicate' | 'blossom' | 'success' | 'warning' | 'danger' | 'info' | 'light' | 'dark' | string
+  size?: 'xs' | 'sm' | 'md' | 'lg'
+  rounded?: 'none' | 'sm' | 'md' | 'lg' | 'full'
+  color?: string
+  backgroundColor?: string
+  customClass?: string
+}
 
 const props = withDefaults(defineProps<Badge>(), {
   text: 'default badge',
@@ -24,9 +33,9 @@ const props = withDefaults(defineProps<Badge>(), {
 // Generate badge classes
 const badgeClasses = computed(() => [
   'badge',
-  `badge__${props.variant}`,
-  `badge__size-${props.size}`,
-  `badge__rounded-${props.rounded}`,
+  `badge--${props.variant}`,
+  `badge--size-${props.size}`,
+  `badge--rounded-${props.rounded}`,
   props.customClass
 ])
 
@@ -58,7 +67,7 @@ const badgeStyles = computed(() => {
   transition: all 0.2s ease;
 
   // Size variants
-  &__size {
+  &--size {
     &-xs {
       font-size: 0.625rem;
       padding: 0.0625rem 0.375rem;
@@ -85,7 +94,7 @@ const badgeStyles = computed(() => {
   }
 
   // Rounded variants
-  &__rounded {
+  &--rounded {
     &-none {
       border-radius: 0;
     }
@@ -108,94 +117,94 @@ const badgeStyles = computed(() => {
 
 
   // Gradient variants
-  &__megatron {
+  &--megatron {
     color: var(--color-black, #000000);
     background: var(--gradient-megatron);
   }
 
-  &__tranquil {
+  &--tranquil {
     color: var(--color-black, #000000);
     background: var(--gradient-tranquil);
   }
 
-  &__oceanic {
+  &--oceanic {
     color: var(--color-black, #000000);
     background: var(--gradient-oceanic);
   }
 
-  &__maldives {
+  &--maldives {
     color: var(--color-black, #000000);
     background: var(--gradient-maldives);
   }
 
-  &__martini {
+  &--martini {
     color: var(--color-black, #000000);
     background: var(--gradient-martini);
   }
 
-  &__arctic {
+  &--arctic {
     color: var(--color-black, #000000);
     background: var(--gradient-arctic);
   }
 
-  &__cloudy {
+  &--cloudy {
     color: var(--color-black, #000000);
     background: var(--gradient-cloudy);
   }
 
-  &__sky {
+  &--sky {
     color: var(--color-black, #000000);
     background: var(--gradient-sky);
   }
 
-  &__margo {
+  &--margo {
     color: var(--color-black, #000000);
     background: var(--gradient-margo);
   }
 
-  &__limeade {
+  &--limeade {
     color: var(--color-black, #000000);
     background: var(--gradient-limeade);
   }
 
-  &__apple {
+  &--apple {
     color: var(--color-black, #000000);
     background: var(--gradient-apple);
   }
 
-  &__delicate {
+  &--delicate {
     color: var(--color-black, #000000);
     background: var(--gradient-delicate);
   }
 
-  &__blossom {
+  &--blossom {
     color: var(--color-black, #000000);
     background: var(--gradient-blossom);
   }
 
   // Status variants
-  &__success {
+  &--success {
     color: var(--color-white, #ffffff);
     background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
   }
 
-  &__warning {
+  &--warning {
     color: var(--color-black, #000000);
     background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
   }
 
-  &__danger {
+  &--danger {
     color: var(--color-white, #ffffff);
     background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
   }
 
-  &__info {
+  &--info {
     color: var(--color-white, #ffffff);
     background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
   }
 
   // Neutral variants
-  &__light {
+  &--light {
     color: var(--color-level-10);
     background: var(--color-level-95);
 
@@ -205,7 +214,7 @@ const badgeStyles = computed(() => {
     }
   }
 
-  &__dark {
+  &--dark {
     color: var(--color-level-90);
     background: var(--color-level-10);
 

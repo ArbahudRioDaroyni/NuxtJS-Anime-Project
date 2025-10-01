@@ -48,6 +48,7 @@ const containerStyles = computed(() => {
 
 <style lang="scss" scoped>
 .base-container {
+  display: grid;
   --width: 100%;
   width: var(--width);
   max-width: var(--width);
@@ -66,36 +67,35 @@ const containerStyles = computed(() => {
     --width: min(800px, 90%);
   }
 
-  &--padding-none {
-    padding: 0;
+  &--padding {
+    &-none {
+      padding: 0;
+    }
+    &-sm {
+      padding: 0.5rem;
+    }
+    &-md {
+      padding: 1rem;
+    }
+  
+    &-lg {
+      padding: 2rem;
+    }
   }
 
-  &--padding-sm {
-    padding: 0.5rem;
-  }
-
-  &--padding-md {
-    padding: 1rem;
-  }
-
-  &--padding-lg {
-    padding: 2rem;
-  }
-
-  &--margin-none {
-    margin: 0 auto;
-  }
-
-  &--margin-sm {
-    margin: 0.5rem auto;
-  }
-
-  &--margin-md {
-    margin: 1rem auto;
-  }
-
-  &--margin-lg {
-    margin: 2rem auto;
+  &--margin {
+    &-none {
+      margin: 0 auto;
+    }
+    &-sm {
+      margin: 0.5rem auto;
+    }
+    &-md {
+      margin: 1rem auto;
+    }
+    &-lg {
+      margin: 2rem auto;
+    }
   }
 }
 </style>

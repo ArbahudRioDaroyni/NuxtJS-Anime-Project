@@ -22,11 +22,11 @@
 
 <script setup lang="ts">
 interface Props {
-  tag?: string
+  tag?: keyof HTMLElementTagNameMap
   variant?: 'outer' | 'inner' | 'both',
   rounded?: 'none' | 'sm' | 'md' | 'lg' | 'full',
   padding?: 'none' | 'sm' | 'md' | 'lg',
-  layout?: 'default' | 'twin' | 'vertical' | 'horizontal',
+  layout?: 'none' | 'default' | 'twin' | 'vertical' | 'horizontal',
   clickable?: boolean
   href?: string
 }
