@@ -181,7 +181,7 @@ const classes = computed(() => [
         flex: 1;
 
         a {
-          min-height: 3rem;
+          min-height: 2.5rem;
           font-weight: 600;
           font-size: 0.875rem;
           text-decoration: none;

@@ -86,17 +86,25 @@
       <V1Card tag="section" layout="none" variant="both" padding="lg">
         <h3 class="section-title">Notable Works</h3>
         <div class="works-grid">
-          <V1Card v-for="work in staff?.anime_staff_relations" :key="work.id" layout="none" variant="inner">
-            <BaseImageClickable
-              :src="work.anime?.medium_cover_image_url || '/image/anime-placeholder-1.webp'"
+          <V1Card
+            v-for="work in staff?.anime_staff_relations"
+            :key="work.id"
+            layout="none"
+            variant="inner"
+            clickable
+            :href="`/${work.anime?.slug}`"
+          >
+            <V1Image
+              src="/image/image-230x345.webp"
+              :data-src="work.anime?.medium_cover_image_url || work.anime?.large_cover_image_url || '/image/image-230x345.webp'"
               :alt="work.anime?.title_romaji"
-              :width="150"
-              :height="200"
             />
             <div class="work-info">
-              <h4 class="work-title">{{ work.anime?.title_romaji }}</h4>
+              <NuxtLink :to="`/${work.anime?.slug}`">
+                <h4 class="work-title">{{ work.anime?.title_romaji }}</h4>
+              </NuxtLink>
               <p class="work-role">{{ work.staff_role?.name }}</p>
-              <p class="work-year">{{ work.staff_role?.name }}</p>
+              <!-- <p class="work-year">{{ work.staff_role?.name }}</p> -->
             </div>
           </V1Card>
         </div>
