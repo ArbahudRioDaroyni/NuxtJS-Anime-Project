@@ -1,7 +1,7 @@
 <template>
   <div class="anime-search-wrapper">
     <div class="search-container">
-      <BaseInput
+      <V1Input
         ref="searchInput"
         v-model="searchQuery"
         placeholder="Search anime by title... (typo-tolerant)"

@@ -89,12 +89,12 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 figure {
+	width: v-bind('width ? width+"px" : "100%"');
+  height: v-bind('height ? height+"px" : "auto"');
 	margin: 0;
 	padding: 0;
 	line-height: 0;
 	display: inline-block;
-	width: v-bind('width ? width+"px" : "100%"');
-  height: v-bind('height ? height+"px" : "auto"');
   overflow: hidden;
 
   &.clicked {

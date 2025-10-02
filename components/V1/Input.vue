@@ -58,11 +58,11 @@ defineExpose({
 
 const inputClasses = computed(() => [
   'input',
-  `input__${props.variant}`,
-  `input__size-${props.size}`,
+  `input--${props.variant}`,
+  `input--size-${props.size}`,
   {
-    'input__error': props.error,
-    'input__disabled': props.disabled
+    'input--error': props.error,
+    'input--disabled': props.disabled
   }
 ])
 
@@ -97,7 +97,7 @@ const handleBlur = (event: FocusEvent) => {
   }
   
   // Sizes variants
-  &__size {
+  &--size {
     &-xs {
       padding: 0.5rem 0.75rem;
       font-size: 0.875rem;
@@ -120,13 +120,13 @@ const handleBlur = (event: FocusEvent) => {
   }
   
   // Variants
-  &__default {
+  &--default {
     background: hsl(var(--primary-color-code), 10%);
     box-shadow: -4px -4px 4px 0px hsl(var(--primary-color-code), 16%) inset,
                 4px 4px 4px 0px hsl(var(--primary-color-code), 4%) inset;
   }
   
-  &__outlined {
+  &--outlined {
     background: hsl(var(--primary-color-code), 10%);
     box-shadow: 8px 8px 12px 0px hsl(var(--primary-color-code), 4%),
                 -8px -8px 12px 0px hsl(var(--primary-color-code), 16%),
@@ -134,7 +134,7 @@ const handleBlur = (event: FocusEvent) => {
                 4px 4px 4px 0px hsl(var(--primary-color-code), 4%) inset;
   }
   
-  &__filled {
+  &--filled {
     background-color: #f9fafb;
     border: none;
     
@@ -145,7 +145,7 @@ const handleBlur = (event: FocusEvent) => {
   }
   
   // States
-  &__error {
+  &--error {
     border-color: #ef4444;
     
     &:focus {
@@ -154,7 +154,7 @@ const handleBlur = (event: FocusEvent) => {
     }
   }
   
-  &__disabled {
+  &--disabled {
     background-color: #f9fafb;
     color: #9ca3af;
     cursor: not-allowed;
