@@ -26,7 +26,15 @@ export const descriptionParser = (raw: string) => {
     story: '',
     roles: [] as { title: string; work: string; type: string }[],
     fields: [] as { label: string; value: string }[],
-    raw
+    raw,
+    rawAfterCleanup: raw
+      .replace(/__[\w\d]+:__[^_[]*?(?=\s*(?:\[|__|$))/g, '')
+      .replace(/__\[[^\]]+\]\([^)]+\)[^_]*?__/g, '')
+      .replace(/\[[^\]]+\]\([^)]+\)/g, '')
+      .trim()
+      .replace(/\n{2,}/g, '\n\n')
+      .trim(),
+    rawToLinks: raw.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
   }
 
   // Get all fields with format __field:__ value (until link or end of paragraph)

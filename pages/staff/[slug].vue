@@ -6,84 +6,88 @@
     <!-- Profile Content -->
     <template v-else>
       <!-- Profile Header -->
-      <section class="profile-header">
-        <div class="profile-image-section">
-          <div class="profile-image-wrapper">
-            <V1Image
-              src="/image/image-230x345.webp"
-              :data-src="staff?.medium_image_url || staff?.large_image_url || '/image/image-230x345.webp'"
-              :alt="staff?.name"
-              :width="250"
-              :height="375"
-              clickable
-            />
-          </div>
-        </div>
-        
-        <div class="profile-info-section">
-          <div class="profile-basic-info">
-            <h1 class="profile-name">{{ staff?.name }}</h1>
-            <h2 v-if="staff?.name_native" class="profile-native-name">{{ staff?.name_native }}</h2>
-            <p class="profile-role">{{ profileData.role }}</p>
+      <V1Card tag="section" layout="none" variant="outer" padding="md">
+        <V1Grid>
+          <div class="profile-image-section">
+            <div class="profile-image-wrapper">
+              <V1Image
+                src="/image/image-230x345.webp"
+                :data-src="staff?.medium_image_url || staff?.large_image_url || '/image/image-230x345.webp'"
+                :alt="staff?.name"
+                :width="250"
+                :height="375"
+                clickable
+              />
+            </div>
           </div>
           
-          <!-- Profile Stats Grid -->
-          <div class="profile-stats-grid">
-            <V1Card layout="none" variant="inner">
-              <div class="stat-label">Age</div>
-              <div class="stat-value">{{ staff?.age }}</div>
-            </V1Card>
-            <V1Card layout="none" variant="inner">
-              <div class="stat-label">Gender</div>
-              <div class="stat-value">{{ staff?.gender }}</div>
-            </V1Card>
-            <V1Card layout="none" variant="inner">
-              <div class="stat-label">Birthday</div>
-              <div class="stat-value">{{ staff?.date_of_birth }}</div>
-            </V1Card>
-            <V1Card layout="none" variant="inner">
-              <div class="stat-label">Hometown</div>
-              <div class="stat-value">{{ staff?.home_town }}</div>
-            </V1Card>
+          <div class="profile-info-section">
+            <div class="profile-basic-info">
+              <h1 class="profile-name">{{ staff?.name }}</h1>
+              <h2 v-if="staff?.name_native" class="profile-native-name">{{ staff?.name_native }}</h2>
+              <!-- <p class="profile-role">Voice Actor / Seiyuu</p> -->
+            </div>
+            
+            <!-- Profile Stats Grid -->
+            <div class="profile-stats-grid">
+              <V1Card layout="none" variant="inner">
+                <div class="stat-label">Age</div>
+                <div class="stat-value">{{ staff?.age }}</div>
+              </V1Card>
+              <V1Card layout="none" variant="inner">
+                <div class="stat-label">Gender</div>
+                <div class="stat-value">{{ staff?.gender }}</div>
+              </V1Card>
+              <V1Card layout="none" variant="inner">
+                <div class="stat-label">Birthday</div>
+                <div class="stat-value">{{ staff?.date_of_birth }}</div>
+              </V1Card>
+              <V1Card layout="none" variant="inner">
+                <div class="stat-label">Hometown</div>
+                <div class="stat-value">{{ staff?.home_town }}</div>
+              </V1Card>
+            </div>
           </div>
-        </div>
-      </section>
+        </V1Grid>
+      </V1Card>
 
       <!-- Biography Section -->
-      <section class="biography-section">
+      <V1Card tag="section" layout="none" variant="outer" padding="md">
         <h3 class="section-title">Biography</h3>
         <div class="biography-content">
           <p class="biography-paragraph">
-            {{ staff?.description }}
+            {{ description.rawAfterCleanup || 'No biography available.' }}
           </p>
         </div>
-      </section>
+      </V1Card>
 
       <!-- Social Links Section -->
-      <section class="social-links-section">
+      <V1Card tag="section" layout="none" variant="outer" padding="md">
         <h3 class="section-title">Social Links</h3>
         <div class="social-links-grid">
-          <a 
-            v-for="link in profileData.socialLinks" 
-            :key="link.platform"
+          <V1Card
+            v-for="link in description.links" 
+            :key="link.label"
+            tag="li"
+            layout="none"
+            variant="both"
+            padding="lg"
+            clickable
             :href="link.url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link-card"
           >
             <div class="social-icon">
-              {{ link.emoji }}
+              🌐
             </div>
             <div class="social-info">
-              <div class="social-platform">{{ link.platform }}</div>
-              <div class="social-handle">{{ link.handle }}</div>
+              <div class="social-platform">{{ link.label }}</div>
+              <div class="social-handle">{{ link.url }}</div>
             </div>
-          </a>
+          </V1Card>
         </div>
-      </section>
+      </V1Card>
 
       <!-- Works Section -->
-      <V1Card tag="section" layout="none" variant="both" padding="lg">
+      <V1Card tag="section" layout="none" variant="outer" padding="lg">
         <h3 class="section-title">Notable Works</h3>
         <div class="works-grid">
           <V1Card
@@ -142,44 +146,8 @@ const { data: response, pending, error: _error } = await useFetch<ResponseType>(
 })
 
 const staff = computed(() => response.value?.data?.[0] as StaffData | undefined)
-
-const profileData = reactive({
-  name: "Hiroshi Kamiya",
-  nativeName: "神谷 浩史",
-  role: "Voice Actor / Seiyuu",
-  imageUrl: "/image/staff-profile-placeholder.webp",
-  age: "48",
-  gender: "Male",
-  birthday: "January 28, 1975",
-  hometown: "Matsudo, Chiba, Japan",
-  bloodType: "A",
-  height: "167 cm",
-  biography: [
-    "Hiroshi Kamiya is a Japanese voice actor and singer affiliated with Aoni Production. He is known for his distinctive voice and has voiced many popular anime characters.",
-    "He won the Best Lead Actor Award at the 2nd Seiyu Awards in 2008 and the Best Supporting Actor Award at the 3rd Seiyu Awards in 2009. He is particularly famous for voicing Araragi Koyomi in the Monogatari series.",
-    "Kamiya has also been active as a radio personality and has released several character songs and albums. He is considered one of the most popular voice actors in Japan."
-  ],
-  socialLinks: [
-    {
-      platform: "Twitter",
-      handle: "@HiroshiKamiya_",
-      url: "https://twitter.com/HiroshiKamiya_",
-      emoji: "🐦"
-    },
-    {
-      platform: "Instagram",
-      handle: "@hiroshi_kamiya_official",
-      url: "https://instagram.com/hiroshi_kamiya_official",
-      emoji: "📸"
-    },
-    {
-      platform: "Official Website",
-      handle: "kamiya-hiroshi.com",
-      url: "https://kamiya-hiroshi.com",
-      emoji: "🌐"
-    }
-  ]
-})
+const description = computed(() => descriptionParser(staff.value?.description || ''))
+useHead({script: [ { innerHTML: `console.log(${JSON.stringify(description.value, null, 2)})` } ]})
 
 const { seoMeta } = useStaffSeo(staff)
 useSeoMeta(seoMeta.value)
@@ -325,13 +293,6 @@ useSeoMeta(seoMeta.value)
 }
 
 /* Social Links Section */
-.social-links-section {
-  background-color: rgba(17, 24, 39, 0.5);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(75, 85, 99, 0.3);
-}
 
 .social-links-grid {
   display: grid;
