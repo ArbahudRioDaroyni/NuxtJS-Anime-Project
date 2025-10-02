@@ -11,11 +11,10 @@
       tag="li"
       @click="trackClick"
     >
-      <BaseImageClickable
+      <V1Image
         :src="anime?.image"
         :alt="anime?.name"
-        min-width="72px"
-        :is-background="true"
+        :width="72"
       />
 
       <div>

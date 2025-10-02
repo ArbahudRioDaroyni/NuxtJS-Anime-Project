@@ -10,11 +10,11 @@
       tag="li"
       @click="trackClick"
     >
-      <BaseImageClickable
+      <V1Image
         :src="staff?.image"
         :alt="staff?.name"
-        min-width="72px"
-        :is-background="true"
+        :width="72"
+        :height="88"
       />
       <div>
         <NuxtLink :to="staff?.slug || '#'">

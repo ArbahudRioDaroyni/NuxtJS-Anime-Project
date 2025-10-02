@@ -8,12 +8,11 @@
       <!-- Header Section -->
       <section class="character-header">
         <div class="character-image">
-          <BaseImageClickable
+          <V1Image
             :src="character.large_image_url || character.medium_image_url || '/image/image-230x345.webp'"
             :alt="character.name"
             :width="300"
             :height="450"
-            :enable-preview="true"
           />
         </div>
         
@@ -67,11 +66,12 @@
             tag="li"
           >
             <div>
-              <BaseImageClickable
-              :src="item?.voice_actor?.medium_image_url"
-              :alt="item?.voice_actor?.name"
-              min-width="72px"
-              :is-background="true"
+              <V1Image
+                v-if="item?.voice_actor?.medium_image_url"
+                :src="item?.voice_actor?.medium_image_url"
+                :alt="item?.voice_actor?.name"
+                :width="72"
+                :height="88"
               />
               <div>
                 <NuxtLink :to="`/voice_actor/${item?.voice_actor?.id}-${item?.voice_actor?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`">
@@ -84,11 +84,12 @@
               </div>
             </div>
             <div>
-              <BaseImageClickable
-              :src="item?.anime?.medium_cover_image_url"
-              :alt="item?.anime?.title_romaji"
-              min-width="72px"
-              :is-background="true"
+              <V1Image
+                v-if="item?.anime?.medium_cover_image_url"
+                :src="item?.anime?.medium_cover_image_url"
+                :alt="item?.anime?.title_romaji"
+                :width="72"
+                :height="88"
               />
               <div>
                 <NuxtLink :to="'/'+item?.anime?.slug">

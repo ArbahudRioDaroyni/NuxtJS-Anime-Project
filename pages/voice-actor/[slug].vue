@@ -8,12 +8,13 @@
       <!-- Header Section -->
       <section class="staff-header">
         <div class="staff-image">
-          <BaseImageClickable
-            :src="staff.large_image_url || staff.medium_image_url || '/image/image-230x345.webp'"
+          <V1Image
+            src="/image/image-230x345.webp"
+            :data-src="staff.large_image_url || staff.medium_image_url || '/image/image-230x345.webp'"
             :alt="staff.name"
             :width="300"
             :height="450"
-            :enable-preview="true"
+            clickable
           />
         </div>
         
@@ -67,11 +68,11 @@
             tag="li"
           >
             <div>
-              <BaseImageClickable
-              :src="item?.character?.medium_image_url"
-              :alt="item?.character?.name"
-              min-width="72px"
-              :is-background="true"
+              <V1Image
+                src="/image/image-230x345.webp"
+                :data-src="item?.character?.medium_image_url || '/image/image-230x345.webp'"
+                :alt="item?.character?.name"
+                :width="72"
               />
               <div>
                 <NuxtLink :to="`/character/${item?.character?.id}-${item?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`">
@@ -84,11 +85,11 @@
               </div>
             </div>
             <div>
-              <BaseImageClickable
-              :src="item?.anime?.medium_cover_image_url"
-              :alt="item?.anime?.title_romaji"
-              min-width="72px"
-              :is-background="true"
+              <V1Image
+                src="/image/image-230x345.webp"
+                :data-src="item?.anime?.medium_cover_image_url || '/image/image-230x345.webp'"
+                :alt="item?.anime?.title_romaji"
+                :width="72"
               />
               <div>
                 <NuxtLink :to="'/'+item?.anime?.slug">

@@ -4,7 +4,7 @@
   <CommonError v-else-if="onError" :error="onError" />
 
   <template v-else>
-    <BaseImageResponsive
+    <V1Image
       v-if="anime"
       :src="anime?.banner_image_url || '/image/test.jpg'"
       :alt="$route.params.slug"

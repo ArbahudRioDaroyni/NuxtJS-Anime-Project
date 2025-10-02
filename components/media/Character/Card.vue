@@ -10,11 +10,11 @@
       tag="li"
     >
       <div>
-        <BaseImageClickable
-        :src="item[0]?.image"
-        :alt="item[0]?.name"
-        min-width="72px"
-        :is-background="true"
+        <V1Image
+          :src="item[0]?.image"
+          :alt="item[0]?.name"
+          :width="72"
+          :height="88"
         />
         <div>
           <NuxtLink :to="item[0]?.slug">
@@ -27,11 +27,11 @@
         </div>
       </div>
       <div>
-        <BaseImageClickable
-        :src="item[1]?.image"
-        :alt="item[1]?.name"
-        min-width="72px"
-        :is-background="true"
+        <V1Image
+          :src="item[1]?.image"
+          :alt="item[1]?.name"
+          :width="72"
+          :height="88"
         />
         <div>
           <NuxtLink :to="item[1]?.slug">

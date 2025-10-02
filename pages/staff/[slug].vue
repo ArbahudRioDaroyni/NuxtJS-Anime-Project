@@ -9,13 +9,13 @@
       <section class="profile-header">
         <div class="profile-image-section">
           <div class="profile-image-wrapper">
-            <BaseImageClickable
-              :src="'/image/image-230x345.webp'"
+            <V1Image
+              src="/image/image-230x345.webp"
+              :data-src="staff?.medium_image_url || staff?.large_image_url || '/image/image-230x345.webp'"
               :alt="staff?.name"
               :width="250"
               :height="375"
-              :enable-preview="true"
-              class="profile-image"
+              clickable
             />
           </div>
         </div>
@@ -29,22 +29,22 @@
           
           <!-- Profile Stats Grid -->
           <div class="profile-stats-grid">
-            <div class="stat-card">
+            <V1Card layout="none" variant="inner">
               <div class="stat-label">Age</div>
               <div class="stat-value">{{ staff?.age }}</div>
-            </div>
-            <div class="stat-card">
+            </V1Card>
+            <V1Card layout="none" variant="inner">
               <div class="stat-label">Gender</div>
               <div class="stat-value">{{ staff?.gender }}</div>
-            </div>
-            <div class="stat-card">
+            </V1Card>
+            <V1Card layout="none" variant="inner">
               <div class="stat-label">Birthday</div>
               <div class="stat-value">{{ staff?.date_of_birth }}</div>
-            </div>
-            <div class="stat-card">
+            </V1Card>
+            <V1Card layout="none" variant="inner">
               <div class="stat-label">Hometown</div>
               <div class="stat-value">{{ staff?.home_town }}</div>
-            </div>
+            </V1Card>
           </div>
         </div>
       </section>
@@ -91,21 +91,26 @@
             :key="work.id"
             layout="none"
             variant="inner"
+          >
+          <!-- <V1Card
+            v-for="work in staff?.anime_staff_relations"
+            :key="work.id"
+            layout="none"
+            variant="inner"
             clickable
             :href="`/${work.anime?.slug}`"
-          >
+          > -->
             <V1Image
               src="/image/image-230x345.webp"
               :data-src="work.anime?.medium_cover_image_url || work.anime?.large_cover_image_url || '/image/image-230x345.webp'"
               :alt="work.anime?.title_romaji"
+              clickable
             />
-            <div class="work-info">
-              <NuxtLink :to="`/${work.anime?.slug}`">
-                <h4 class="work-title">{{ work.anime?.title_romaji }}</h4>
-              </NuxtLink>
-              <p class="work-role">{{ work.staff_role?.name }}</p>
-              <!-- <p class="work-year">{{ work.staff_role?.name }}</p> -->
-            </div>
+            <NuxtLink :to="`/${work.anime?.slug}`">
+              <h4 class="work-title">{{ work.anime?.title_romaji }}</h4>
+            </NuxtLink>
+            <p class="work-role">{{ work.staff_role?.name }}</p>
+            <!-- <p class="work-year">{{ work.staff_role?.name }}</p> -->
           </V1Card>
         </div>
       </V1Card>
@@ -275,18 +280,6 @@ useSeoMeta(seoMeta.value)
   }
 }
 
-.stat-card {
-  background-color: rgba(31, 41, 55, 0.6);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  border: 1px solid rgba(75, 85, 99, 0.5);
-  transition: all 0.3s ease;
-}
-
-.stat-card:hover {
-  border-color: rgb(59, 130, 246);
-}
-
 .stat-label {
   font-size: 0.875rem;
   color: rgb(156, 163, 175);
@@ -429,12 +422,6 @@ useSeoMeta(seoMeta.value)
 .work-card:hover {
   border-color: rgb(59, 130, 246);
   background-color: rgba(31, 41, 55, 0.8);
-}
-
-.work-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
 }
 
 .work-title {

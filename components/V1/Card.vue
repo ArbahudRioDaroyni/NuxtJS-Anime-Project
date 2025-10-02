@@ -213,10 +213,10 @@ const classes = computed(() => [
       > div {
         display: flex;
         gap: 1rem;
+        flex: 50%;
 
         >figure,
         >img {
-          cursor: pointer;
           transition: filter 0.2s ease;
           border-radius: var(--radius);
           overflow: hidden;
@@ -234,11 +234,12 @@ const classes = computed(() => [
           display: flex;
           align-items: flex-start;
           flex-direction: column;
-          justify-content: flex-start;
+          justify-content: space-around;
           gap: 1rem;
+          flex: 1;
 
           a {
-            min-height: 3rem;
+            min-height: 2.5rem;
             font-weight: 600;
             font-size: 0.875rem;
             text-decoration: none;
