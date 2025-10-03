@@ -55,7 +55,7 @@
       <!-- Voice Acting Roles -->
       <section v-if="character.anime_characters_voice_actor_relations?.length" class="voice-roles">
         <h2>Voice Acting Roles</h2>
-        <V1Grid tag="ul" gap="3rem 2rem">
+        <V1Grid tag="ul" template="columns" gap="3rem 2rem" length="400px">
           <V1Card
             v-for="(item, index) in character.anime_characters_voice_actor_relations"
             :key="`voice_actor-${index}`"

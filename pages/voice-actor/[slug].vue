@@ -7,16 +7,14 @@
     <div v-else-if="staff && !isNotFound" class="staff-content">
       <!-- Header Section -->
       <section class="staff-header">
-        <div class="staff-image">
-          <V1Image
-            src="/image/image-230x345.webp"
-            :data-src="staff.large_image_url || staff.medium_image_url || '/image/image-230x345.webp'"
-            :alt="staff.name"
-            :width="300"
-            :height="450"
-            clickable
-          />
-        </div>
+        <V1Image
+          src="/image/image-230x345.webp"
+          :data-src="staff.large_image_url || staff.medium_image_url || '/image/image-230x345.webp'"
+          :alt="staff.name"
+          :width="300"
+          :height="450"
+          clickable
+        />
         
         <div class="staff-info">
           <h1 class="staff-name">{{ staff.name }}</h1>
@@ -57,7 +55,7 @@
       <!-- Voice Acting Roles -->
       <section v-if="staff.anime_characters_voice_actor_relations?.length" class="voice-roles">
         <h2>Voice Acting Roles</h2>
-        <V1Grid tag="ul" gap="3rem 2rem">
+        <V1Grid tag="ul" template="columns" gap="3rem 2rem" length="400px">
           <V1Card
             v-for="(item, index) in staff.anime_characters_voice_actor_relations"
             :key="`character-${index}`"

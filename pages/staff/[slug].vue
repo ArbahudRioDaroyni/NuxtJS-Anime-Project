@@ -2,34 +2,25 @@
   <V1Container class="staff-profile-page">
     <!-- Loading State -->
     <CommonLoading v-if="pending" type="spinner" size="md" message="Loading profile..." overlay center />
-    
+
     <!-- Profile Content -->
     <template v-else>
       <!-- Profile Header -->
       <V1Card tag="section" layout="none" variant="outer" padding="md">
-        <V1Grid>
-          <div class="profile-image-section">
-            <div class="profile-image-wrapper">
-              <V1Image
-                src="/image/image-230x345.webp"
-                :data-src="staff?.medium_image_url || staff?.large_image_url || '/image/image-230x345.webp'"
-                :alt="staff?.name"
-                :width="250"
-                :height="375"
-                clickable
-              />
-            </div>
-          </div>
-          
-          <div class="profile-info-section">
-            <div class="profile-basic-info">
+        <V1Grid flow="column" length="1fr" gap="1rem" class="profile-header">
+          <V1Image
+            src="/image/image-230x345.webp"
+            :data-src="staff?.medium_image_url || staff?.large_image_url || '/image/image-230x345.webp'"
+            :alt="staff?.name" :width="250" :height="375" clickable />
+
+          <V1Grid>
+            <div>
               <h1 class="profile-name">{{ staff?.name }}</h1>
               <h2 v-if="staff?.name_native" class="profile-native-name">{{ staff?.name_native }}</h2>
-              <!-- <p class="profile-role">Voice Actor / Seiyuu</p> -->
             </div>
-            
+
             <!-- Profile Stats Grid -->
-            <div class="profile-stats-grid">
+            <V1Grid flow="row" length="1fr 1fr">
               <V1Card layout="none" variant="inner">
                 <div class="stat-label">Age</div>
                 <div class="stat-value">{{ staff?.age }}</div>
@@ -46,19 +37,17 @@
                 <div class="stat-label">Hometown</div>
                 <div class="stat-value">{{ staff?.home_town }}</div>
               </V1Card>
-            </div>
-          </div>
+            </V1Grid>
+          </V1Grid>
         </V1Grid>
       </V1Card>
 
       <!-- Biography Section -->
       <V1Card tag="section" layout="none" variant="outer" padding="md">
         <h3 class="section-title">Biography</h3>
-        <div class="biography-content">
-          <p class="biography-paragraph">
-            {{ description.rawAfterCleanup || 'No biography available.' }}
-          </p>
-        </div>
+        <p class="biography-paragraph">
+          {{ description.rawAfterCleanup || 'No biography available.' }}
+        </p>
       </V1Card>
 
       <!-- Social Links Section -->
@@ -66,7 +55,7 @@
         <h3 class="section-title">Social Links</h3>
         <div class="social-links-grid">
           <V1Card
-            v-for="link in description.links" 
+            v-for="link in description.links"
             :key="link.label"
             tag="li"
             layout="none"
@@ -89,34 +78,25 @@
       <!-- Works Section -->
       <V1Card tag="section" layout="none" variant="outer" padding="lg">
         <h3 class="section-title">Notable Works</h3>
-        <div class="works-grid">
+        <V1Grid template="columns" gap="1.5rem" length="150px">
           <V1Card
-            v-for="work in staff?.anime_staff_relations"
-            :key="work.id"
-            layout="none"
-            variant="inner"
-          >
-          <!-- <V1Card
             v-for="work in staff?.anime_staff_relations"
             :key="work.id"
             layout="none"
             variant="inner"
             clickable
             :href="`/${work.anime?.slug}`"
-          > -->
-            <V1Image
-              src="/image/image-230x345.webp"
+          >
+            <V1Image src="/image/image-230x345.webp"
               :data-src="work.anime?.medium_cover_image_url || work.anime?.large_cover_image_url || '/image/image-230x345.webp'"
-              :alt="work.anime?.title_romaji"
-              clickable
-            />
+              :alt="work.anime?.title_romaji" />
             <NuxtLink :to="`/${work.anime?.slug}`">
               <h4 class="work-title">{{ work.anime?.title_romaji }}</h4>
             </NuxtLink>
             <p class="work-role">{{ work.staff_role?.name }}</p>
             <!-- <p class="work-year">{{ work.staff_role?.name }}</p> -->
           </V1Card>
-        </div>
+        </V1Grid>
       </V1Card>
     </template>
   </V1Container>
@@ -147,73 +127,17 @@ const { data: response, pending, error: _error } = await useFetch<ResponseType>(
 
 const staff = computed(() => response.value?.data?.[0] as StaffData | undefined)
 const description = computed(() => descriptionParser(staff.value?.description || ''))
-useHead({script: [ { innerHTML: `console.log(${JSON.stringify(description.value, null, 2)})` } ]})
+useHead({ script: [{ innerHTML: `console.log(${JSON.stringify(description.value, null, 2)})` }] })
 
 const { seoMeta } = useStaffSeo(staff)
 useSeoMeta(seoMeta.value)
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .staff-profile-page {
   min-height: 100vh;
   padding: 5rem 0;
   gap: 2rem;
-}
-
-/* Profile Header */
-.profile-header {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-  background-color: rgba(17, 24, 39, 0.5);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(75, 85, 99, 0.3);
-}
-
-@media (min-width: 1024px) {
-  .profile-header {
-    grid-template-columns: 1fr 2fr;
-  }
-}
-
-.profile-image-section {
-  display: flex;
-  justify-content: center;
-}
-
-@media (min-width: 1024px) {
-  .profile-image-section {
-    justify-content: flex-start;
-  }
-}
-
-.profile-image-wrapper {
-  position: relative;
-}
-
-.profile-image {
-  border-radius: 0.75rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  border: 2px solid rgba(75, 85, 99, 0.5);
-  transition: all 0.3s ease;
-}
-
-.profile-image:hover {
-  border-color: rgb(59, 130, 246);
-}
-
-.profile-info-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.profile-basic-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 }
 
 .profile-name {
@@ -229,24 +153,17 @@ useSeoMeta(seoMeta.value)
   font-weight: 500;
 }
 
-.profile-role {
-  font-size: 1.125rem;
-  color: rgb(96, 165, 250);
-  font-weight: 600;
-}
-
 /* Stats Grid */
 .profile-stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-}
 
-@media (min-width: 768px) {
-  .profile-stats-grid {
+  @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
 
 .stat-label {
   font-size: 0.875rem;
@@ -272,19 +189,6 @@ useSeoMeta(seoMeta.value)
 }
 
 /* Biography Section */
-.biography-section {
-  background-color: rgba(17, 24, 39, 0.5);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(75, 85, 99, 0.3);
-}
-
-.biography-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
 
 .biography-paragraph {
   color: rgb(209, 213, 219);
@@ -310,23 +214,6 @@ useSeoMeta(seoMeta.value)
   .social-links-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-}
-
-.social-link-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background-color: rgba(31, 41, 55, 0.6);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  border: 1px solid rgba(75, 85, 99, 0.5);
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.social-link-card:hover {
-  border-color: rgb(59, 130, 246);
-  background-color: rgba(31, 41, 55, 0.8);
 }
 
 .social-icon {
@@ -409,15 +296,6 @@ useSeoMeta(seoMeta.value)
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .profile-header {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-  
-  .profile-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
   .works-grid {
     grid-template-columns: repeat(2, 1fr);
   }

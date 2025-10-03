@@ -1,5 +1,5 @@
 <template>
-  <V1Grid tag="ul" gap="1rem">
+  <V1Grid tag="ul" template="columns" length="400px">
     <V1Card
       v-for="(item, index) in orderedCharacters"
       :key="`character-${index}`"
