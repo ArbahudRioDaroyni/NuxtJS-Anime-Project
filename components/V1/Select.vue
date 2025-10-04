@@ -3,7 +3,7 @@
 		ref="selectContainer"
 		:class="['select--container', { 'select--disabled': disabled }]"
 	>
-		<label v-if="label" class="select--label">{{ label }}</label>
+		<h2 v-if="label" class="select--label">{{ label }}</h2>
 		
 		<!-- Custom Select Display -->
 		<div 
@@ -72,13 +72,12 @@
 <script setup lang="ts">
 interface Props {
 	id?: string
-	modelValue?: string | number | string[]
+	modelValue?: string | number
 	options?: Option[]
 	label?: string
 	placeholder?: string
 	error?: string
 	disabled?: boolean
-	multiple?: boolean
 	name?: string
 	required?: boolean
 	autofocus?: boolean
@@ -101,7 +100,6 @@ const props = withDefaults(defineProps<Props>(), {
 	placeholder: undefined,
 	error: undefined,
 	disabled: false,
-	multiple: false,
 	name: undefined,
 	required: false,
 	autofocus: false,
@@ -111,8 +109,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emits = defineEmits<{
-	'update:modelValue': [value: string | number | string[]]
-	change: [value: string | number | string[]]
+	'update:modelValue': [value: string | number]
+	change: [value: string | number]
 	focus: [event: Event]
 	blur: [event: Event]
 }>();
@@ -139,9 +137,6 @@ const selectedLabel = computed(() => {
 
 // Check if option is selected
 function isSelected(value: string | number): boolean {
-	if (props.multiple && Array.isArray(props.modelValue)) {
-		return props.modelValue.includes(value as string);
-	}
 	return props.modelValue === value;
 }
 
@@ -155,23 +150,9 @@ function toggleDropdown() {
 function selectOption(option: Option) {
 	if (option.disabled) return;
 	
-	let newValue: string | number | string[];
-	
-	if (props.multiple && Array.isArray(props.modelValue)) {
-		// Multiple select logic
-		const currentValues = [...props.modelValue];
-		const index = currentValues.indexOf(option.value as string);
-		if (index > -1) {
-			currentValues.splice(index, 1);
-		} else {
-			currentValues.push(option.value as string);
-		}
-		newValue = currentValues;
-	} else {
-		// Single select
-		newValue = option.value;
-		isOpen.value = false; // Close dropdown after selection
-	}
+	// Single select
+	const newValue = option.value;
+	isOpen.value = false; // Close dropdown after selection
 	
 	emits('update:modelValue', newValue);
 	emits('change', newValue);
@@ -261,6 +242,13 @@ watch(isOpen, (newValue) => {
 
 		&-open {
 			transform: translateY(-50%) rotate(180deg);
+		}
+	}
+
+	&--open {
+		.select {
+			box-shadow: inset 4px 4px 4px hsl(var(--primary-color-code), 4%),
+				inset -4px -4px 4px hsl(var(--primary-color-code), 16%);
 		}
 	}
 
@@ -372,11 +360,6 @@ watch(isOpen, (newValue) => {
 	&--outer {
 		box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
 			-8px -8px 12px hsl(var(--primary-color-code), 16%);
-
-		&:active, &:focus {
-			box-shadow: inset 4px 4px 4px hsl(var(--primary-color-code), 4%),
-				inset -4px -4px 4px hsl(var(--primary-color-code), 16%);
-		}
 	}
 
 	&--inner {

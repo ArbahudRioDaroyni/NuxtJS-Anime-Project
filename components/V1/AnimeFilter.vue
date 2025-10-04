@@ -55,9 +55,9 @@
 
 <script setup lang="ts">
 const search = ref('');
-const selectedGenres = ref<string | string[]>('');
-const selectedYear = ref<string | string[]>('');
-const selectedSeasons = ref<string | string[]>('');
+const selectedGenres = ref<string>('');
+const selectedYear = ref<string>('');
+const selectedSeasons = ref<string>('');
 </script>
 
 <style lang="scss" scoped>
