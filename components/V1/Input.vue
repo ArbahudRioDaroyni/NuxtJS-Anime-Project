@@ -24,7 +24,8 @@ interface Props {
   readonly?: boolean
   required?: boolean
   size?: 'xs' | 'sm' | 'md' | 'lg'
-  variant?: 'default' | 'outlined' | 'filled'
+  variant?: 'outer' | 'inner' | 'both'
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl'
   error?: boolean
 }
 
@@ -36,7 +37,8 @@ const props = withDefaults(defineProps<Props>(), {
   readonly: false,
   required: false,
   size: 'md',
-  variant: 'default',
+  padding: 'md',
+  variant: 'inner',
   error: false
 })
 
@@ -60,6 +62,7 @@ const inputClasses = computed(() => [
   'input',
   `input--${props.variant}`,
   `input--size-${props.size}`,
+  `input--padding-${props.padding}`,
   {
     'input--error': props.error,
     'input--disabled': props.disabled
@@ -99,49 +102,66 @@ const handleBlur = (event: FocusEvent) => {
   // Sizes variants
   &--size {
     &-xs {
-      padding: 0.5rem 0.75rem;
       font-size: 0.875rem;
     }
     
     &-sm {
-      padding: 0.625rem 0.875rem;
       font-size: 0.875rem;
     }
     
     &-md {
-      padding: 0.75rem 1rem;
       font-size: 1rem;
     }
 
     &-lg {
-      padding: 1rem 1.25rem;
       font-size: 1.25rem;
+    }
+  }
+
+  // Padding variants
+  &--padding {
+    &-none {
+      padding: 0;
+    }
+    
+    &-sm {
+      padding: 0.5rem 1rem;
+    }
+    
+    &-md {
+      padding: 0.75rem 1.5rem;
+    }
+
+    &-lg {
+      padding: 1rem 2rem;
+    }
+
+    &-xl {
+      padding: 1.5rem 3rem;
     }
   }
   
   // Variants
-  &--default {
-    background: hsl(var(--primary-color-code), 10%);
-    box-shadow: -4px -4px 4px 0px hsl(var(--primary-color-code), 16%) inset,
-                4px 4px 4px 0px hsl(var(--primary-color-code), 4%) inset;
-  }
-  
-  &--outlined {
-    background: hsl(var(--primary-color-code), 10%);
-    box-shadow: 8px 8px 12px 0px hsl(var(--primary-color-code), 4%),
-                -8px -8px 12px 0px hsl(var(--primary-color-code), 16%),
-                -4px -4px 4px 0px hsl(var(--primary-color-code), 16%) inset,
-                4px 4px 4px 0px hsl(var(--primary-color-code), 4%) inset;
-  }
-  
-  &--filled {
-    background-color: #f9fafb;
-    border: none;
-    
-    &:focus {
-      background-color: white;
-      border: 1px solid #3b82f6;
+  &--outer {
+    box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
+      -8px -8px 12px hsl(var(--primary-color-code), 16%);
+      
+    &:active {
+      box-shadow: inset 4px 4px 4px hsl(var(--primary-color-code), 4%),
+        inset -4px -4px 4px hsl(var(--primary-color-code), 16%);
     }
+  }
+
+  &--inner {
+    box-shadow: -4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
+      4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
+  }
+
+  &--both {
+    box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
+      -8px -8px 12px hsl(var(--primary-color-code), 16%),
+      -4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
+      4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
   }
   
   // States

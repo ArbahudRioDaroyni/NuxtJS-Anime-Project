@@ -15,8 +15,8 @@
 interface Props {
   tag?: keyof HTMLElementTagNameMap
   variant?: 'default' | 'fluid' | 'narrow'
-  padding?: 'none' | 'sm' | 'md' | 'lg'
-  margin?: 'none' | 'sm' | 'md' | 'lg'
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl'
+  margin?: 'none' | 'sm' | 'md' | 'lg' | 'xl'
   backgroundColor?: string
 }
 
@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
   tag: 'div',
   variant: 'fluid',
   padding: 'none',
-  margin: 'none',
+  margin: 'md',
   backgroundColor: undefined
 })
 
@@ -81,6 +81,10 @@ const containerStyles = computed(() => {
     &-lg {
       padding: 2rem;
     }
+
+    &-xl {
+      padding: 4rem;
+    }
   }
 
   &--margin {
@@ -88,13 +92,19 @@ const containerStyles = computed(() => {
       margin: 0 auto;
     }
     &-sm {
-      margin: 0.5rem auto;
-    }
-    &-md {
       margin: 1rem auto;
     }
+
+    &-md {
+      margin: 2.5rem auto;
+    }
+
     &-lg {
-      margin: 2rem auto;
+      margin: 5rem auto;
+    }
+
+    &-xl {
+      margin: 7.5rem auto;
     }
   }
 }

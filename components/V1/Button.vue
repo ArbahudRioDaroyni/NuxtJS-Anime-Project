@@ -20,7 +20,7 @@
 <script setup lang="ts">
 interface Props {
   tag?: string
-  color?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
+  variant?: 'outer' | 'inner' | 'both'
   size?: 'sm' | 'md' | 'lg' | 'xl'
   htmlType?: 'button' | 'submit' | 'reset'
   disabled?: boolean
@@ -33,7 +33,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   tag: 'button',
-  color: 'primary',
+  variant: 'outer',
   size: 'md',
   htmlType: 'button',
   disabled: false,
@@ -51,8 +51,8 @@ const emit = defineEmits<{
 
 const buttonClasses = computed(() => [
   'base-button',
-  `base-button--${props.color}`,
   `base-button--${props.size}`,
+  `base-button--${props.variant}`,
   {
     'base-button--block': props.block,
     [`base-button--icon-${props.iconPosition}`]: props.icon,
@@ -75,51 +75,43 @@ const handleClick = (event: MouseEvent) => {
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   cursor: pointer;
+  line-height: 1;
   transition: background-color 0.2s, color 0.2s;
 
-  &--primary {
-    background-color: hsl(from var(--primary-color) h s 30%);
-    color: white;
-
-    &:hover {
-      background-color: hsl(from var(--primary-color) h s 40%);
+  &--outer {
+    box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
+      -8px -8px 12px hsl(var(--primary-color-code), 16%);
+      
+    &:active {
+      box-shadow: inset 4px 4px 4px hsl(var(--primary-color-code), 4%),
+        inset -4px -4px 4px hsl(var(--primary-color-code), 16%);
     }
   }
 
-  &--secondary {
-    background-color: #f3f4f6;
-    color: #111827;
-
-    &:hover {
-      background-color: #e5e7eb;
-    }
+  &--inner {
+    box-shadow: -4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
+      4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
   }
 
-  &--outline {
-    border: 1px solid #d1d5db;
-    color: #111827;
-
-    &:hover {
-      border-color: #9ca3af;
-    }
+  &--both {
+    box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
+      -8px -8px 12px hsl(var(--primary-color-code), 16%),
+      -4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
+      4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
   }
 
-  &--ghost {
-    background-color: transparent;
-    color: #111827;
-
-    &:hover {
-      background-color: rgba(59, 130, 246, 0.1);
-    }
+  // Size variants
+  &--sm {
+    padding: 0.5rem;
   }
-
-  &--danger {
-    background-color: #ef4444;
-    color: white;
-
-    &:hover {
-      background-color: #dc2626;
-    }
+  &--md {
+    padding: 1rem;
+  }
+  &--lg {
+    padding: 1.5rem;
+  }
+  &--xl {
+    padding: 2rem;
   }
 
   &--block {
