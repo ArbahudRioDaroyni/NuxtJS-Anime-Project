@@ -1,5 +1,5 @@
 <template>
-  <NuxtLoadingIndicator color="var(--color-level-50)" />
+  <NuxtLoadingIndicator color="hsl(from var(--primary-color) h s 70%)" />
   <CommonHeader />
   <slot />
   <CommonFooter />

@@ -2,7 +2,6 @@
   <component
     :is="props.tag"
     :class="classes"
-    v-bind="$attrs"
     role="article"
     @click="handleClick"
   >
@@ -57,24 +56,41 @@ const handleClick = (event: MouseEvent) => {
 }
 
 const classes = computed(() => [
-  'card',
-  `card--${props.variant}`,
-  `card--rounded-${props.rounded}`,
-  `card--padding-${props.padding}`,
-  `card--layout-${props.layout}`,
+  'base-card',
+  `base-card--${props.variant}`,
+  `base-card--rounded-${props.rounded}`,
+  `base-card--padding-${props.padding}`,
+  `base-card--layout-${props.layout}`,
   {
-    'card--clickable': props.clickable || props.href
+    'base-card--clickable': props.clickable || props.href
   }
 ])
 </script>
 
 <style lang="scss">
-.card {
+@media (prefers-color-scheme: dark) {
+  .base-card {
+    --color: hsl(from var(--primary-color) h s 90%);
+    --background-color: hsl(from var(--primary-color) h s 10%);
+    --shadow-color: hsl(from var(--primary-color) h s 4%);
+    --light-color: hsl(from var(--primary-color) h s 16%);
+  }
+}
+@media (prefers-color-scheme: light) {
+  .base-card {
+    --color: hsl(from var(--primary-color) h s 10%);
+    --background-color: hsl(from var(--primary-color) h s 97.5%);
+    --shadow-color: hsl(from var(--primary-color) h s 96%);
+    --light-color: hsl(from var(--primary-color) h s 84%);
+  }
+}
+
+.base-card {
   width: auto;
   height: auto;
-  color: hsl(var(--primary-color-code), 90%);
-  background: hsl(var(--primary-color-code), 10%);
-  outline: 2.5px solid hsl(var(--primary-color-code), 10%);
+  color: var(--color);
+  background: var(--background-color);
+  outline: 2.5px solid var(--background-color);
   overflow: hidden;
 
   // Clickable modifier
@@ -96,20 +112,20 @@ const classes = computed(() => [
 
   // Variants
   &--outer {
-    box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
-      -8px -8px 12px hsl(var(--primary-color-code), 16%);
+    box-shadow: 8px 8px 12px var(--shadow-color),
+      -8px -8px 12px var(--light-color);
   }
 
   &--inner {
-    box-shadow: -4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
-      4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
+    box-shadow: -4px -4px 4px var(--light-color) inset,
+      4px 4px 4px var(--shadow-color) inset;
   }
 
   &--both {
-    box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
-      -8px -8px 12px hsl(var(--primary-color-code), 16%),
-      -4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
-      4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
+    box-shadow: 8px 8px 12px var(--shadow-color),
+      -8px -8px 12px var(--light-color),
+      -4px -4px 4px var(--light-color) inset,
+      4px 4px 4px var(--shadow-color) inset;
   }
 
   // Rounded

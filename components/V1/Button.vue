@@ -67,11 +67,30 @@ const handleClick = (event: MouseEvent) => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+@media (prefers-color-scheme: dark) {
+  .base-button {
+    --color: hsl(from var(--primary-color) h s 90%);
+    --background-color: hsl(from var(--primary-color) h s 10%);
+    --shadow-color: hsl(from var(--primary-color) h s 4%);
+    --light-color: hsl(from var(--primary-color) h s 16%);
+  }
+}
+@media (prefers-color-scheme: light) {
+  .base-button {
+    --color: hsl(from var(--primary-color) h s 10%);
+    --background-color: hsl(from var(--primary-color) h s 97.5%);
+    --shadow-color: hsl(from var(--primary-color) h s 96%);
+    --light-color: hsl(from var(--primary-color) h s 84%);
+  }
+}
+
 .base-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: var(--color);
+  background-color: var(--background-color);
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   cursor: pointer;
@@ -79,25 +98,25 @@ const handleClick = (event: MouseEvent) => {
   transition: background-color 0.2s, color 0.2s;
 
   &--outer {
-    box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
-      -8px -8px 12px hsl(var(--primary-color-code), 16%);
+    box-shadow: 8px 8px 12px var(--shadow-color),
+      -8px -8px 12px var(--light-color);
       
     &:active {
-      box-shadow: inset 4px 4px 4px hsl(var(--primary-color-code), 4%),
-        inset -4px -4px 4px hsl(var(--primary-color-code), 16%);
+      box-shadow: inset 4px 4px 4px var(--shadow-color),
+        inset -4px -4px 4px var(--light-color);
     }
   }
 
   &--inner {
-    box-shadow: -4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
-      4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
+    box-shadow: -4px -4px 4px var(--light-color) inset,
+      4px 4px 4px var(--shadow-color) inset;
   }
 
   &--both {
-    box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
-      -8px -8px 12px hsl(var(--primary-color-code), 16%),
-      -4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
-      4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
+    box-shadow: 8px 8px 12px var(--shadow-color),
+      -8px -8px 12px var(--light-color),
+      -4px -4px 4px var(--light-color) inset,
+      4px 4px 4px var(--shadow-color) inset;
   }
 
   // Size variants

@@ -249,11 +249,11 @@ useSeoMeta({
   &-name {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--color-level-10);
+    color: hsl(from var(--primary-color) h s 10%);
     margin: 0;
 
     @media (prefers-color-scheme: dark) {
-      color: var(--color-level-90);
+      color: hsl(from var(--primary-color) h s 90%);
     }
   }
 
@@ -265,10 +265,10 @@ useSeoMeta({
 
   &-native {
     font-size: 1.25rem;
-    color: var(--color-level-30);
+    color: hsl(from var(--primary-color) h s 30%);
 
     @media (prefers-color-scheme: dark) {
-      color: var(--color-level-70);
+      color: hsl(from var(--primary-color) h s 70%);
     }
   }
 }
@@ -286,19 +286,19 @@ useSeoMeta({
 
 .stat-label {
   font-weight: 600;
-  color: var(--color-level-20);
+  color: hsl(from var(--primary-color) h s 20%);
   min-width: 120px;
 
   @media (prefers-color-scheme: dark) {
-    color: var(--color-level-80);
+    color: hsl(from var(--primary-color) h s 80%);
   }
 }
 
 .stat-value {
-  color: var(--color-level-10);
+  color: hsl(from var(--primary-color) h s 10%);
 
   @media (prefers-color-scheme: dark) {
-    color: var(--color-level-90);
+    color: hsl(from var(--primary-color) h s 90%);
   }
 }
 
@@ -307,20 +307,20 @@ useSeoMeta({
   h2 {
     font-size: 1.75rem;
     margin-bottom: 1rem;
-    color: var(--color-level-10);
+    color: hsl(from var(--primary-color) h s 10%);
 
     @media (prefers-color-scheme: dark) {
-      color: var(--color-level-90);
+      color: hsl(from var(--primary-color) h s 90%);
     }
   }
 }
 
 .description-content {
   line-height: 1.6;
-  color: var(--color-level-20);
+  color: hsl(from var(--primary-color) h s 20%);
 
   @media (prefers-color-scheme: dark) {
-    color: var(--color-level-80);
+    color: hsl(from var(--primary-color) h s 80%);
   }
 }
 
@@ -329,10 +329,10 @@ useSeoMeta({
   h2 {
     font-size: 1.75rem;
     margin-bottom: 1.5rem;
-    color: var(--color-level-10);
+    color: hsl(from var(--primary-color) h s 10%);
 
     @media (prefers-color-scheme: dark) {
-      color: var(--color-level-90);
+      color: hsl(from var(--primary-color) h s 90%);
     }
   }
 }
@@ -346,23 +346,23 @@ useSeoMeta({
     display: inline-flex;
     align-items: center;
     padding: 0.75rem 1.5rem;
-    background: var(--color-level-90);
-    color: var(--color-level-10);
+    background: hsl(from var(--primary-color) h s 90%);
+    color: hsl(from var(--primary-color) h s 10%);
     text-decoration: none;
     border-radius: var(--radius);
     transition: all 0.2s ease;
     
     &:hover {
-      background: var(--color-level-80);
+      background: hsl(from var(--primary-color) h s 80%);
       transform: translateX(-4px);
     }
     
     @media (prefers-color-scheme: dark) {
-      background: var(--color-level-10);
-      color: var(--color-level-90);
+      background: hsl(from var(--primary-color) h s 10%);
+      color: hsl(from var(--primary-color) h s 90%);
       
       &:hover {
-        background: var(--color-level-20);
+        background: hsl(from var(--primary-color) h s 20%);
       }
     }
   }
@@ -375,19 +375,19 @@ useSeoMeta({
   h2 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: var(--color-level-20);
+    color: hsl(from var(--primary-color) h s 20%);
 
     @media (prefers-color-scheme: dark) {
-      color: var(--color-level-80);
+      color: hsl(from var(--primary-color) h s 80%);
     }
   }
   
   p {
     margin-bottom: 2rem;
-    color: var(--color-level-40);
+    color: hsl(from var(--primary-color) h s 40%);
 
     @media (prefers-color-scheme: dark) {
-      color: var(--color-level-60);
+      color: hsl(from var(--primary-color) h s 60%);
     }
   }
 }

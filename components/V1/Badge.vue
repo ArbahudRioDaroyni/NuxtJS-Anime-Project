@@ -32,10 +32,10 @@ const props = withDefaults(defineProps<Badge>(), {
 
 // Generate badge classes
 const badgeClasses = computed(() => [
-  'badge',
-  `badge--${props.variant}`,
-  `badge--size-${props.size}`,
-  `badge--rounded-${props.rounded}`,
+  'base-badge',
+  `base-badge--${props.variant}`,
+  `base-badge--size-${props.size}`,
+  `base-badge--rounded-${props.rounded}`,
   props.customClass
 ])
 
@@ -56,7 +56,7 @@ const badgeStyles = computed(() => {
 </script>
 
 <style scoped lang="scss">
-.badge {
+.base-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -205,23 +205,13 @@ const badgeStyles = computed(() => {
 
   // Neutral variants
   &--light {
-    color: var(--color-level-10);
-    background: var(--color-level-95);
-
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-level-90);
-      background: var(--color-level-20);
-    }
+    color: hsl(from var(--primary-color) h s 10%);
+    background: hsl(from var(--primary-color) h s 97.5%);
   }
 
   &--dark {
-    color: var(--color-level-90);
-    background: var(--color-level-10);
-
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-level-10);
-      background: var(--color-level-90);
-    }
+    color: hsl(from var(--primary-color) h s 90%);
+    background: hsl(from var(--primary-color) h s 10%);
   }
 }
 </style>

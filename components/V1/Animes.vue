@@ -54,6 +54,5 @@ h2 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   font-weight: bold;
-  color: var(--color-level-900);
 }
 </style>

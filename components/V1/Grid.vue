@@ -29,15 +29,15 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const classes = computed(() => [
-  'grid',
-  props.template !== 'none' ? `grid--template-${props.template}` : '',
-  props.layout !== 'none' ? `grid--layout-${props.layout}` : '',
-  props.flow !== 'none' ? `grid--flow-${props.flow}` : '',
+  'base-grid',
+  props.template !== 'none' ? `base-grid--template-${props.template}` : '',
+  props.layout !== 'none' ? `base-grid--layout-${props.layout}` : '',
+  props.flow !== 'none' ? `base-grid--flow-${props.flow}` : '',
 ])
 </script>
 
 <style lang="scss">
-.grid {
+.base-grid {
   display: grid;
   gap: v-bind('gap || "1rem"');
 

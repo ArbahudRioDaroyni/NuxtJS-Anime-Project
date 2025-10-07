@@ -1,20 +1,20 @@
 <template>
 	<div 
 		ref="selectContainer"
-		:class="['select--container', { 'select--disabled': disabled }]"
+		:class="['base-select--container', { 'base-select--disabled': disabled }]"
 	>
-		<h2 v-if="label" class="select--label">{{ label }}</h2>
+		<h2 v-if="label" class="base-select--label">{{ label }}</h2>
 		
 		<!-- Custom Select Display -->
 		<div 
-			:class="['select--wrapper', { 'select--open': isOpen }]"
+			:class="['base-select--wrapper', { 'base-select--open': isOpen }]"
 			@click="toggleDropdown"
 		>
 			<div :class="classes">
-				<span v-if="selectedLabel" class="select--selected">
+				<span v-if="selectedLabel" class="base-select--selected">
 					{{ selectedLabel }}
 				</span>
-				<span v-else class="select--placeholder">
+				<span v-else class="base-select--placeholder">
 					{{ placeholder || 'Select an option' }}
 				</span>
 			</div>
@@ -22,7 +22,7 @@
 			<!-- Dropdown Icon -->
 			<Icon 
 				name="heroicons:chevron-down" 
-				:class="['select--icon', { 'select--icon-open': isOpen }]"
+				:class="['base-select--icon', { 'base-select--icon-open': isOpen }]"
 			/>
 		</div>
 
@@ -30,18 +30,18 @@
 		<Transition name="dropdown">
 			<div 
 				v-if="isOpen && !disabled"
-				class="select--dropdown"
+				class="base-select--dropdown"
 				@click.stop
 			>
-				<ul class="select--options" role="listbox">
+				<ul class="base-select--options" role="listbox">
 					<li
 						v-for="option in options"
 						:key="option.value"
 						:class="[
-							'select--option',
+							'base-select--option',
 							{
-								'select--option-selected': isSelected(option.value),
-								'select--option-disabled': option.disabled
+								'base-select--option-selected': isSelected(option.value),
+								'base-select--option-disabled': option.disabled
 							}
 						]"
 						role="option"
@@ -53,19 +53,19 @@
 							<Icon 
 								v-if="isSelected(option.value)" 
 								name="heroicons:check" 
-								class="select--option-check"
+								class="base-select--option-check"
 							/>
 						</slot>
 					</li>
 					
-					<li v-if="options.length === 0" class="select--option-empty">
+					<li v-if="options.length === 0" class="base-select--option-empty">
 						No options available
 					</li>
 				</ul>
 			</div>
 		</Transition>
 		
-		<span v-if="error" class="select--error">{{ error }}</span>
+		<span v-if="error" class="base-select--error">{{ error }}</span>
 	</div>
 </template>
 
@@ -119,12 +119,12 @@ const selectContainer = ref<HTMLDivElement>();
 const isOpen = ref(false);
 
 const classes = computed(() => [
-	'select',
-	`select--${props.variant}`,
-	`select--padding-${props.padding}`,
+	'base-select',
+	`base-select--${props.variant}`,
+	`base-select--padding-${props.padding}`,
 	{
-		'select--error': props.error,
-		'select--disabled': props.disabled
+		'base-select--error': props.error,
+		'base-select--disabled': props.disabled
 	}
 ])
 
@@ -200,10 +200,32 @@ watch(isOpen, (newValue) => {
 </script>
 
 <style scoped lang="scss">
-.select {
+@media (prefers-color-scheme: dark) {
+  .base-select--container {
+    --color: hsl(from var(--primary-color) h s 90%);
+    --background-color: hsl(from var(--primary-color) h s 10%);
+    --shadow-color: hsl(from var(--primary-color) h s 4%);
+    --light-color: hsl(from var(--primary-color) h s 16%);
+    --placeholder-color: #9ca3af;
+    --danger-color: hsl(from var(--color-alert-danger) h s 70%);
+    --success-color: hsl(from var(--color-alert-success) h s 70%);
+  }
+}
+@media (prefers-color-scheme: light) {
+  .base-select--container {
+    --color: hsl(from var(--primary-color) h s 10%);
+    --background-color: hsl(from var(--primary-color) h s 97.5%);
+    --shadow-color: hsl(from var(--primary-color) h s 96%);
+    --light-color: hsl(from var(--primary-color) h s 84%);
+    --placeholder-color: #9ca3af;
+    --danger-color: hsl(from var(--color-alert-danger) h s 70%);
+  }
+}
+
+.base-select {
 	width: 100%;
-	color: #fff;
-	background-color: var(--color-level-10);
+	color: var(--color);
+	background-color: var(--background-color);
 	border: none;
 	border-radius: 8px;
 	padding: 0.75rem 1rem;
@@ -223,12 +245,12 @@ watch(isOpen, (newValue) => {
 	}
 
 	&--selected {
-		color: #fff;
+		color: var(--color);
 	}
 
 	&--placeholder {
 		white-space: nowrap;
-		color: #9ca3af;
+		color: var(--placeholder-color);
 	}
 
 	&--icon {
@@ -237,7 +259,7 @@ watch(isOpen, (newValue) => {
 		top: 50%;
 		transform: translateY(-50%);
 		pointer-events: none;
-		color: #fff;
+		color: var(--color);
 		transition: transform 0.2s ease;
 
 		&-open {
@@ -246,9 +268,9 @@ watch(isOpen, (newValue) => {
 	}
 
 	&--open {
-		.select {
-			box-shadow: inset 4px 4px 4px hsl(var(--primary-color-code), 4%),
-				inset -4px -4px 4px hsl(var(--primary-color-code), 16%);
+		.base-select {
+			box-shadow: inset 4px 4px 4px var(--shadow-color),
+				inset -4px -4px 4px var(--light-color);
 		}
 	}
 
@@ -257,11 +279,11 @@ watch(isOpen, (newValue) => {
 		top: calc(100% + 1rem);
 		left: 0;
 		right: 0;
-		background-color: var(--color-level-10);
+		background-color: var(--background-color);
 		border-radius: 8px;
 		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3),
-			8px 8px 12px hsl(var(--primary-color-code), 4%),
-			-8px -8px 12px hsl(var(--primary-color-code), 16%);
+			8px 8px 12px var(--shadow-color),
+			-8px -8px 12px var(--light-color);
 		z-index: 1000;
 		max-height: 300px;
 		overflow-y: auto;
@@ -276,11 +298,11 @@ watch(isOpen, (newValue) => {
 		}
 		
 		&::-webkit-scrollbar-thumb {
-			background: hsl(var(--primary-color-code), 20%);
+			background: hsl(from var(--primary-color) h s 20%);
 			border-radius: 4px;
 			
 			&:hover {
-				background: hsl(var(--primary-color-code), 30%);
+        background: hsl(from var(--primary-color) h s 30%);
 			}
 		}
 	}
@@ -296,17 +318,17 @@ watch(isOpen, (newValue) => {
 		cursor: pointer;
 		border-radius: 6px;
 		transition: all 0.2s;
-		color: #fff;
+		color: var(--color);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 
 		&:hover:not(&-disabled) {
-			background-color: hsl(var(--primary-color-code), 15%);
+			background-color: hsl(from var(--primary-color) h s 12%);
 		}
 
 		&-selected {
-			background-color: hsl(var(--primary-color-code), 12%);
+			background-color: hsl(from var(--primary-color) h s 15%);
 			font-weight: 500;
 		}
 
@@ -318,12 +340,12 @@ watch(isOpen, (newValue) => {
 		&-empty {
 			padding: 1rem;
 			text-align: center;
-			color: #9ca3af;
+			color: var(--placeholder-color);
 			cursor: default;
 		}
 
 		&-check {
-			color: #10b981;
+			color: var(--color-alert-success);
 			flex-shrink: 0;
 			margin-left: 0.5rem;
 		}
@@ -342,11 +364,11 @@ watch(isOpen, (newValue) => {
 	&--label {
 		font-weight: 600;
 		margin-bottom: 0.25rem;
-		color: #fff;
+		color: var(--color);
 	}
 
 	&--error {
-		color: #ff6b6b;
+		color: var(--danger-color);
 		font-size: 0.9em;
 		margin-top: 0.2rem;
 	}
@@ -358,20 +380,20 @@ watch(isOpen, (newValue) => {
 	}
 
 	&--outer {
-		box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
-			-8px -8px 12px hsl(var(--primary-color-code), 16%);
+		box-shadow: 8px 8px 12px var(--shadow-color),
+			-8px -8px 12px var(--light-color);
 	}
 
 	&--inner {
-		box-shadow: -4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
-			4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
+		box-shadow: -4px -4px 4px var(--light-color) inset,
+			4px 4px 4px var(--shadow-color) inset;
 	}
 
 	&--both {
-		box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
-			-8px -8px 12px hsl(var(--primary-color-code), 16%),
-			-4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
-			4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
+		box-shadow: 8px 8px 12px var(--shadow-color),
+			-8px -8px 12px var(--light-color),
+			-4px -4px 4px var(--light-color) inset,
+			4px 4px 4px var(--shadow-color) inset;
 	}
 
 	// Padding variants

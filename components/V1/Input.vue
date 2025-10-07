@@ -59,13 +59,13 @@ defineExpose({
 })
 
 const inputClasses = computed(() => [
-  'input',
-  `input--${props.variant}`,
-  `input--size-${props.size}`,
-  `input--padding-${props.padding}`,
+  'base-input',
+  `base-input--${props.variant}`,
+  `base-input--size-${props.size}`,
+  `base-input--padding-${props.padding}`,
   {
-    'input--error': props.error,
-    'input--disabled': props.disabled
+    'base-input--error': props.error,
+    'base-input--disabled': props.disabled
   }
 ])
 
@@ -84,7 +84,28 @@ const handleBlur = (event: FocusEvent) => {
 </script>
 
 <style lang="scss" scoped>
-.input {
+@media (prefers-color-scheme: dark) {
+  .base-input {
+    --color: hsl(from var(--primary-color) h s 90%);
+    --background-color: hsl(from var(--primary-color) h s 10%);
+    --shadow-color: hsl(from var(--primary-color) h s 4%);
+    --light-color: hsl(from var(--primary-color) h s 16%);
+    --placeholder-color: #9ca3af;
+    --danger-color: hsl(from var(--color-alert-danger) h s 70%);
+  }
+}
+@media (prefers-color-scheme: light) {
+  .base-input {
+    --color: hsl(from var(--primary-color) h s 10%);
+    --background-color: hsl(from var(--primary-color) h s 97.5%);
+    --shadow-color: hsl(from var(--primary-color) h s 96%);
+    --light-color: hsl(from var(--primary-color) h s 84%);
+    --placeholder-color: #9ca3af;
+    --danger-color: hsl(from var(--color-alert-danger) h s 70%);
+  }
+}
+
+.base-input {
   width: 100%;
   border-radius: 0.375rem;
   transition: all 0.2s ease;
@@ -93,10 +114,8 @@ const handleBlur = (event: FocusEvent) => {
     outline: none;
   }
 
-  @media (prefers-color-scheme: dark) {
-    &::placeholder {
-      color: #9ca3af;
-    }
+  &::placeholder {
+    color: var(--placeholder-color);
   }
   
   // Sizes variants
@@ -143,34 +162,34 @@ const handleBlur = (event: FocusEvent) => {
   
   // Variants
   &--outer {
-    box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
-      -8px -8px 12px hsl(var(--primary-color-code), 16%);
+    box-shadow: 8px 8px 12px var(--shadow-color),
+      -8px -8px 12px var(--light-color);
       
     &:active {
-      box-shadow: inset 4px 4px 4px hsl(var(--primary-color-code), 4%),
-        inset -4px -4px 4px hsl(var(--primary-color-code), 16%);
+      box-shadow: inset 4px 4px 4px var(--shadow-color),
+        inset -4px -4px 4px var(--light-color);
     }
   }
 
   &--inner {
-    box-shadow: -4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
-      4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
+    box-shadow: -4px -4px 4px var(--light-color) inset,
+      4px 4px 4px var(--shadow-color) inset;
   }
 
   &--both {
-    box-shadow: 8px 8px 12px hsl(var(--primary-color-code), 4%),
-      -8px -8px 12px hsl(var(--primary-color-code), 16%),
-      -4px -4px 4px hsl(var(--primary-color-code), 16%) inset,
-      4px 4px 4px hsl(var(--primary-color-code), 4%) inset;
+    box-shadow: 8px 8px 12px var(--shadow-color),
+      -8px -8px 12px var(--light-color),
+      -4px -4px 4px var(--light-color) inset,
+      4px 4px 4px var(--shadow-color) inset;
   }
   
   // States
   &--error {
-    border-color: #ef4444;
+    border-color: var(--danger-color);
     
     &:focus {
-      border-color: #ef4444;
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      border-color: var(--danger-color);
+      box-shadow: 0 0 0 3px hsl(from var(--color-alert-danger) h s 40% / 0.5);
     }
   }
   
