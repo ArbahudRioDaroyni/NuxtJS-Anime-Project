@@ -1,5 +1,5 @@
 <template>
-  <V1Container>
+  <V1Container tag="section" aria-label="Anime Filters" margin="xl">
     <!-- Loading State -->
     <CommonLoading v-if="pending" type="spinner" size="md" message="Loading character details..." overlay center />
     
