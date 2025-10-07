@@ -5,14 +5,27 @@ Panduan ini menjelaskan langkah-langkah untuk migrasi project NuxtJS-Anime-Proje
 
 ## Persiapan
 
-### 1. Backup Project
+### 1. Buat Branch Migrasi (Recommended)
 ```bash
-# Buat backup branch terlebih dahulu
-git checkout -b backup-before-nuxt4
-git add .
-git commit -m "Backup before Nuxt 4 migration"
+# Pastikan berada di branch V1 dan clean
 git checkout V1
+git status
+
+# Buat branch baru khusus untuk migrasi
+git checkout -b migrate-to-nuxt4
+
+# ATAU jika ingin backup juga (extra safety)
+git checkout -b backup-before-nuxt4
+git checkout V1
+git checkout -b migrate-to-nuxt4
 ```
+
+**Keuntungan strategi ini:**
+- ✅ Branch `V1` tetap stabil dan bisa di-deploy kapan saja
+- ✅ Bisa eksperimen bebas di `migrate-to-nuxt4`
+- ✅ Mudah rollback jika ada masalah (tinggal delete branch)
+- ✅ Bisa review changes sebelum merge
+- ✅ Tim lain bisa tetap development di `V1`
 
 ### 2. Update Nuxt Config
 File `nuxt.config.ts` sudah dikonfigurasi dengan benar:
@@ -27,7 +40,7 @@ export default defineNuxtConfig({
 })
 ```
 
-## Langkah Migrasi
+## Langkah Migrasi (di Branch migrate-to-nuxt4)
 
 ### 3. Update Dependencies
 Update semua dependencies Nuxt ke versi 4.x:
@@ -50,13 +63,31 @@ Update semua dependencies Nuxt ke versi 4.x:
 
 Jalankan update:
 ```bash
-npm update nuxt @nuxt/eslint @nuxt/image @nuxt/scripts @pinia/nuxt @nuxtjs/tailwindcss @prisma/nuxt @nuxt/icon
+# Update Nuxt core
+npm install nuxt@latest
+
+# Update Nuxt modules
+npm update @nuxt/eslint @nuxt/image @nuxt/icon @nuxt/test-utils
+
+# Update UI framework (pilih salah satu)
+# Opsi A: Nuxt UI v2 (kompatibel Nuxt 3 & 4)
+npm install @nuxt/ui@^2.18.7
+
+# Opsi B: Nuxt UI v3 (hanya Nuxt 4)
+npm install @nuxt/ui@latest
+
+# Update dependencies lainnya
+npm update @pinia/nuxt @nuxtjs/tailwindcss @prisma/nuxt
 ```
 
 ### 4. Clear Cache dan Reinstall
 ```bash
-# Hapus cache dan node_modules
+# Windows PowerShell
 Remove-Item -Recurse -Force .nuxt, .output, node_modules -ErrorAction SilentlyContinue
+npm install
+
+# Linux/Mac
+rm -rf .nuxt .output node_modules
 npm install
 ```
 
@@ -130,6 +161,7 @@ Routes di `server/api/` harus tetap kompatible.
 - [ ] Common components (Header, Footer) render
 - [ ] Media components (Anime cards, Character) berfungsi
 - [ ] UI components (Buttons, Cards) styling benar
+- [ ] Nuxt UI components (UAlert, UButton, dll) berfungsi
 
 ### ✅ Data & API
 - [ ] Database connection berfungsi
@@ -142,79 +174,141 @@ Routes di `server/api/` harus tetap kompatible.
 - [ ] SCSS files di `assets/scss/` ter-compile
 - [ ] Theme switching bekerja
 
-### ✅ Advanced Features
-- [ ] SEO meta tags generate
-- [ ] Image optimization (@nuxt/image)
-- [ ] Pinia stores berfungsi
-- [ ] Auto-imports (composables) bekerja
+### ✅ Build & Production
+- [ ] `npm run build` berhasil tanpa error
+- [ ] `npm run preview` berfungsi
+- [ ] Bundle size reasonable
+
+## Merge Strategy
+
+### Jika Migrasi SUKSES ✅
+
+```bash
+# 1. Pastikan semua test passed
+npm run build
+npm run preview
+
+# 2. Commit semua perubahan
+git add .
+git commit -m "feat: migrate to Nuxt 4"
+
+# 3. Kembali ke V1
+git checkout V1
+
+# 4. Merge migrate-to-nuxt4 ke V1
+git merge migrate-to-nuxt4
+
+# 5. Push ke remote
+git push origin V1
+
+# 6. (Opsional) Hapus branch migrasi
+git branch -d migrate-to-nuxt4
+git push origin --delete migrate-to-nuxt4
+```
+
+### Jika Migrasi GAGAL ❌
+
+```bash
+# 1. Kembali ke V1 (yang masih stabil)
+git checkout V1
+
+# 2. Hapus branch migrasi
+git branch -D migrate-to-nuxt4
+
+# 3. Tetap development di V1 dengan Nuxt 3
+# Atau coba lagi dengan strategi berbeda
+```
+
+## Rollback Plan
+
+### Quick Rollback (Jika sudah merge tapi ada masalah)
+```bash
+# Revert merge commit
+git revert -m 1 HEAD
+
+# Atau reset ke commit sebelum merge
+git reset --hard HEAD~1
+git push origin V1 --force  # HATI-HATI!
+```
+
+### Safe Rollback (Jika punya backup branch)
+```bash
+git checkout backup-before-nuxt4
+git checkout -b V1-rollback
+# Continue development here
+```
 
 ## Troubleshooting
 
 ### Error Common
 1. **Module resolution errors**
    ```bash
-   rm -rf .nuxt .output
+   rm -rf .nuxt .output node_modules
+   npm install
    npm run dev
    ```
 
-2. **TypeScript errors**
-   - Check `tsconfig.json` compatibility
-   - Update types if needed
+2. **Nuxt UI incompatibility**
+   ```bash
+   # Downgrade ke versi kompatibel
+   npm install @nuxt/ui@^2.18.7
+   ```
 
-3. **Plugin errors**  
-   - Check plugin compatibility di `plugins/`
-   - Update plugin registration jika perlu
+3. **TypeScript errors**
+   - Check `.nuxt/tsconfig.json` setelah `npm run dev`
+   - Update global types jika perlu
 
 4. **Build errors**
    ```bash
+   # Clean build
+   rm -rf .nuxt .output
    npm run build
    ```
 
-### Rollback Plan
-Jika migrasi gagal:
-```bash
-git checkout backup-before-nuxt4
-git checkout -b rollback-v1
-# Lanjutkan development di branch ini
+## Git Workflow Visualization
+
 ```
-
-## Breaking Changes Potential
-
-### Auto-imports
-- File di `composables/` tetap auto-import
-- `textUtils.ts`, `useGenerateMetaSeo.ts`, `useThrottle.ts` harus tetap bekerja
-
-### Server API
-- Routes di `server/api/` format tetap sama
-- Middleware di `server/middleware/` perlu dicek
-
-### Plugins
-- Plugin registration mungkin perlu penyesuaian kecil
+V1 (stable, Nuxt 3)
+ |
+ |-- migrate-to-nuxt4 (experimental)
+ |    |
+ |    |-- [upgrade dependencies]
+ |    |-- [fix errors]
+ |    |-- [testing]
+ |    |
+ |    |-- SUKSES? --> merge ke V1
+ |    |
+ |    |-- GAGAL? --> delete branch
+ |
+ |-- (tetap stabil, bisa deploy)
+```
 
 ## Post-Migration
 
 ### 1. Update Documentation
-- Update `README.md` dengan info Nuxt 4
-- Update dependencies list
+- [ ] Update `README.md` dengan Nuxt 4 info
+- [ ] Update dependencies list di `package.json`
+- [ ] Tag release: `git tag v2.0.0-nuxt4`
 
 ### 2. Performance Check
-- Test build time
-- Test runtime performance  
-- Check bundle size
+- [ ] Compare build time (Nuxt 3 vs 4)
+- [ ] Test runtime performance  
+- [ ] Check bundle size reduction
 
 ### 3. Deploy Testing
-- Test build production
-- Test deployment pipeline
+- [ ] Test staging deployment
+- [ ] Smoke test production features
+- [ ] Monitor error logs
 
 ## Catatan Tambahan
 
-- **Kompatibilitas**: Nuxt 4 mempertahankan backward compatibility
-- **Auto-imports**: Tetap berfungsi untuk composables dan utils
-- **TypeScript**: Support lebih baik untuk TypeScript
-- **Performance**: Peningkatan performa build dan runtime
+- **Timeline**: Lakukan migrasi di waktu low-traffic
+- **Team Communication**: Inform team sebelum merge ke V1
+- **Backup Database**: Pastikan database ter-backup
+- **Feature Freeze**: Hindari merge fitur baru selama migrasi
 
 ---
 
-**Tanggal**: October 6, 2025  
+**Tanggal**: October 7, 2025  
 **Project**: NuxtJS-Anime-Project  
-**Branch**: V1 → Nuxt 4 Migration
+**Strategy**: Feature Branch Migration (`migrate-to-nuxt4` → `V1`)

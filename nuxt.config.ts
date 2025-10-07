@@ -32,13 +32,13 @@ export default defineNuxtConfig({
     },
   },
   modules: [
+    '@nuxt/ui',
     '@nuxt/eslint',
     '@nuxt/image',
-    '@nuxt/test-utils',
-    '@pinia/nuxt',
+    '@nuxt/icon',
     '@nuxtjs/tailwindcss',
-    '@prisma/nuxt',
-    '@nuxt/icon'
+    '@pinia/nuxt',
+    '@prisma/nuxt'
   ],
   alias: {
     '@anime': '/modules/anime',
