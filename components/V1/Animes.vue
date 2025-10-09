@@ -1,32 +1,23 @@
 <template>
-  <V1Container tag="main" margin="md" :aria-label="heading">
+  <UContainer as="section" class="my-6 p0">
     <h2>{{ heading }}</h2>
-    <V1Grid tag="ul" template="columns" length="200px">
-      <V1Card
-        v-for="(anime, index) in data"
-        :key="`relation-${index}`"
-        :title="anime?.title_romaji || anime?.title_english || anime?.title_native || 'Unknown Title'"
-        :aria-label="`Anime: ${anime?.title_romaji || anime?.title_english || anime?.title_native || 'Unknown Title'}`"
-        variant="both"
-        layout="horizontal"
-        clickable
-        :href="anime?.slug"
-        tag="li"
-        @click="trackClick"
-      >
-        <V1Image
-          :src="anime?.medium_cover_image_url || anime?.large_cover_image_url || '/image/image-230x345.webp'"
-          :alt="anime?.title_romaji || anime?.title_english || anime?.title_native || 'Unknown Title'"
-        />
-
-        <div>
-          <NuxtLink :to="anime?.slug">
-            {{ anime?.title_romaji || anime?.title_english || anime?.title_native || 'Unknown Title' }}
-          </NuxtLink>
-        </div>
-      </V1Card>
-    </V1Grid>
-  </V1Container>
+    <UPageGrid class="grid-cols-[repeat(auto-fill,minmax(200px,1fr))]! gap-6">
+       <UPageCard
+         v-for="(anime, index) in data"
+         :key="`relation-${index}`"
+         :title="anime?.title_romaji || anime?.title_english || anime?.title_native || 'Unknown Title'"
+         :to="anime?.slug"
+         orientation="vertical"
+         variant="outline"
+         class="[--tw-ring-color:var(--color-gray)]"
+       >
+         <V1Image
+           :src="anime?.large_cover_image_url || anime?.medium_cover_image_url || '/image/image-230x345.webp'"
+           :alt="anime?.title_romaji || anime?.title_english || anime?.title_native || 'Unknown Title'"
+         />
+       </UPageCard>
+     </UPageGrid>
+  </UContainer>
 </template>
 
 <script setup lang="ts">
@@ -37,16 +28,10 @@ interface Props {
   heading?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const _props = withDefaults(defineProps<Props>(), {
   data: () => [],
   heading: 'Anime List'
 })
-
-const trackClick = () => {
-  console.log('Anime card clicked');
-}
-
-useHead({ script: [{ innerHTML: `console.log(${JSON.stringify(props.data, null, 2)})` }] })
 </script>
 
 <style lang="scss" scoped>
