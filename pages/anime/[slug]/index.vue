@@ -5,7 +5,7 @@
       <li
         v-for="relation in relations" :key="relation.id"
         :class="[
-          'flex flex-col items-center flex-row gap-4',
+          'flex items-center flex-row gap-4',
           'p-4',
           'rounded-lg',
           'border border-gray-700',
