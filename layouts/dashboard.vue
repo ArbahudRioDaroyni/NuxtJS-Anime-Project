@@ -76,7 +76,7 @@ const links = [[{
 }, {
   label: 'Customers',
   icon: 'i-lucide-users',
-  to: '/customers',
+  to: '/dashboard/customers',
   onSelect: () => {
     open.value = false
   }
@@ -88,26 +88,26 @@ const links = [[{
   type: 'trigger',
   children: [{
     label: 'General',
-    to: '/settings',
+    to: '/dashboard/settings',
     exact: true,
     onSelect: () => {
       open.value = false
     }
   }, {
     label: 'Members',
-    to: '/settings/members',
+    to: '/dashboard/settings/members',
     onSelect: () => {
       open.value = false
     }
   }, {
     label: 'Notifications',
-    to: '/settings/notifications',
+    to: '/dashboard/settings/notifications',
     onSelect: () => {
       open.value = false
     }
   }, {
     label: 'Security',
-    to: '/settings/security',
+    to: '/dashboard/settings/security',
     onSelect: () => {
       open.value = false
     }
