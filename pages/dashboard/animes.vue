@@ -10,18 +10,12 @@
 
     <template #body>
       <div class="flex flex-wrap items-center justify-between gap-1.5">
-        <UInput
-          :model-value="(table?.tableApi?.getColumn('title')?.getFilterValue() as string)"
-          class="max-w-sm"
-          icon="i-lucide-search"
-          placeholder="Filter titles..."
-          @update:model-value="table?.tableApi?.getColumn('title')?.setFilterValue($event)"
-        />
+        <UInput v-model="filters" class="max-w-sm" placeholder="Filter..." />
 
         <div class="flex flex-wrap items-center gap-1.5">
-          <!-- <CustomersDeleteModal :count="table?.tableApi?.getFilteredSelectedRowModel().rows.length">
+          <!-- <CustomersDeleteModal :count="table?.tableApi?.getFilteredSelectedRowModel().rows.length"> -->
             <UButton
-              v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
+              v-if="totalSelectedCount > 0"
               label="Delete"
               color="error"
               variant="subtle"
@@ -29,11 +23,24 @@
             >
               <template #trailing>
                 <UKbd>
-                  {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length }}
+                  {{ totalSelectedCount }}
                 </UKbd>
               </template>
             </UButton>
-          </CustomersDeleteModal> -->
+          <!-- </CustomersDeleteModal> -->
+
+          <USelect
+            v-model="pageSize"
+            :items="[
+              { label: '5 per page', value: 5 },
+              { label: '10 per page', value: 10 },
+              { label: '20 per page', value: 20 },
+              { label: '50 per page', value: 50 }
+            ]"
+            :ui="{ trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200' }"
+            placeholder="Items per page"
+            class="min-w-32"
+          />
 
           <USelect
             v-model="statusFilter"
@@ -75,12 +82,15 @@
           </UDropdownMenu>
         </div>
       </div>
+
       <UTable
         ref="table"
+        v-model:global-filter="filters"
         v-model:row-selection="rowSelection"
         :data="animes"
         :columns="columns"
         :loading="pending"
+        :get-row-id="(row: AnimeDetails) => row.id.toString()"
         sticky
         :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
         class="h-full flex-1"
@@ -90,25 +100,41 @@
           <pre>{{ row.original }}</pre>
         </template>
       </UTable>
-      <div class="px-4 py-3.5 border-t border-accented text-sm text-muted">
-        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }} of
-        {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }} row(s) selected.
+
+      <div class="flex flex-wrap items-center justify-between gap-1.5">
+        <div class="text-sm text-muted">
+          {{ totalSelectedCount }} item(s) selected across all pages.
+        </div>
+  
+        <div class="text-sm text-muted">
+          Showing {{ ((meta.page - 1) * meta.limit) + 1 }} to {{ Math.min(meta.page * meta.limit, meta.total) }} of {{ meta.total }} results
+        </div>
+      </div>
+
+
+      <div class="flex justify-center border-t border-default pt-4">
+        <UPagination
+          v-model:page="currentPage"
+          :total="meta.total"
+          :items-per-page="pageSize"
+          show-edges
+          :sibling-count="2"
+        />
       </div>
     </template>
   </UDashboardPanel>
 </template>
 
 <script setup lang="ts">
-import { h, resolveComponent } from 'vue'
 import type { TableColumn, TableRow } from '@nuxt/ui'
 import type { ResponseType } from '~/types/database'
 import type { AnimeDetails } from '~/types/anime'
 import type { ReleaseStatusType, ReleaseFormat } from '~/types/metadata'
 import type { Row, Column } from '@tanstack/table-core'
+import { h, resolveComponent } from 'vue'
 import { upperFirst } from 'scule'
 
 const UCheckbox = resolveComponent('UCheckbox')
-const ULink = resolveComponent('ULink')
 const UButton = resolveComponent('UButton')
 const UBadge = resolveComponent('UBadge')
 const UDropdownMenu = resolveComponent('UDropdownMenu')
@@ -118,13 +144,45 @@ const toast = useToast()
 const table = useTemplateRef('table')
 const rowSelection = ref<Record<string, boolean>>({})
 
-const { data: response, pending, error: _error } = await useFetch<ResponseType>(
-  `/api/anime`, 
+const filters = ref('')
+
+// Server-side pagination state
+const currentPage = ref(1)
+const pageSize = ref(10)
+
+// Fetch data from API with pagination using useAsyncData
+const { data: response, pending, error: _error, refresh: _refresh } = await useAsyncData<ResponseType>(
+  'animes',
+  () => $fetch('/api/anime', {
+    query: {
+      page: currentPage.value,
+      limit: pageSize.value
+    }
+  }),
   {
-    lazy: true,
+    watch: [currentPage, pageSize]
   }
 )
+
 const animes = computed(() => response.value?.data as AnimeDetails[] || [])
+const meta = computed(() => ({
+  total: response.value?.meta?.total || 0,
+  page: response.value?.meta?.page || 1,
+  limit: response.value?.meta?.limit || 10,
+  totalPages: response.value?.meta?.totalPages || 0,
+  hasNext: response.value?.meta?.hasNext || false,
+  hasPrev: response.value?.meta?.hasPrev || false,
+  nextPage: response.value?.meta?.nextPage || null,
+  prevPage: response.value?.meta?.prevPage || null,
+  nextLink: response.value?.meta?.nextLink || null,
+  prevLink: response.value?.meta?.prevLink || null
+}))
+
+// Count total selected items (by ID)
+const totalSelectedCount = computed(() => {
+  return Object.keys(rowSelection.value).length
+})
+
 const columns: TableColumn<AnimeDetails>[] = [
   {
     id: 'select',
@@ -145,6 +203,25 @@ const columns: TableColumn<AnimeDetails>[] = [
       })
   },
   {
+    id: 'expand',
+    cell: ({ row }) =>
+      h(UButton, {
+        color: 'neutral',
+        variant: 'ghost',
+        icon: 'i-lucide-chevron-down',
+        square: true,
+        'aria-label': 'Expand',
+        size: 'xl',
+        ui: {
+          leadingIcon: [
+            'transition-transform',
+            row.getIsExpanded() ? 'duration-300 rotate-180' : ''
+          ]
+        },
+        onClick: () => row.toggleExpanded()
+      })
+  },
+  {
     accessorKey: 'id',
     header: ({ column }) => getHeader(column, 'ID', 'left'),
     cell: ({ row }) => `#${row.getValue('id')}`
@@ -152,12 +229,7 @@ const columns: TableColumn<AnimeDetails>[] = [
   {
     accessorKey: 'slug',
     header: 'Slug',
-    cell: ({ row }) => {
-      return h(ULink, {
-        to: `/${row.getValue('slug')}`,
-        class: 'hover:underline text-white'
-      }, () => row.getValue('slug'))
-    }
+    cell: ({ row }) => row.getValue('slug')
   },
   {
     accessorKey: 'title_romaji',
@@ -177,12 +249,7 @@ const columns: TableColumn<AnimeDetails>[] = [
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
       })
     },
-    cell: ({ row }) => {
-      return h(ULink, {
-        to: `/${row.getValue('slug')}`,
-        class: 'hover:underline text-white'
-      }, () => row.getValue('title_romaji'))
-    }
+    cell: ({ row }) => row.getValue('title_romaji'),
   },
   {
     accessorKey: 'status_type',
@@ -191,14 +258,13 @@ const columns: TableColumn<AnimeDetails>[] = [
       const statusType = row.getValue('status_type') as ReleaseStatusType
       const statusName = (statusType?.name || 'UNKNOWN') as 'FINISHED' | 'CANCELLED' | 'RELEASING' | 'NOT_YET_RELEASED' | 'UNKNOWN'
 
-      const colorMap = {
+      const color = {
         FINISHED: 'success' as const,
         CANCELLED: 'error' as const,
         RELEASING: 'info' as const,
         NOT_YET_RELEASED: 'warning' as const,
         UNKNOWN: 'neutral' as const
-      }
-      const color = colorMap[statusName]
+      }[statusName] || 'neutral'
 
       return h(UBadge, { 
         class: 'capitalize', 
@@ -220,7 +286,7 @@ const columns: TableColumn<AnimeDetails>[] = [
       const statusType = row.getValue('release_format') as ReleaseFormat
       const statusName = (statusType?.name || 'Unknown') as 'TV' | 'OVA' | 'Special' | 'Movie' | 'ONA' | 'Web' | 'Theatrical' | 'TV Short' | 'Music' | 'Unknown'
 
-      const colorMap = {
+      const color = {
         TV: 'primary' as const,
         OVA: 'secondary' as const,
         Special: 'neutral' as const,
@@ -231,10 +297,8 @@ const columns: TableColumn<AnimeDetails>[] = [
         'TV Short': 'neutral' as const,
         Music: 'warning' as const,
         Unknown: 'neutral' as const
-      }
+      }[statusName] || 'neutral'
       
-      const color = colorMap[statusName] || 'dark'
-
       return h(UBadge, { 
         class: 'capitalize', 
         variant: 'subtle', 
@@ -247,24 +311,6 @@ const columns: TableColumn<AnimeDetails>[] = [
         td: 'text-center font-mono'
       }
     }
-  },
-  {
-    id: 'expand',
-    cell: ({ row }) =>
-      h(UButton, {
-        color: 'neutral',
-        variant: 'ghost',
-        icon: 'i-lucide-chevron-down',
-        square: true,
-        'aria-label': 'Expand',
-        ui: {
-          leadingIcon: [
-            'transition-transform',
-            row.getIsExpanded() ? 'duration-200 rotate-180' : ''
-          ]
-        },
-        onClick: () => row.toggleExpanded()
-      })
   },
   {
     id: 'actions',
@@ -371,6 +417,11 @@ watch(() => statusFilter.value, (newVal) => {
   } else {
     statusColumn.setFilterValue(newVal)
   }
+})
+
+// Reset to page 1 when pageSize changes
+watch(() => pageSize.value, () => {
+  currentPage.value = 1
 })
 
 definePageMeta({
