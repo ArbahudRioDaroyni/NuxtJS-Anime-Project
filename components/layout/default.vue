@@ -1,6 +1,6 @@
 <template>
   <NuxtLoadingIndicator color="hsl(from var(--primary-color) h s 70%)" />
-  <CommonHeader />
+  <RekaHeader />
   <slot />
-  <CommonFooter />
+  <RekaFooter />
 </template>

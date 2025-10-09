@@ -1,5 +1,5 @@
 <template>
-  <V1Container class="filter--container" tag="section" aria-label="Anime Filters" margin="xl">
+  <UContainer as="form" role="search" aria-label="Anime Filter">
     <div class="filter--group">
       <label for="search-filter">Search</label>
       <div>
@@ -50,7 +50,7 @@
       <option>Fall</option>
     </V1Select>
     <V1Button variant="outer" size="md" icon="heroicons:adjustments-horizontal-16-solid" />
-  </V1Container>
+  </UContainer>
 </template>
 
 <script setup lang="ts">

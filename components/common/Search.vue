@@ -7,7 +7,6 @@
         placeholder="Search anime by title... (typo-tolerant)"
         type="text"
         size="md"
-        variant="default"
         :loading="loading"
         @input="handleInput"
         @focus="showSuggestions = true"

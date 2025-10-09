@@ -1,6 +1,5 @@
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary-color: #1e3148;
     
     --color-black: hsl(0, 0%, 0%);
     --color-white: hsl(0, 0%, 100%);
@@ -112,7 +111,6 @@
 }
 @media (prefers-color-scheme: light) {
   :root {
-    --primary-color: #f3f3f3;
 
     --color-white: #ffffff;
     --color-black: #000000;
@@ -148,5 +146,14 @@
   
     --brightness: brightness(75%);
     --radius: 6px;
+  }
+}
+
+html {
+  &.dark {
+    --primary-color: #0f1923;
+  }
+  &.light {
+    --primary-color: #f3f3f3;
   }
 }

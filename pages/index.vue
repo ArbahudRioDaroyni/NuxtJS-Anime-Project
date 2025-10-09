@@ -1,8 +1,10 @@
 <template>
-  <V1AnimeFilter />
-  <V1Animes :data="trending" heading="Trending" margin="md" />
-  <V1Animes :data="faforites" heading="Favorites" />
-  <V1Animes :data="popular" heading="Popular" />
+  <!-- <V1AnimeFilter /> -->
+  <UMain>
+    <V1Animes :data="trending" heading="Trending" margin="md" class="mt-[5rem]" />
+    <V1Animes :data="faforites" heading="Favorites" />
+    <V1Animes :data="popular" heading="Popular" />
+  </UMain>
 </template>
 
 <script lang="ts" setup>
