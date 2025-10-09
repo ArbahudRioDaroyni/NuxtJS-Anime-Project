@@ -1,37 +1,52 @@
 {
-    "sqltools.connections": [
-        {
-            "previewLimit": 50,
-            "driver": "SQLite",
-            "name": "sqlite_nuxt",
-            "group": "nuxt",
-            "database": "database.sqlite3"
-        }
-    ],
-    "sqltools.useNodeRuntime": true,
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true,
-    "editor.detectIndentation": false,
-
-    // Material Icon Theme settings
-    "material-icon-theme.folders.color": "#42d7f5",
-    "material-icon-theme.activeIconPack": "angular",
-    "material-icon-theme.folders.customClones": [
-      {
-        "name": "card",
-        "base": "luau",
-        "color": "red-500",
-        "lightColor": "red-300",
-        "folderNames": ["card", "cards"],
-        "rootFolderNames": ["card", "cards"]
-      },
-      {
-        "name": "composables",
-        "base": "utils",
-        "color": "teal-500",
-        "lightColor": "teal-300",
-        "folderNames": ["composables", "composable", "use", "uses"],
-        "rootFolderNames": ["composables", "composable", "use", "uses"]
-      }
-    ],  
+	"editor.tabSize": 2,
+	"editor.insertSpaces": true,
+	"editor.detectIndentation": false,
+	// Material Icon Theme settings
+	"material-icon-theme.folders.color": "#42d7f5",
+	"material-icon-theme.activeIconPack": "angular",
+	"material-icon-theme.folders.customClones": [
+		{
+			"name": "card",
+			"base": "luau",
+			"color": "red-500",
+			"lightColor": "red-300",
+			"folderNames": [
+				"card",
+				"cards"
+			],
+			"rootFolderNames": [
+				"card",
+				"cards"
+			]
+		},
+		{
+			"name": "composables",
+			"base": "utils",
+			"color": "teal-500",
+			"lightColor": "teal-300",
+			"folderNames": [
+				"composables",
+				"composable",
+				"use",
+				"uses"
+			],
+			"rootFolderNames": [
+				"composables",
+				"composable",
+				"use",
+				"uses"
+			]
+		}
+	],
+	"files.associations": {
+		"*.css": "tailwindcss"
+	},
+	"editor.quickSuggestions": {
+		"strings": "on"
+  },
+  "tailwindCSS.classAttributes": ["class", "ui"],
+  "tailwindCSS.experimental.classRegex": [
+    ["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ]
 }
