@@ -145,7 +145,7 @@ const externalSites = computed(() => props.anime?.anime_external_site_relations)
 
 <style lang="scss" scoped>
 .sidebar-container {
-  padding: 1rem;
+  // padding: 1rem;
   display: grid;
   gap: 1.5rem;
   // contain: layout style paint; // CSS containment for performance
