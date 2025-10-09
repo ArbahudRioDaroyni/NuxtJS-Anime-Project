@@ -12,6 +12,12 @@ export interface ResponseType {
     page?: number
     limit?: number
     totalPages?: number
+    hasNext?: boolean
+    hasPrev?: boolean
+    nextPage?: number | null
+    prevPage?: number | null
+    nextLink?: string | null
+    prevLink?: string | null
     season?: string
     year?: string
     [key: string]: unknown

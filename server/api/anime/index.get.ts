@@ -6,45 +6,33 @@ const prisma = getPrismaClient()
 
 export default defineEventHandler(async (event: H3Event): Promise<ResponseType> => {
   try {
-    const { safeSearch = '', safeFields, safeLimit = 10, safeOffset = 0 } = event.context
+    // Get query parameters
+    const query = getQuery(event)
+    const page = parseInt(query.page as string) || 1
+    const limit = parseInt(query.limit as string) || 10
+    const fields = query.fields as string | undefined
+    
+    // Calculate offset from page number
+    const offset = (page - 1) * limit
+    
+    // Parse fields if provided
+    const safeFields = fields ? JSON.parse(fields) : undefined
     
     // Parallel queries for better performance
     const [animeList, totalCount] = await Promise.all([
       // Main query
       safeFields ? 
         prisma.anime.findMany({
-          where: safeSearch ? {
-            AND: [
-              { deleted_at: null },
-              {
-                OR: [
-                  { title_romaji: { contains: safeSearch, mode: 'insensitive' } },
-                  { title_english: { contains: safeSearch, mode: 'insensitive' } },
-                  { title_native: { contains: safeSearch, mode: 'insensitive' } }
-                ]
-              }
-            ]
-          } : { deleted_at: null },
+          where: { deleted_at: null },
           select: safeFields,
-          take: safeLimit,
-          skip: safeOffset,
+          take: limit,
+          skip: offset,
           orderBy: { title_romaji: 'asc' }
         }) :
         prisma.anime.findMany({
-          where: safeSearch ? {
-            AND: [
-              { deleted_at: null },
-              {
-                OR: [
-                  { title_romaji: { contains: safeSearch, mode: 'insensitive' } },
-                  { title_english: { contains: safeSearch, mode: 'insensitive' } },
-                  { title_native: { contains: safeSearch, mode: 'insensitive' } }
-                ]
-              }
-            ]
-          } : { deleted_at: null },
-          take: safeLimit,
-          skip: safeOffset,
+          where: { deleted_at: null },
+          take: limit,
+          skip: offset,
           orderBy: { title_romaji: 'asc' },
           include: {
             media_type: true,
@@ -56,18 +44,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
       
       // Count query
       prisma.anime.count({
-        where: safeSearch ? {
-          AND: [
-            { deleted_at: null },
-            {
-              OR: [
-                { title_romaji: { contains: safeSearch, mode: 'insensitive' } },
-                { title_english: { contains: safeSearch, mode: 'insensitive' } },
-                { title_native: { contains: safeSearch, mode: 'insensitive' } }
-              ]
-            }
-          ]
-        } : { deleted_at: null }
+        where: { deleted_at: null }
       })
     ])
 
@@ -79,12 +56,15 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
       length: animeList.length,
       meta: {
         total: totalCount,
-        page: Math.floor(safeOffset / safeLimit) + 1,
-        limit: safeLimit,
-        totalPages: Math.ceil(totalCount / safeLimit),
-        hasNext: (safeOffset + safeLimit) < totalCount,
-        hasPrev: safeOffset > 0,
-        searchTerm: safeSearch || null
+        page: page,
+        limit: limit,
+        totalPages: Math.ceil(totalCount / limit),
+        hasNext: page < Math.ceil(totalCount / limit),
+        hasPrev: page > 1,
+        nextPage: page < Math.ceil(totalCount / limit) ? page + 1 : null,
+        prevPage: page > 1 ? page - 1 : null,
+        nextLink: page < Math.ceil(totalCount / limit) ? `/api/anime?page=${page + 1}&limit=${limit}` : null,
+        prevLink: page > 1 ? `/api/anime?page=${page - 1}&limit=${limit}` : null
       }
     }
   } catch (e: unknown) {
