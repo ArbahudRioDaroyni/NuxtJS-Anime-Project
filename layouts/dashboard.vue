@@ -35,7 +35,12 @@
       </template>
     </UDashboardSidebar>
 
-    <UDashboardSearch :groups="groups" />
+    <UDashboardSearch
+    v-model:search-term="searchTerm"
+    shortcut="meta_k"
+    :groups="groups"
+    :fuse="{ resultLimit: 42 }"
+  />
 
     <slot />
 
@@ -50,6 +55,7 @@ const route = useRoute()
 const toast = useToast()
 
 const open = ref(false)
+const searchTerm = ref('')
 
 const links = [[{
   label: 'Home',

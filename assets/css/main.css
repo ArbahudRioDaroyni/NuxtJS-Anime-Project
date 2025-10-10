@@ -5,10 +5,12 @@
   --ui-primary: hsl(210, 100%, 35%);
   --ui-bg: hsl(0, 0%, 90%);
   --ui-border: hsl(0, 0%, 75%);
+  --ui-text-muted: var(--ui-color-neutral-600);
 }
 
 .dark {
   --ui-primary: hsl(210, 70%, 56%);
   --ui-bg: hsl(210, 40%, 10%);
   --ui-border: hsl(210, 40%, 25%);
+  --ui-text-muted: var(--ui-color-neutral-300);
 }

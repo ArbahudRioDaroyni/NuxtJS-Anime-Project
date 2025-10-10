@@ -248,23 +248,23 @@ const externalSites = computed(() => props.anime?.anime_external_site_relations)
 /* Dark mode support with system preference */
 @media (prefers-color-scheme: dark) {
   .label {
-    color: var(--text-secondary-dark, #9ca3af);
+    color: var(--ui-text-muted, #9ca3af);
   }
   
   .value {
-    color: var(--text-primary-dark, #f9fafb);
+    color: var(--ui-text, #f9fafb);
   }
   
   .countdown {
-    background: var(--accent-color-dark, #374151);
+    background: var(--ui-text-highlighted, #374151);
   }
   
   .loading-placeholder {
-    color: var(--text-secondary-dark, #9ca3af);
+    color: var(--ui-text-muted, #9ca3af);
   }
   
   .no-data {
-    color: var(--text-secondary-dark, #9ca3af);
+    color: var(--ui-text-muted, #9ca3af);
   }
 }
 
