@@ -1,2 +1,14 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+:root {
+  --ui-primary: hsl(210, 100%, 35%);
+  --ui-bg: hsl(0, 0%, 90%);
+  --ui-border: hsl(0, 0%, 75%);
+}
+
+.dark {
+  --ui-primary: hsl(210, 70%, 56%);
+  --ui-bg: hsl(210, 40%, 10%);
+  --ui-border: hsl(210, 40%, 25%);
+}
