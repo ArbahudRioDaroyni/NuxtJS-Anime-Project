@@ -11,6 +11,8 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     const page = parseInt(query.page as string) || 1
     const limit = parseInt(query.limit as string) || 10
     const fields = query.fields as string | undefined
+    const format = query.format as string | undefined
+    const search = query.search as string | undefined
     
     // Calculate offset from page number
     const offset = (page - 1) * limit
@@ -18,19 +20,39 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     // Parse fields if provided
     const safeFields = fields ? JSON.parse(fields) : undefined
     
+    // Build where clause
+    const whereClause: Record<string, unknown> = { deleted_at: null }
+    
+    // Add format filter if provided
+    if (format) {
+      whereClause.release_format = {
+        name: format
+      }
+    }
+    
+    // Add search filter if provided
+    if (search) {
+      whereClause.OR = [
+        { title_romaji: { contains: search, mode: 'insensitive' } },
+        { title_english: { contains: search, mode: 'insensitive' } },
+        { title_native: { contains: search, mode: 'insensitive' } },
+        { slug: { contains: search, mode: 'insensitive' } }
+      ]
+    }
+    
     // Parallel queries for better performance
     const [animeList, totalCount] = await Promise.all([
       // Main query
       safeFields ? 
         prisma.anime.findMany({
-          where: { deleted_at: null },
+          where: whereClause,
           select: safeFields,
           take: limit,
           skip: offset,
           orderBy: { title_romaji: 'asc' }
         }) :
         prisma.anime.findMany({
-          where: { deleted_at: null },
+          where: whereClause,
           take: limit,
           skip: offset,
           orderBy: { title_romaji: 'asc' },
@@ -44,7 +66,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
       
       // Count query
       prisma.anime.count({
-        where: { deleted_at: null }
+        where: whereClause
       })
     ])
 
