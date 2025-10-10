@@ -6,9 +6,7 @@
       </template>
 
       <UNavigationMenu :items="links" highlight class="-mx-1 flex-1 py-7" />
-      <KeepAlive>
-        <NuxtPage :data="anime" />
-      </KeepAlive>
+      <NuxtPage :data="anime" />
     </UPage>
   </UContainer>
 </template>
