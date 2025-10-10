@@ -1,5 +1,55 @@
+<template>
+  <aside v-if="props.anime" class="sidebar-container">
+    <UDashboardSearch
+      v-model:search-term="searchTerm"
+      v-model:open="isSearchOpen"
+      shortcut="meta_k"
+      :groups="groups"
+      overlay
+      :fuse="{ resultLimit: 42 }"
+      @update:search-term="console.log('Search term updated:', $event)"
+    />
+
+    <UDashboardSearchButton @click="isSearchOpen = true" />
+
+    <!-- Search Component -->
+    <CommonSearch />
+
+    <!-- Rankings -->
+    <Rankings />
+
+    <!-- Main Details Card -->
+    <V1Card class="card-details" variant="outer" padding="sm">
+      <!-- Next Episode Countdown -->
+      <V1Card v-if="nextEpisodeCountdown" variant="inner" class="countdown">
+        {{ nextEpisodeCountdown }}
+      </V1Card>
+
+      <!-- Anime Details Grid -->
+      <div class="details-grid">
+        <V1Card 
+          v-for="(detail, index) in animeDetails" 
+          :key="`${detail.label}-${index}`"
+          variant="inner"
+          class="detail-item"
+          :class="{ 'full-col': detail.fullWidth }"
+        >
+          <span class="label">{{ detail.label }}</span>
+          <span class="value">{{ detail.value }}</span>
+        </V1Card>
+      </div>
+    </V1Card>
+
+    <ExternalSites :external-sites="externalSites" class="card-details" />
+  </aside>
+  <aside v-else class="sidebar-container">
+    <div class="no-data">No anime data available</div>
+  </aside>
+</template>
+
 <script setup lang="ts">
 import type { AnimeDetails } from '~/types/anime'
+import type { AnimeRelationRelation } from '~/types/relations'
 import ExternalSites from './ExternalSites.vue'
 import Rankings from './Rankings.vue'
 
@@ -14,6 +64,18 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const searchTerm = ref('')
+const isSearchOpen = ref(false)
+const groups = computed(() => [{
+  id: 'links',
+  label: 'Go to',
+  items: (props.anime?.anime_relation_relations_as_anime as AnimeRelationRelation[])?.map(relation => ({
+    id: relation?.reference_anime?.id.toString() || '',
+    label: relation?.reference_anime?.title_english || relation?.reference_anime?.title_romaji || 'Unknown',
+    icon: 'i-lucide-film',
+    to: `/${relation?.reference_anime?.slug || ''}`
+  }))
+}])
 
 // Utility functions - extracted dan memoized
 const formatters = {
@@ -105,43 +167,6 @@ const nextEpisodeCountdown = computed(() => {
 // Memoized external sites to prevent unnecessary re-renders
 const externalSites = computed(() => props.anime?.anime_external_site_relations)
 </script>
-
-<template>
-  <aside v-if="props.anime" class="sidebar-container">
-    <!-- Search Component -->
-    <CommonSearch />
-
-    <!-- Rankings -->
-    <Rankings />
-
-    <!-- Main Details Card -->
-    <V1Card class="card-details" variant="outer" padding="sm">
-      <!-- Next Episode Countdown -->
-      <V1Card v-if="nextEpisodeCountdown" variant="inner" class="countdown">
-        {{ nextEpisodeCountdown }}
-      </V1Card>
-
-      <!-- Anime Details Grid -->
-      <div class="details-grid">
-        <V1Card 
-          v-for="(detail, index) in animeDetails" 
-          :key="`${detail.label}-${index}`"
-          variant="inner"
-          class="detail-item"
-          :class="{ 'full-col': detail.fullWidth }"
-        >
-          <span class="label">{{ detail.label }}</span>
-          <span class="value">{{ detail.value }}</span>
-        </V1Card>
-      </div>
-    </V1Card>
-
-    <ExternalSites :external-sites="externalSites" class="card-details" />
-  </aside>
-  <aside v-else class="sidebar-container">
-    <div class="no-data">No anime data available</div>
-  </aside>
-</template>
 
 <style lang="scss" scoped>
 .sidebar-container {

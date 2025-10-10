@@ -1,10 +1,34 @@
-// Utility function untuk consistent number formatting
+/**
+ * Log any raw data to the console in development mode
+ * @param raw - any raw data to log
+ */
+export const useConsole = (raw: unknown) => {
+  if (import.meta.dev) {
+    useHead({ 
+      script: [
+        { innerHTML: `console.log(${JSON.stringify(raw, null, 2)})` }
+      ]
+    })
+  }
+}
+
+/**
+ * Format number with dot as thousand separator
+ * e.g. 1000000 -> 1.000.000
+ * @param num - the number to format
+ * @returns formatted number string
+ */
 export const formatNumber = (num: number | undefined | null): string => {
   if (!num) return 'N/A'
   // Force consistent formatting regardless of server/client locale
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 }
 
+/**
+ * Convert a string to start case (capitalize first letter of each word)
+ * @param str - input string
+ * @returns start case string
+ */
 export const startCase = (str: string): string => {
   if (!str) return ''
   // Convert to start case (capitalize first letter of each word)
@@ -18,6 +42,32 @@ export const startCase = (str: string): string => {
     // If no spaces, just capitalize the first letter
     return str.charAt(0).toUpperCase() + str.slice(1).toLocaleLowerCase()
   }
+}
+
+/**
+ * Throttle a function to only allow it to be called once every specified time period
+ * @param func - the function to throttle
+ * @param limit - the time period in milliseconds
+ * @returns a throttled version of the original function
+ */
+export function useThrottle<T extends (...args: unknown[]) => void>(func: T, limit: number): (...args: Parameters<T>) => void {
+  let lastFunc: ReturnType<typeof setTimeout> | undefined;
+  let lastRan: number | undefined;
+
+  return function(this: unknown, ...args: Parameters<T>) {
+    if (!lastRan) {
+      func.apply(this, args);
+      lastRan = Date.now();
+    } else {
+      if (lastFunc) clearTimeout(lastFunc);
+      lastFunc = setTimeout(() => {
+        if (lastRan && (Date.now() - lastRan) >= limit) {
+          func.apply(this, args);
+          lastRan = Date.now();
+        }
+      }, limit - (Date.now() - (lastRan ?? 0)));
+    }
+  };
 }
 
 export const descriptionParser = (raw: string) => {
