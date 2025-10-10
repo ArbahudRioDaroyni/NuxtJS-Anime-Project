@@ -68,24 +68,20 @@ const classes = computed(() => [
 </script>
 
 <style lang="scss">
-@media (prefers-color-scheme: dark) {
-  .base-card {
-    --color: hsl(from var(--primary-color) h s 90%);
-    --background-color: hsl(from var(--primary-color) h s 10%);
-    --shadow-color: hsl(from var(--primary-color) h s 4%);
-    --light-color: hsl(from var(--primary-color) h s 16%);
-  }
+.dark .base-card {
+  --color: hsl(from var(--background-color) h s 90%);
+  --shadow-color: hsl(from var(--background-color) h s 4%);
+  --light-color: hsl(from var(--background-color) h s 16%);
 }
-@media (prefers-color-scheme: light) {
-  .base-card {
-    --color: hsl(from var(--primary-color) h s 10%);
-    --background-color: hsl(from var(--primary-color) h s 97.5%);
-    --shadow-color: hsl(from var(--primary-color) h s 96%);
-    --light-color: hsl(from var(--primary-color) h s 84%);
-  }
+.base-card {
+  --color: hsl(from var(--background-color) h s 10%);
+  --shadow-color: hsl(from var(--background-color) h s 84%);
+  --light-color: hsl(from var(--background-color) h s 96%);
 }
 
 .base-card {
+  --background-color: var(--ui-bg);
+
   width: auto;
   height: auto;
   color: var(--color);
