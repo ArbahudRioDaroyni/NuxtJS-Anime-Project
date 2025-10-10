@@ -19,8 +19,6 @@
       class="border-none"
     />
 
-    {{ lastScrollTop }}
-
     <template #right>
       <UColorModeButton />
 
