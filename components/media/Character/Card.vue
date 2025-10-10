@@ -1,5 +1,6 @@
 <template>
   <V1Grid tag="ul" template="columns" length="400px">
+    <h2 class="col-span-full text-[1.5rem] font-bold">Characters</h2>
     <V1Card
       v-for="(item, index) in orderedCharacters"
       :key="`character-${index}`"

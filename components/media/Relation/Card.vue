@@ -1,5 +1,6 @@
 <template>
   <V1Grid tag="ul" template="columns" length="400px">
+    <h2 class="col-span-full text-[1.5rem] font-bold">Relations</h2>
     <V1Card
       v-for="(anime, index) in orderedRelations"
       :key="`relation-${index}`"
@@ -125,7 +126,7 @@ const orderedRelations = computed(() => {
         id: anime?.slug || Math.random().toString(),
         name: anime?.title_english || anime?.title_romaji || anime?.title_native || 'Unknown Anime',
         image: anime?.medium_cover_image_url || anime?.thumbnail_image_url || '/image/image-230x345.webp',
-        slug: anime?.slug || '#',
+        slug: `/${anime?.slug || '#'}`,
         relation_type: relation?.reference_type,
         relation_name: relation?.reference_type?.name || 'Unknown',
         status_type_name: (anime as AnimeDetails)?.status_type?.name || 'Unknown',
