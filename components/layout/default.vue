@@ -1,5 +1,5 @@
 <template>
-  <NuxtLoadingIndicator color="hsl(from var(--primary-color) h s 70%)" />
+  <NuxtLoadingIndicator color="var(--ui-primary)" />
   <RekaHeader />
   <slot />
   <RekaFooter />
