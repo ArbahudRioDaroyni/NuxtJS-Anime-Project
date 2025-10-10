@@ -40,106 +40,118 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 const items = ref<NavigationMenuItem[][]>([
   [
     {
-      label: 'Guide',
-      icon: 'i-lucide-book-open',
+      label: 'Anime',
       children: [
         {
-          label: 'Introduction',
-          description: 'Fully styled and customizable components for Nuxt.',
-          icon: 'i-lucide-house'
+          label: 'Anime Search',
+          icon: 'i-lucide-text-search',
+          description: 'Search for anime in the database.',
+          to: '/'
         },
         {
-          label: 'Installation',
-          description: 'Learn how to install and configure Nuxt UI in your application.',
-          icon: 'i-lucide-cloud-download'
+          label: 'Trending Anime',
+          icon: 'i-lucide-trending-up',
+          description: 'Find the most trending anime.',
+          to: '/'
         },
         {
-          label: 'Icons',
-          icon: 'i-lucide-smile',
-          description: 'You have nothing to do, @nuxt/icon will handle it automatically.'
+          label: 'Popular Anime',
+          icon: 'i-lucide-trending-up',
+          description: 'Find the most popular anime.',
+          to: '/'
         },
         {
-          label: 'Colors',
-          icon: 'i-lucide-swatch-book',
-          description: 'Choose a primary and a neutral color from your Tailwind CSS theme.'
+          label: 'Favorites Anime',
+          icon: 'i-lucide-heart',
+          description: 'Find your favorite anime.',
+          to: '/'
         },
         {
-          label: 'Theme',
-          icon: 'i-lucide-cog',
-          description:
-            'You can customize components by using the `class` / `ui` props or in your app.config.ts.'
-        }
+          label: 'Videos',
+          icon: 'i-lucide-list-video',
+          description: 'Find anime-related videos.',
+          to: '/'
+        },
+        {
+          label: 'Recommendations',
+          icon: 'i-lucide-thumbs-up',
+          description: 'Find anime based on your preferences.',
+          to: '/'
+        },
       ]
     },
     {
-      label: 'Composables',
-      icon: 'i-lucide-database',
-      children: [
-        {
-          label: 'defineShortcuts',
-          icon: 'i-lucide-file-text',
-          description: 'Define shortcuts for your application.',
-          to: '/docs/composables/define-shortcuts'
-        },
-        {
-          label: 'useOverlay',
-          icon: 'i-lucide-file-text',
-          description: 'Display a modal/slideover within your application.',
-          to: '/docs/composables/use-overlay'
-        },
-        {
-          label: 'useToast',
-          icon: 'i-lucide-file-text',
-          description: 'Display a toast within your application.',
-          to: '/docs/composables/use-toast'
-        }
-      ]
-    },
-    {
-      label: 'Components',
-      icon: 'i-lucide-box',
-      to: '/docs/components',
+      label: 'Manga',
+      to: '/',
       active: true,
       defaultOpen: true,
       children: [
         {
-          label: 'Link',
-          icon: 'i-lucide-file-text',
-          description: 'Use NuxtLink with superpowers.',
-          to: '/docs/components/link'
+          label: 'Manga Search',
+          icon: 'i-lucide-text-search',
+          description: 'Search for manga in the database.',
+          to: '/'
         },
         {
-          label: 'Modal',
-          icon: 'i-lucide-file-text',
+          label: 'Top Manga',
+          icon: 'i-lucide-trending-up',
           description: 'Display a modal within your application.',
-          to: '/docs/components/modal'
+          to: '/'
         },
         {
-          label: 'NavigationMenu',
+          label: 'Adapted to Anime',
           icon: 'i-lucide-file-text',
           description: 'Display a list of links.',
           to: '/docs/components/navigation-menu'
         },
         {
-          label: 'Pagination',
-          icon: 'i-lucide-file-text',
+          label: 'Recommendations',
+          icon: 'i-lucide-thumbs-up',
           description: 'Display a list of pages.',
           to: '/docs/components/pagination'
         },
+      ]
+    },
+    {
+      label: 'Browse',
+      to: '/',
+      children: [
         {
-          label: 'Popover',
-          icon: 'i-lucide-file-text',
-          description: 'Display a non-modal dialog that floats around a trigger element.',
-          to: '/docs/components/popover'
+          label: 'Staff',
+          icon: 'i-lucide-circle-user',
+          description: 'Search for staff in the database.',
+          to: '/'
         },
         {
-          label: 'Progress',
-          icon: 'i-lucide-file-text',
-          description: 'Show a horizontal bar to indicate task progression.',
-          to: '/docs/components/progress'
-        }
+          label: 'Character',
+          icon: 'i-lucide-users',
+          description: 'Find characters in the database.',
+          to: '/character/'
+        },
+        {
+          label: 'Voice Actor',
+          icon: 'i-lucide-mic',
+          description: 'Find voice actors in the database.',
+          to: '/'
+        },
+        {
+          label: 'Studio',
+          icon: 'i-lucide-house',
+          description: 'Find studios in the database.',
+          to: '/'
+        },
       ]
-    }
+    },
+    {
+      label: 'News',
+      icon: 'i-lucide-newspaper',
+      to: '/'
+    },
+    {
+      label: 'Blog',
+      icon: 'i-lucide-book-open-text',
+      to: '/'
+    },
   ],
   [
     {
@@ -152,6 +164,7 @@ const items = ref<NavigationMenuItem[][]>([
     {
       label: 'Help',
       icon: 'i-lucide-circle-help',
+      badge: { label: 'New', color: 'error', variant: 'solid', size: 'xs' },
       disabled: true
     }
   ]
