@@ -1,5 +1,6 @@
 <template>
   <UDashboardGroup unit="rem">
+    <NuxtLoadingIndicator color="var(--ui-primary)" />
     <UDashboardSidebar
       id="default"
       v-model:open="open"
@@ -36,11 +37,11 @@
     </UDashboardSidebar>
 
     <UDashboardSearch
-    v-model:search-term="searchTerm"
-    shortcut="meta_k"
-    :groups="groups"
-    :fuse="{ resultLimit: 42 }"
-  />
+      v-model:search-term="searchTerm"
+      shortcut="meta_k"
+      :groups="groups"
+      :fuse="{ resultLimit: 42 }"
+    />
 
     <slot />
 

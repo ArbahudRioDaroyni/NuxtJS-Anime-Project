@@ -5,15 +5,20 @@
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
+
+        <template #right>
+          <DashboardAddModal />
+        </template>
       </UDashboardNavbar>
     </template>
 
     <template #body>
       <div class="flex flex-wrap items-center justify-between gap-1.5">
-        <UInput v-model="filters" class="max-w-sm" placeholder="Filter..." />
+        <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filter..." />
+        <UInput v-model="search" class="max-w-sm" placeholder="Search..." />
 
         <div class="flex flex-wrap items-center gap-1.5">
-          <!-- <CustomersDeleteModal :count="table?.tableApi?.getFilteredSelectedRowModel().rows.length"> -->
+          <DashboardDeleteModal :count="totalSelectedCount" title="anime">
             <UButton
               v-if="totalSelectedCount > 0"
               label="Delete"
@@ -27,7 +32,7 @@
                 </UKbd>
               </template>
             </UButton>
-          <!-- </CustomersDeleteModal> -->
+          </DashboardDeleteModal>
 
           <USelect
             v-model="pageSize"
@@ -46,9 +51,16 @@
             v-model="statusFilter"
             :items="[
               { label: 'All', value: 'all' },
-              { label: 'Subscribed', value: 'subscribed' },
-              { label: 'Unsubscribed', value: 'unsubscribed' },
-              { label: 'Bounced', value: 'bounced' }
+              { label: 'TV', value: 'TV' },
+              { label: 'OVA', value: 'OVA' },
+              { label: 'Special', value: 'Special' },
+              { label: 'Movie', value: 'Movie' },
+              { label: 'ONA', value: 'ONA' },
+              { label: 'Web', value: 'Web' },
+              { label: 'Theatrical', value: 'Theatrical' },
+              { label: 'TV Short', value: 'TV Short' },
+              { label: 'Music', value: 'Music' },
+              { label: 'Unknown', value: 'Unknown' }
             ]"
             :ui="{ trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200' }"
             placeholder="Filter status"
@@ -85,7 +97,7 @@
 
       <UTable
         ref="table"
-        v-model:global-filter="filters"
+        v-model:global-filter="globalFilter"
         v-model:row-selection="rowSelection"
         :data="animes"
         :columns="columns"
@@ -97,7 +109,14 @@
         @select="onSelect"
       >
         <template #expanded="{ row }">
-          <pre>{{ row.original }}</pre>
+          <table class="min-w-full text-sm">
+            <tbody>
+              <tr v-for="(value, key) in row.original" :key="key">
+                <th class="text-left pr-4 font-semibold align-top">{{ key }}</th>
+                <td class="break-all">{{ value }}</td>
+              </tr>
+            </tbody>
+          </table>
         </template>
       </UTable>
 
@@ -134,21 +153,26 @@ import type { Row, Column } from '@tanstack/table-core'
 import { h, resolveComponent } from 'vue'
 import { upperFirst } from 'scule'
 
+const UAvatar = resolveComponent('UAvatar')
 const UCheckbox = resolveComponent('UCheckbox')
 const UButton = resolveComponent('UButton')
 const UBadge = resolveComponent('UBadge')
 const UDropdownMenu = resolveComponent('UDropdownMenu')
 
-const statusFilter = ref('all')
 const toast = useToast()
 const table = useTemplateRef('table')
+const search = ref('')
+const globalFilter = ref('')
 const rowSelection = ref<Record<string, boolean>>({})
 
-const filters = ref('')
+// Debounced search value
+const debouncedSearch = ref('')
+let searchTimeout: NodeJS.Timeout | null = null
 
 // Server-side pagination state
 const currentPage = ref(1)
 const pageSize = ref(10)
+const statusFilter = ref('all')
 
 // Fetch data from API with pagination using useAsyncData
 const { data: response, pending, error: _error, refresh: _refresh } = await useAsyncData<ResponseType>(
@@ -156,11 +180,13 @@ const { data: response, pending, error: _error, refresh: _refresh } = await useA
   () => $fetch('/api/anime', {
     query: {
       page: currentPage.value,
-      limit: pageSize.value
+      limit: pageSize.value,
+      format: statusFilter.value !== 'all' ? statusFilter.value : undefined,
+      search: debouncedSearch.value || undefined
     }
   }),
   {
-    watch: [currentPage, pageSize]
+    watch: [currentPage, pageSize, statusFilter, debouncedSearch]
   }
 )
 
@@ -203,6 +229,11 @@ const columns: TableColumn<AnimeDetails>[] = [
       })
   },
   {
+    accessorKey: 'id',
+    header: ({ column }) => getHeader(column, 'ID', 'left'),
+    cell: ({ row }) => `#${row.original.id.toString()}`
+  },
+  {
     id: 'expand',
     cell: ({ row }) =>
       h(UButton, {
@@ -222,24 +253,14 @@ const columns: TableColumn<AnimeDetails>[] = [
       })
   },
   {
-    accessorKey: 'id',
-    header: ({ column }) => getHeader(column, 'ID', 'left'),
-    cell: ({ row }) => `#${row.getValue('id')}`
-  },
-  {
     accessorKey: 'slug',
-    header: 'Slug',
-    cell: ({ row }) => row.getValue('slug')
-  },
-  {
-    accessorKey: 'title_romaji',
     header: ({ column }) => {
       const isSorted = column.getIsSorted()
 
       return h(UButton, {
         color: 'neutral',
         variant: 'ghost',
-        label: 'Title Romaji',
+        label: 'Title',
         icon: isSorted
           ? isSorted === 'asc'
             ? 'i-lucide-arrow-up-narrow-wide'
@@ -249,7 +270,18 @@ const columns: TableColumn<AnimeDetails>[] = [
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
       })
     },
-    cell: ({ row }) => row.getValue('title_romaji'),
+    cell: ({ row }) => {
+      return h('div', { class: 'flex items-center gap-3' }, [
+        h(UAvatar, {
+          src: row.original.thumbnail_image_url || row.original.medium_cover_image_url || row.original.large_cover_image_url || undefined,
+          size: 'lg'
+        }),
+        h('div', undefined, [
+          h('p', { class: 'font-medium text-highlighted' }, row.original.title_romaji || row.original.title_english || row.original.title_native || 'Unknown Title'),
+          h('p', { class: '' }, `/${row.original.slug}`)
+        ])
+      ])
+    }
   },
   {
     accessorKey: 'status_type',
@@ -314,7 +346,6 @@ const columns: TableColumn<AnimeDetails>[] = [
   },
   {
     id: 'actions',
-    header: () => h('div', { class: 'text-gray-500' }, 'Actions'),
     cell: ({ row }) => {
       return h(
         'div',
@@ -355,6 +386,13 @@ function getRowItems(row: Row<AnimeDetails>) {
           title: 'Copied to clipboard',
           description: 'Customer ID copied to clipboard'
         })
+      }
+    },
+    {
+      label: 'View anime',
+      icon: 'i-lucide-eye',
+      onSelect() {
+        window.open(`/${row.original.slug}`, '_blank')
       }
     },
     {
@@ -407,16 +445,19 @@ function getHeader(column: Column<AnimeDetails>, label: string, position: 'left'
 }
 
 watch(() => statusFilter.value, (newVal) => {
-  if (!table?.value?.tableApi) return
-
-  const statusColumn = table.value.tableApi.getColumn('id')
-  if (!statusColumn) return
-
-  if (newVal === 'all') {
-    statusColumn.setFilterValue(undefined)
-  } else {
-    statusColumn.setFilterValue(newVal)
+  // Reset to page 1 when filter changes
+  if (newVal !== 'all') {
+    currentPage.value = 1
   }
+})
+
+// Reset to page 1 when search changes
+watch(() => search.value, (newVal) => {
+  if (searchTimeout) clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    debouncedSearch.value = newVal
+    currentPage.value = 1
+  }, 500) // Wait 500ms after user stops typing
 })
 
 // Reset to page 1 when pageSize changes
