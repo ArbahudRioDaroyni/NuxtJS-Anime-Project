@@ -6,12 +6,13 @@ const prisma = getPrismaClient()
 
 export default defineEventHandler(async (event: H3Event): Promise<ResponseType> => {
   try {
-    const key = getRouterParam(event, 'id')
     const query = getQuery(event)
-    const searchBySlug = useStringValidator(query['search-by'], '', 255) === 'slug' ? true : false
+    const key = getRouterParam(event, 'id')
     const safeId = useNumberValidator(key, NaN, -1)
     const isValidId = !isNaN(safeId) && safeId > 0
+    const searchBySlug = useStringValidator(query['search-by'], '', 255) === 'slug' ? true : false
     const safeSlug = useSlugValidator(key)
+
     const whereClause = searchBySlug
       ? { slug: String(safeSlug), deleted_at: null }
       : { id: safeId, deleted_at: null }
@@ -32,13 +33,6 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         status_type: { omit: { id: true } },
         source_media_type: { omit: { id: true } },
         season: true,
-        anime_studio_relations: {
-          select: {
-            studio: { omit: { id: true } },
-            is_main: true
-          }
-        },
-        anime_genre_relations: true,
         anime_external_site_relations: {
           select: {
             url: true,
@@ -64,28 +58,9 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
                 name: true
               }
             }
-          }
+          },
+          take: 6
         },
-        anime_relation_relations_as_reference_anime: {
-          select: {
-            reference_anime: {
-              select: {
-                id: true,
-                slug: true,
-                title_romaji: true,
-                title_english: true,
-                medium_cover_image_url: true
-              }
-            },
-            reference_type: {
-              select: {
-                id: true,
-                name: true
-              }
-            }
-          }
-        },
-        anime_tag_relations: true,
         anime_characters_voice_actor_relations: {
           select: {
             character: {
@@ -109,14 +84,14 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
               select: { name: true }
             }
           },
-          // take: 15
+          take: 6
         },
         anime_staff_relations: {
           select: {
             staff: true,
             staff_role: { select: { name: true } }
           },
-          // take: 10
+          take: 6
         },
       }
     })

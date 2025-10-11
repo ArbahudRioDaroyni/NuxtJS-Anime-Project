@@ -20,6 +20,7 @@ export interface ResponseType {
     prevLink?: string | null
     season?: string
     year?: string
+    searchSuggestions?: string[]
     [key: string]: unknown
   }
 }

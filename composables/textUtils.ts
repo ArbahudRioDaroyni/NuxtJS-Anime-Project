@@ -1,18 +1,4 @@
 /**
- * Log any raw data to the console in development mode
- * @param raw - any raw data to log
- */
-export const useConsole = (raw: unknown) => {
-  if (import.meta.dev) {
-    useHead({ 
-      script: [
-        { innerHTML: `console.log(${JSON.stringify(raw, null, 2)})` }
-      ]
-    })
-  }
-}
-
-/**
  * Format number with dot as thousand separator
  * e.g. 1000000 -> 1.000.000
  * @param num - the number to format
