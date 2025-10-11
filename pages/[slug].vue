@@ -1,14 +1,27 @@
 <template>
-  <UContainer as="main" class="mt-[5rem]">
-    <UPage>
-      <template #left>
-        <MediaAnimeSidebar :anime="anime" />
-      </template>
+  <UMain>
+    <UPageHero v-if="anime?.banner_image_url" as="figure">
+      <NuxtImg
+        :src="anime.banner_image_url"
+        alt="Banner Image"
+        class="absolute inset-0 h-full w-full object-cover"
+        :sizes="`(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 1200px`"
+        :lazy="true"
+        :priority="true"
+        :quality="80"
+      />
+    </UPageHero>
+    <UContainer as="section" :class="[anime?.banner_image_url ? 'mt-8 mb-[7rem]' : 'my-[7rem]']">
+      <UPage>
+        <template #left>
+          <MediaAnimeSidebar :anime="anime" />
+        </template>
 
-      <UNavigationMenu :items="links" highlight class="-mx-1 flex-1 py-7" />
-      <NuxtPage :data="anime" />
-    </UPage>
-  </UContainer>
+        <UNavigationMenu :items="links" highlight class="-mx-1 flex-1 py-7 pt-0" />
+        <NuxtPage :data="anime" :slug="anime?.slug" />
+      </UPage>
+    </UContainer>
+  </UMain>
 </template>
 
 <script setup lang="ts">
@@ -29,21 +42,21 @@ const links = [[{
   icon: 'i-lucide-play-circle',
   to: `/${slug.value}/watch`
 }, {
-  label: 'Characters',
-  icon: 'i-lucide-users',
-  to: `/${slug.value}/characters`
-}, {
+//   label: 'Social',
+//   icon: 'i-lucide-message-square',
+//   to: `/${slug.value}/social`
+// }, {
   label: 'Staffs',
   icon: 'i-lucide-briefcase',
   to: `/${slug.value}/staffs`
 }, {
-  label: 'Social',
-  icon: 'i-lucide-message-square',
-  to: `/${slug.value}/social`
+  label: 'Characters',
+  icon: 'i-lucide-users',
+  to: `/${slug.value}/characters`
 }]] satisfies NavigationMenuItem[][]
 
 const { data: response, pending, error } = await useFetch<ResponseType>(
-  `/api/anime/${slug.value}?search-by=slug`, 
+  `/api/anime/${slug.value}?search-by=slug`,
   {
     key: `anime-${slug.value}`,
     server: true,
@@ -65,7 +78,7 @@ watchEffect(() => {
         statusMessage: 'Failed to load anime data'
       })
     }
-    
+  
     if (!anime.value || !response.value?.success) {
       throw createError({
         statusCode: 404,
@@ -77,13 +90,4 @@ watchEffect(() => {
 
 const { seoMeta } = useAnimeSeo(anime)
 useSeoMeta(seoMeta.value)
-
-// if (import.meta.dev) {
-//   useHead({ 
-//     script: [
-//       { innerHTML: `console.log(${JSON.stringify(anime.value, null, 2)})` },
-//       { innerHTML: `console.log(${JSON.stringify(seoMeta.value, null, 2)})` }
-//     ]
-//   })
-// }
 </script>

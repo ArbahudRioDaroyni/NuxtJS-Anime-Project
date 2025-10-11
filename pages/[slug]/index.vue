@@ -1,8 +1,8 @@
 <template>
   <div class="space-y-6">
-    <MediaRelationCard :data="relations" :count-show="12" />
-    <MediaCharacterCard :data="characters" :count-show="6" />
-    <MediaStaffCard :data="staffs" :count-show="6" />
+    <MediaRelationCard :data="relations" />
+    <MediaCharacterCard :data="characters" />
+    <MediaStaffCard :data="staffs" />
     <section v-if="trailerUrl">
       <h2 class="overview-title">Trailer</h2>
       <V1Card variant="inner">
