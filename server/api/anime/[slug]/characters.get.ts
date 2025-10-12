@@ -7,7 +7,7 @@ const prisma = getPrismaClient()
 export default defineEventHandler(async (event: H3Event): Promise<ResponseType> => {
   try {
     const slug = getRouterParam(event, 'slug')
-    
+   
     if (!slug) {
       return {
         success: false,
@@ -38,52 +38,39 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
           select: {
             anime_characters_voice_actor_relations: true
           }
+        },
+        anime_characters_voice_actor_relations: {
+          select: {
+            id: true,
+            anime_id: true,
+            character_id: true,
+            character_role_id: true,
+            voice_actor_id: true,
+            character: true,
+            voice_actor: true,
+            character_role: true
+          },
+          take: limit,
+          skip: offset
         }
       }
     })
 
-    if (!anime) {
-      return {
-        success: false,
-        code: 404,
-        message: `Anime with slug '${slug}' not found`,
-        length: 0,
-        data: []
-      }
-    }
-
-    // Get characters with pagination
-    const characters = await prisma.anime_characters_voice_actor_relations.findMany({
-      where: {
-        anime_id: anime.id
-      },
-      include: {
-        character: true,
-        voice_actor: true,
-        character_role: true
-      },
-      orderBy: {
-        character_role: {
-          name: 'asc'
-        }
-      },
-      take: limit,
-      skip: offset
-    })
-
-    const totalCount = anime._count.anime_characters_voice_actor_relations
+    const characters = anime?.anime_characters_voice_actor_relations || []
+    const charactersLenght = characters?.length || 0
+    const totalCount = anime?._count.anime_characters_voice_actor_relations || 0
     const totalPages = Math.ceil(totalCount / limit)
 
     return {
       success: true,
       code: 200,
       message: 'Characters retrieved successfully',
-      length: characters.length,
+      length: charactersLenght,
       data: characters,
       meta: {
-        anime_id: anime.id,
-        anime_slug: anime.slug,
-        anime_title: anime.title_romaji,
+        anime_id: anime?.id,
+        anime_slug: anime?.slug,
+        anime_title: anime?.title_romaji,
         total: totalCount,
         page: page,
         limit: limit,

@@ -27,7 +27,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     // Generate slug from title
     const slug = (body.slug || body.title_romaji || body.title_english || '')
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/[^a-z0-9.]+/g, '-')
       .replace(/^-+|-+$/g, '')
 
     // Check if slug already exists

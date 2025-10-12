@@ -10,7 +10,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     const query = getQuery(event)
     const page = parseInt(query.page as string) || 1
     const limit = parseInt(query.limit as string) || 10
-    const fields = query.fields as string | undefined
+    const fields = event.context.safeFields
     const format = query.format as string | undefined
     const search = query.search as string | undefined
     
@@ -18,7 +18,9 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     const offset = (page - 1) * limit
     
     // Parse fields if provided
-    const safeFields = fields ? JSON.parse(fields) : undefined
+    console.log('Fields:', typeof fields)
+    // const safeFields = fields ? JSON.parse(fields) : undefined
+
     
     // Build where clause
     const whereClause: Record<string, unknown> = { deleted_at: null }
@@ -43,10 +45,10 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     // Parallel queries for better performance
     const [animeList, totalCount] = await Promise.all([
       // Main query
-      safeFields ? 
+      fields ? 
         prisma.anime.findMany({
           where: whereClause,
-          select: safeFields,
+          select: fields,
           take: limit,
           skip: offset,
           orderBy: { title_romaji: 'asc' }

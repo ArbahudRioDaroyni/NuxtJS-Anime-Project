@@ -38,51 +38,44 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
           select: {
             anime_staff_relations: true
           }
+        },
+        anime_staff_relations: {
+          select: {
+            id: true,
+            anime_id: true,
+            staff_id: true,
+            staff_role_id: true,
+            language: true,
+            version: true,
+            episodes: true,
+            openings: true,
+            endings: true,
+            promotions: true,
+            additional_info: true,
+            staff: true,
+            staff_role: true
+          },
+          take: limit,
+          skip: offset
         }
       }
     })
 
-    if (!anime) {
-      return {
-        success: false,
-        code: 404,
-        message: `Anime with slug '${slug}' not found`,
-        length: 0,
-        data: []
-      }
-    }
-
-    // Get staffs with pagination
-    const staffs = await prisma.anime_staff_relations.findMany({
-      where: {
-        anime_id: anime.id
-      },
-      include: {
-        staff: true,
-        staff_role: true
-      },
-      orderBy: {
-        staff_role: {
-          name: 'asc'
-        }
-      },
-      take: limit,
-      skip: offset
-    })
-
-    const totalCount = anime._count.anime_staff_relations
+    const staffs = anime?.anime_staff_relations || []
+    const staffsLenght = staffs?.length || 0
+    const totalCount = anime?._count.anime_staff_relations || 0
     const totalPages = Math.ceil(totalCount / limit)
 
     return {
       success: true,
       code: 200,
       message: 'Staffs retrieved successfully',
-      length: staffs.length,
+      length: staffsLenght,
       data: staffs,
       meta: {
-        anime_id: anime.id,
-        anime_slug: anime.slug,
-        anime_title: anime.title_romaji,
+        anime_id: anime?.id,
+        anime_slug: anime?.slug,
+        anime_title: anime?.title_romaji,
         total: totalCount,
         page: page,
         limit: limit,
