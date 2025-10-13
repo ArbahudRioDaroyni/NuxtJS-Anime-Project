@@ -17,11 +17,6 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     // Calculate offset from page number
     const offset = (page - 1) * limit
     
-    // Parse fields if provided
-    console.log('Fields:', typeof fields)
-    // const safeFields = fields ? JSON.parse(fields) : undefined
-
-    
     // Build where clause
     const whereClause: Record<string, unknown> = { deleted_at: null }
     
@@ -51,13 +46,13 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
           select: fields,
           take: limit,
           skip: offset,
-          orderBy: { title_romaji: 'asc' }
+          orderBy: { created_at: 'desc' }
         }) :
         prisma.anime.findMany({
           where: whereClause,
           take: limit,
           skip: offset,
-          orderBy: { title_romaji: 'asc' },
+          orderBy: { created_at: 'desc' },
           include: {
             media_type: true,
             release_format: true,

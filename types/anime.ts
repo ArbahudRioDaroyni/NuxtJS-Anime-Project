@@ -83,10 +83,11 @@ export interface AnimeDetails extends Anime {
 }
 
 // Input type for creating/updating anime
-export interface AnimeCreateInput extends Partial<Anime> {
+export interface AnimeCreateInput extends Partial<Omit<Anime, 'id'>> {
   title_romaji: string
   title_english: string
-  title_native: string
+  studio_ids?: number[]
+  genre_ids?: number[]
 }
 
 // Update type (partial of create input)

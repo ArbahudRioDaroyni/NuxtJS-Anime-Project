@@ -7,7 +7,7 @@
         </template>
 
         <template #right>
-          <DashboardAddModal />
+          <DashboardAnimesAddModal />
         </template>
       </UDashboardNavbar>
     </template>
@@ -18,13 +18,18 @@
         <UInput v-model="search" class="max-w-sm" placeholder="Search..." />
 
         <div class="flex flex-wrap items-center gap-1.5">
-          <DashboardDeleteModal :count="totalSelectedCount" title="anime">
+          <DashboardDeleteModal 
+            v-if="totalSelectedCount > 0"
+            :count="totalSelectedCount" 
+            title="anime"
+            @confirm="bulkDeleteAnimes(false)"
+          >
             <UButton
-              v-if="totalSelectedCount > 0"
               label="Delete"
               color="error"
               variant="subtle"
               icon="i-lucide-trash"
+              :loading="isDeleting"
             >
               <template #trailing>
                 <UKbd>
@@ -33,6 +38,49 @@
               </template>
             </UButton>
           </DashboardDeleteModal>
+          
+          <UModal 
+            v-if="totalSelectedCount > 0"
+            v-model:open="showPermanentDeleteConfirm"
+            title="Permanent Delete Confirmation"
+            :description="`Are you sure you want to permanently delete ${totalSelectedCount} anime(s)? This action cannot be undone.`"
+          >
+            <UButton
+              label="Delete Permanent"
+              color="error"
+              variant="solid"
+              icon="i-lucide-trash-2"
+              :loading="isDeleting"
+            >
+              <template #trailing>
+                <UKbd>
+                  {{ totalSelectedCount }}
+                </UKbd>
+              </template>
+            </UButton>
+            
+            <template #body>
+              <div class="flex justify-end gap-2">
+                <UButton
+                  label="Cancel"
+                  color="neutral"
+                  variant="subtle"
+                  :disabled="isDeleting"
+                  @click="showPermanentDeleteConfirm = false"
+                />
+                <UButton
+                  label="Delete Permanently"
+                  color="error"
+                  variant="solid"
+                  :loading="isDeleting"
+                  @click="async () => {
+                    await bulkDeleteAnimes(true)
+                    showPermanentDeleteConfirm = false
+                  }"
+                />
+              </div>
+            </template>
+          </UModal>
 
           <USelect
             v-model="pageSize"
@@ -164,6 +212,8 @@ const table = useTemplateRef('table')
 const search = ref('')
 const globalFilter = ref('')
 const rowSelection = ref<Record<string, boolean>>({})
+const isDeleting = ref(false)
+const showPermanentDeleteConfirm = ref(false)
 
 // Debounced search value
 const debouncedSearch = ref('')
@@ -208,6 +258,109 @@ const meta = computed(() => ({
 const totalSelectedCount = computed(() => {
   return Object.keys(rowSelection.value).length
 })
+
+// Get selected anime IDs
+const selectedAnimeIds = computed(() => {
+  return Object.keys(rowSelection.value).map(id => parseInt(id))
+})
+
+// Delete single anime
+async function deleteAnime(id: number, force = false) {
+  isDeleting.value = true
+  
+  try {
+    const response = await $fetch<ResponseType>(`/api/anime/${id}`, {
+      method: 'DELETE',
+      query: { force: force.toString() }
+    })
+    
+    if (response.success) {
+      toast.add({
+        title: 'Success',
+        description: force ? 'Anime permanently deleted' : 'Anime deleted successfully',
+        color: 'success'
+      })
+      
+      // Refresh data
+      await refreshNuxtData('animes')
+      
+      // Clear selection if deleted
+      if (rowSelection.value[id.toString()]) {
+        delete rowSelection.value[id.toString()]
+      }
+    } else {
+      toast.add({
+        title: 'Error',
+        description: response.message || 'Failed to delete anime',
+        color: 'error'
+      })
+    }
+  } catch (error) {
+    toast.add({
+      title: 'Error',
+      description: error instanceof Error ? error.message : 'An error occurred',
+      color: 'error'
+    })
+  } finally {
+    isDeleting.value = false
+  }
+}
+
+// Bulk delete selected animes
+async function bulkDeleteAnimes(force = false) {
+  if (selectedAnimeIds.value.length === 0) {
+    toast.add({
+      title: 'Warning',
+      description: 'No animes selected',
+      color: 'warning'
+    })
+    return
+  }
+  
+  isDeleting.value = true
+  
+  try {
+    const deletePromises = selectedAnimeIds.value.map(id => 
+      $fetch<ResponseType>(`/api/anime/${id}`, {
+        method: 'DELETE',
+        query: { force: force.toString() }
+      })
+    )
+    
+    const results = await Promise.allSettled(deletePromises)
+    
+    const successCount = results.filter(r => r.status === 'fulfilled' && (r.value as ResponseType).success).length
+    const failCount = results.length - successCount
+    
+    if (successCount > 0) {
+      toast.add({
+        title: 'Success',
+        description: `${successCount} anime(s) deleted successfully${failCount > 0 ? `, ${failCount} failed` : ''}`,
+        color: successCount === results.length ? 'success' : 'warning'
+      })
+      
+      // Refresh data
+      await refreshNuxtData('animes')
+      
+      // Clear selection
+      rowSelection.value = {}
+    } else {
+      toast.add({
+        title: 'Error',
+        description: 'Failed to delete selected animes',
+        color: 'error'
+      })
+    }
+  } catch (error) {
+    toast.add({
+      title: 'Error',
+      description: error instanceof Error ? error.message : 'An error occurred',
+      color: 'error'
+    })
+  } finally {
+    isDeleting.value = false
+  }
+}
 
 const columns: TableColumn<AnimeDetails>[] = [
   {
@@ -378,13 +531,14 @@ function getRowItems(row: Row<AnimeDetails>) {
       label: 'Actions'
     },
     {
-      label: 'Copy customer ID',
+      label: 'Copy anime ID',
       icon: 'i-lucide-copy',
       onSelect() {
         navigator.clipboard.writeText(row.original.id.toString())
         toast.add({
           title: 'Copied to clipboard',
-          description: 'Customer ID copied to clipboard'
+          description: 'Anime ID copied to clipboard',
+          color: 'success'
         })
       }
     },
@@ -399,25 +553,35 @@ function getRowItems(row: Row<AnimeDetails>) {
       type: 'separator'
     },
     {
-      label: 'View customer details',
-      icon: 'i-lucide-list'
-    },
-    {
-      label: 'View customer payments',
-      icon: 'i-lucide-wallet'
+      label: 'Edit anime',
+      icon: 'i-lucide-pencil',
+      onSelect() {
+        toast.add({
+          title: 'Coming soon',
+          description: 'Edit feature will be available soon',
+          color: 'info'
+        })
+      }
     },
     {
       type: 'separator'
     },
     {
-      label: 'Delete customer',
+      label: 'Delete anime (soft)',
       icon: 'i-lucide-trash',
+      color: 'warning',
+      onSelect() {
+        deleteAnime(row.original.id, false)
+      }
+    },
+    {
+      label: 'Delete anime (permanent)',
+      icon: 'i-lucide-trash-2',
       color: 'error',
       onSelect() {
-        toast.add({
-          title: 'Customer deleted',
-          description: 'The customer has been deleted.'
-        })
+        if (window.confirm(`Are you sure you want to permanently delete "${row.original.title_english || row.original.title_romaji}"? This action cannot be undone.`)) {
+          deleteAnime(row.original.id, true)
+        }
       }
     }
   ]
