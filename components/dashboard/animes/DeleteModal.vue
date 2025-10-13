@@ -9,23 +9,11 @@ withDefaults(defineProps<{
   description: 'Are you sure, this action cannot be undone.'
 })
 
-const emit = defineEmits<{
-  confirm: []
-}>()
-
 const open = ref(false)
-const loading = ref(false)
 
 async function onSubmit() {
-  loading.value = true
-  try {
-    emit('confirm')
-    // Wait a bit before closing to allow parent to handle
-    await new Promise(resolve => setTimeout(resolve, 500))
-    open.value = false
-  } finally {
-    loading.value = false
-  }
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  open.value = false
 }
 </script>
 
@@ -43,14 +31,13 @@ async function onSubmit() {
           label="Cancel"
           color="neutral"
           variant="subtle"
-          :disabled="loading"
           @click="open = false"
         />
         <UButton
           label="Delete"
           color="error"
           variant="solid"
-          :loading="loading"
+          loading-auto
           @click="onSubmit"
         />
       </div>
