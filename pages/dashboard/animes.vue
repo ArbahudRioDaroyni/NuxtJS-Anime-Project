@@ -189,6 +189,15 @@
         />
       </div>
     </template>
+
+    <!-- Edit Modal -->
+    <DashboardAnimesEditModal
+      v-if="selectedAnimeForEdit"
+      :anime="selectedAnimeForEdit"
+      :open="showEditModal"
+      @close="handleEditModalClose"
+      @updated="handleAnimeUpdated"
+    />
   </UDashboardPanel>
 </template>
 
@@ -214,6 +223,10 @@ const globalFilter = ref('')
 const rowSelection = ref<Record<string, boolean>>({})
 const isDeleting = ref(false)
 const showPermanentDeleteConfirm = ref(false)
+
+// Edit modal state
+const showEditModal = ref(false)
+const selectedAnimeForEdit = ref<AnimeDetails | null>(null)
 
 // Debounced search value
 const debouncedSearch = ref('')
@@ -285,9 +298,9 @@ async function deleteAnime(id: number, force = false) {
       await refreshNuxtData('animes')
       
       // Clear selection if deleted
-      if (rowSelection.value[id.toString()]) {
-        delete rowSelection.value[id.toString()]
-      }
+      // if (rowSelection.value[id.toString()]) {
+      //   delete rowSelection.value[id.toString()]
+      // }
     } else {
       toast.add({
         title: 'Error',
@@ -556,11 +569,8 @@ function getRowItems(row: Row<AnimeDetails>) {
       label: 'Edit anime',
       icon: 'i-lucide-pencil',
       onSelect() {
-        toast.add({
-          title: 'Coming soon',
-          description: 'Edit feature will be available soon',
-          color: 'info'
-        })
+        selectedAnimeForEdit.value = row.original
+        showEditModal.value = true
       }
     },
     {
@@ -628,6 +638,18 @@ watch(() => search.value, (newVal) => {
 watch(() => pageSize.value, () => {
   currentPage.value = 1
 })
+
+// Handle edit modal actions
+function handleEditModalClose() {
+  showEditModal.value = false
+  selectedAnimeForEdit.value = null
+}
+
+function handleAnimeUpdated() {
+  showEditModal.value = false
+  selectedAnimeForEdit.value = null
+  // Data will be refreshed automatically via the EditModal component
+}
 
 definePageMeta({
   layout: 'dashboard'
