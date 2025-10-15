@@ -6,6 +6,9 @@
   --ui-bg: hsl(0, 0%, 90%);
   --ui-border: hsl(0, 0%, 75%);
   --ui-text-muted: var(--ui-color-neutral-600);
+
+  --card-shadow-color: hsl(from var(--ui-bg) h s 84%);
+  --card-light-color: hsl(from var(--ui-bg) h s 96%);
 }
 
 .dark {
@@ -13,4 +16,7 @@
   --ui-bg: hsl(210, 40%, 10%);
   --ui-border: hsl(210, 40%, 25%);
   --ui-text-muted: var(--ui-color-neutral-300);
+
+  --card-shadow-color: hsl(from var(--ui-bg) h s 4%);
+  --card-light-color: hsl(from var(--ui-bg) h s 16%);
 }
