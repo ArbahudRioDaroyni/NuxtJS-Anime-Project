@@ -21,9 +21,11 @@
           <NuxtLink :to="item[0]?.slug">
             {{ item[0]?.name }}
           </NuxtLink>
-          <V1Badge
-            :variant="getGradientBadgeColor(item[0]?.character_role || '')"
-            :text="item[0]?.character_role"
+          <UBadge
+            :label="item[0]?.character_role"
+            :color="getGradientBadgeColor(item[0]?.character_role || '')"
+            variant="solid"
+            size="md"
           />
         </div>
       </div>
@@ -58,11 +60,11 @@ const props = defineProps<{
 const getGradientBadgeColor = (type: string) => {
   switch (type.toUpperCase()) {
     case 'MAIN':
-      return 'megatron'
+      return 'gradient-megatron'
     case 'SUPPORTING':
-      return 'arctic'
+      return 'gradient-arctic'
     default:
-      return 'cloudy'
+      return 'gradient-cloudy'
   }
 }
 

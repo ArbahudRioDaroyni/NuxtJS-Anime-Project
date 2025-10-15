@@ -77,9 +77,11 @@
                 <NuxtLink :to="`/voice_actor/${item?.voice_actor?.id}-${item?.voice_actor?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`">
                   {{ item?.voice_actor?.name }}
                 </NuxtLink>
-                <V1Badge
-                  :variant="getGradientBadgeColor(item.character_role?.name || '')"
-                  :text="item.character_role?.name"
+                <UBadge
+                  :label="item.character_role?.name"
+                  :color="getGradientBadgeColor(item.character_role?.name || '')"
+                  variant="solid"
+                  size="md"
                 />
               </div>
             </div>
@@ -176,16 +178,17 @@ const meta = computed(() => {
   }
 })
 
-function getGradientBadgeColor(role?: string): string {
-  if (!role) return 'arctic'
-  
-  const roleMap = {
-    MAIN: 'oceanic',
-    SUPPORTING: 'megatron', 
-    BACKGROUND: 'tranquil'
-  } as const
-  
-  return roleMap[role.toUpperCase() as keyof typeof roleMap] || 'arctic'
+const getGradientBadgeColor = (type: string) => {
+  switch (type.toUpperCase()) {
+    case 'MAIN':
+      return 'gradient-megatron'
+    case 'SUPPORTING':
+      return 'gradient-delicate'
+    case 'BACKGROUND':
+      return 'gradient-sky'
+    default:
+      return 'gradient-cloudy'
+  }
 }
 
 useHead({script: [ { innerHTML: `console.log(${JSON.stringify(character.value, null, 2)})` }, { innerHTML: `console.log(${JSON.stringify(description.value, null, 2)})` } ]})
