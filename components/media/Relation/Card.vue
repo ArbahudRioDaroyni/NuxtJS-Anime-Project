@@ -22,10 +22,12 @@
         <NuxtLink :to="anime?.slug">
           {{ anime?.name }}
         </NuxtLink>
-        <V1Badge
+        <UBadge
           v-if="anime?.relation_type"
-          :variant="getGradientBadgeColor(anime?.relation_name)"
-          :text="anime?.relation_name"
+          :label="anime?.relation_name"
+          :color="getGradientBadgeColor(anime?.relation_name)"
+          variant="solid"
+          size="md"
         />
         <div>
           <span 
@@ -60,25 +62,25 @@ const props = defineProps<{
 const getGradientBadgeColor = (type: string) => {
   switch (type.toUpperCase()) {
     case 'SEQUEL':
-      return 'megatron'
+      return 'gradient-megatron'
     case 'PREQUEL':
-      return 'arctic'
+      return 'gradient-fresco'
     case 'SIDE_STORY':
-      return 'tranquil'
+      return 'gradient-tranquil'
     case 'SPIN_OFF':
-      return 'maldives'
+      return 'gradient-maldives'
     case 'ALTERNATIVE':
-      return 'martini'
+      return 'gradient-martini'
     case 'SUMMARY':
-      return 'oceanic'
+      return 'gradient-oceanic'
     case 'CHARACTER':
-      return 'blossom'
+      return 'gradient-blossom'
     case 'ADAPTATION':
-      return 'margo'
+      return 'gradient-disco'
     case 'PARENT':
-      return 'sky'
+      return 'gradient-sky'
     default:
-      return 'cloudy'
+      return 'gradient-cloudy'
   }
 }
 
