@@ -243,7 +243,7 @@ export default {
     {
       color: 'gradient-disco',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white shadow-lg shadow-purple-500/50 dark:shadow-pink-300/50'
+      class: 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white'
     },
     {
       color: 'gradient-disco',
@@ -265,7 +265,7 @@ export default {
     {
       color: 'gradient-megatron',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-green-200 via-yellow-400 to-red-300 text-black shadow-lg shadow-red-300/50 dark:shadow-green-200/50'
+      class: 'bg-gradient-to-r from-green-200 via-yellow-400 to-red-300 text-black'
     },
     {
       color: 'gradient-megatron',
@@ -287,7 +287,7 @@ export default {
     {
       color: 'gradient-tranquil',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-orange-200 to-pink-500 text-black shadow-lg shadow-pink-500/50 dark:shadow-orange-200/50'
+      class: 'bg-gradient-to-r from-orange-200 to-pink-500 text-black'
     },
     {
       color: 'gradient-tranquil',
@@ -309,7 +309,7 @@ export default {
     {
       color: 'gradient-oceanic',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-cyan-500 to-violet-950 text-white shadow-lg shadow-violet-950/50 dark:shadow-cyan-500/50'
+      class: 'bg-gradient-to-r from-cyan-500 to-violet-950 text-white'
     },
     {
       color: 'gradient-oceanic',
@@ -331,7 +331,7 @@ export default {
     {
       color: 'gradient-maldives',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-cyan-400 to-cyan-100 text-black shadow-lg shadow-cyan-400/50 dark:shadow-cyan-100/50'
+      class: 'bg-gradient-to-r from-cyan-400 to-cyan-100 text-black'
     },
     {
       color: 'gradient-maldives',
@@ -353,7 +353,7 @@ export default {
     {
       color: 'gradient-martini',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-yellow-300 to-green-300 text-black shadow-lg shadow-green-300/50 dark:shadow-yellow-300/50'
+      class: 'bg-gradient-to-r from-yellow-300 to-green-300 text-black'
     },
     {
       color: 'gradient-martini',
@@ -375,7 +375,7 @@ export default {
     {
       color: 'gradient-arctic',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-blue-300 to-violet-400 text-black shadow-lg shadow-violet-400/50 dark:shadow-blue-300/50'
+      class: 'bg-gradient-to-r from-blue-300 to-violet-400 text-black'
     },
     {
       color: 'gradient-arctic',
@@ -397,7 +397,7 @@ export default {
     {
       color: 'gradient-cloudy',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-slate-200 to-blue-200 text-black shadow-lg shadow-slate-200/50 dark:shadow-blue-200/50'
+      class: 'bg-gradient-to-r from-slate-200 to-blue-200 text-black'
     },
     {
       color: 'gradient-cloudy',
@@ -419,7 +419,7 @@ export default {
     {
       color: 'gradient-sky',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-sky-400 to-blue-300 text-black shadow-lg shadow-sky-400/50 dark:shadow-blue-300/50'
+      class: 'bg-gradient-to-r from-sky-400 to-blue-300 text-black'
     },
     {
       color: 'gradient-sky',
@@ -441,7 +441,7 @@ export default {
     {
       color: 'gradient-cactus',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-yellow-200 to-amber-600 text-black shadow-lg shadow-amber-600/50 dark:shadow-yellow-200/50'
+      class: 'bg-gradient-to-r from-yellow-200 to-amber-600 text-black'
     },
     {
       color: 'gradient-cactus',
@@ -463,7 +463,7 @@ export default {
     {
       color: 'gradient-limeade',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-teal-200 to-orange-100 text-black shadow-lg shadow-orange-100/50 dark:shadow-teal-200/50'
+      class: 'bg-gradient-to-r from-teal-200 to-orange-100 text-black'
     },
     {
       color: 'gradient-limeade',
@@ -485,7 +485,7 @@ export default {
     {
       color: 'gradient-fresco',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-amber-700 to-violet-700 text-white shadow-lg shadow-violet-700/50 dark:shadow-amber-700/50'
+      class: 'bg-gradient-to-r from-amber-700 to-violet-700 text-white'
     },
     {
       color: 'gradient-fresco',
@@ -507,7 +507,7 @@ export default {
     {
       color: 'gradient-delicate',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-violet-400 to-violet-50 text-black shadow-lg shadow-violet-400/50 dark:shadow-violet-50/50'
+      class: 'bg-gradient-to-r from-violet-400 to-violet-50 text-black'
     },
     {
       color: 'gradient-delicate',
@@ -529,7 +529,7 @@ export default {
     {
       color: 'gradient-blossom',
       variant: 'solid',
-      class: 'bg-gradient-to-r from-teal-300 via-pink-200 to-red-200 text-black shadow-lg shadow-red-200/50 dark:shadow-teal-300/50'
+      class: 'bg-gradient-to-r from-teal-300 via-pink-200 to-red-200 text-black'
     },
     {
       color: 'gradient-blossom',
