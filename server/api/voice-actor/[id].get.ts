@@ -6,9 +6,9 @@ const prisma = getPrismaClient()
 
 export default defineEventHandler(async (event: H3Event): Promise<ResponseType> => {
   try {
-    const staffId = getRouterParam(event, 'id')
+    const voiceActorId = getRouterParam(event, 'id')
 
-    if (!staffId) {
+    if (!voiceActorId) {
       return {
         success: false,
         code: 400,
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
       }
     }
 
-    if (isNaN(Number(staffId))) {
+    if (isNaN(Number(voiceActorId))) {
       return {
         success: false,
         code: 400,
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
 
     const staff = await prisma.voice_actors.findUnique({
       where: {
-        id: parseInt(staffId)
+        id: parseInt(voiceActorId)
       },
       include: {
         anime_characters_voice_actor_relations: {
@@ -72,7 +72,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
       return {
         success: false,
         code: 404,
-        message: `Voice Actor member with ID "${staffId}" not found`,
+        message: `Voice Actor member with ID "${voiceActorId}" not found`,
         length: 0,
         data: []
       }
