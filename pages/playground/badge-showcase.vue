@@ -26,7 +26,7 @@ definePageMeta({
           UBadge Disco Theme Playground
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-400">
-          Showcase custom Badge theme dengan color 'gradient-disco'
+          Showcase custom Badge theme with gradient variants
         </p>
       </div>
 
@@ -39,7 +39,7 @@ definePageMeta({
                 ✨ Disco Color: <code class="text-purple-500">gradient-disco</code>
               </h2>
               <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Purple → Pink → Red gradient badge
+                Showcase all variants and sizes with the custom gradient-disco color
               </p>
             </div>
           </div>
@@ -117,7 +117,7 @@ definePageMeta({
             🎨 All Colors & Variants Matrix
           </h2>
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            Semua kombinasi color dan variant (termasuk gradient-disco)
+            All available colors and variants
           </p>
         </template>
         
@@ -150,7 +150,7 @@ definePageMeta({
             📏 Size Variants
           </h2>
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            Semua ukuran badge yang tersedia
+            All available sizes
           </p>
         </template>
         
@@ -173,7 +173,7 @@ definePageMeta({
             ✨ With Icons
           </h2>
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            Badge dengan leading dan trailing icons
+            Badge with leading, trailing, or both icons
           </p>
         </template>
         
@@ -259,7 +259,7 @@ definePageMeta({
             🏷️ Genre Tags (Real Use Case)
           </h2>
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            Contoh penggunaan untuk genre anime
+            Example usage for anime genres
           </p>
         </template>
         
@@ -282,7 +282,7 @@ definePageMeta({
             🎯 Real World Example
           </h2>
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            Contoh penggunaan di anime card
+            Example usage in an anime card
           </p>
         </template>
         
@@ -353,10 +353,10 @@ definePageMeta({
       <UCard>
         <template #header>
           <h2 class="text-2xl font-semibold">
-            🎨 Disco Styling (via class prop)
+            🎨 Custom Styling
           </h2>
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            Override styles menggunakan class prop
+            Override styles using props
           </p>
         </template>
         
@@ -451,7 +451,7 @@ definePageMeta({
       <UCard>
         <div class="text-center space-y-4">
           <p class="text-gray-600 dark:text-gray-400">
-            📖 Dokumentasi lengkap custom Badge theme
+            📖 Complete docs custom Badge
           </p>
           <div class="flex flex-col gap-2 items-center">
             <code class="text-sm bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded">
