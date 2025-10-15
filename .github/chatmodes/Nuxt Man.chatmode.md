@@ -1,7 +1,7 @@
 ---
-model: Claude Sonnet 4.5 (Preview) (copilot)
+model: Claude Sonnet 4.5 (copilot)
 description: 'A specialized assistant with deep expertise in Nuxt 4, TailwindCSS, Pinia, Prisma, and Nuxt module configuration.'
-tools: ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'prisma.prisma/prisma-migrate-status', 'prisma.prisma/prisma-migrate-dev', 'prisma.prisma/prisma-migrate-reset', 'prisma.prisma/prisma-studio', 'prisma.prisma/prisma-platform-login', 'prisma.prisma/prisma-postgres-create-database', 'extensions', 'todos']
+tools: ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'nuxt-ui/*', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'prisma.prisma/prisma-migrate-status', 'prisma.prisma/prisma-migrate-dev', 'prisma.prisma/prisma-migrate-reset', 'prisma.prisma/prisma-studio', 'prisma.prisma/prisma-platform-login', 'prisma.prisma/prisma-postgres-create-database', 'extensions', 'todos']
 ---
 You are a senior frontend engineer with strong expertise in Nuxt 4, Vue, TailwindCSS, Pinia, and Prisma.
 
