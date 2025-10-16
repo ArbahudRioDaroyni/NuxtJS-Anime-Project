@@ -6,7 +6,7 @@
     <!-- Profile Content -->
     <template v-else>
       <!-- Profile Header -->
-      <V1Card tag="section" layout="none" variant="outer" padding="md">
+      <UCard variant="neumorphic-outer">
         <V1Grid flow="column" length="1fr" gap="1rem" class="profile-header">
           <V1Image
             src="/image/image-230x345.webp"
@@ -21,48 +21,45 @@
 
             <!-- Profile Stats Grid -->
             <V1Grid flow="row" length="1fr 1fr">
-              <V1Card layout="none" variant="inner">
+              <UCard variant="neumorphic-inner">
                 <div class="stat-label">Age</div>
                 <div class="stat-value">{{ staff?.age }}</div>
-              </V1Card>
-              <V1Card layout="none" variant="inner">
+              </UCard>
+              <UCard variant="neumorphic-inner">
                 <div class="stat-label">Gender</div>
                 <div class="stat-value">{{ staff?.gender }}</div>
-              </V1Card>
-              <V1Card layout="none" variant="inner">
+              </UCard>
+              <UCard variant="neumorphic-inner">
                 <div class="stat-label">Birthday</div>
                 <div class="stat-value">{{ staff?.date_of_birth }}</div>
-              </V1Card>
-              <V1Card layout="none" variant="inner">
+              </UCard>
+              <UCard variant="neumorphic-inner">
                 <div class="stat-label">Hometown</div>
                 <div class="stat-value">{{ staff?.home_town }}</div>
-              </V1Card>
+              </UCard>
             </V1Grid>
           </V1Grid>
         </V1Grid>
-      </V1Card>
+      </UCard>
 
       <!-- Biography Section -->
-      <V1Card tag="section" layout="none" variant="outer" padding="md">
+      <UCard variant="neumorphic-outer">
         <h3 class="section-title">Biography</h3>
         <p class="biography-paragraph">
           {{ description.rawAfterCleanup || 'No biography available.' }}
         </p>
-      </V1Card>
+      </UCard>
 
       <!-- Social Links Section -->
-      <V1Card tag="section" layout="none" variant="outer" padding="md">
+      <UCard variant="neumorphic-outer">
         <h3 class="section-title">Social Links</h3>
         <div class="social-links-grid">
-          <V1Card
+          <UCard
             v-for="link in description.links"
             :key="link.label"
-            tag="li"
-            layout="none"
-            variant="both"
-            padding="lg"
-            clickable
-            :href="link.url"
+            as="li"
+            variant="neumorphic-outline"
+            @click="$router.push(link.url)"
           >
             <div class="social-icon">
               🌐
@@ -71,21 +68,20 @@
               <div class="social-platform">{{ link.label }}</div>
               <div class="social-handle">{{ link.url }}</div>
             </div>
-          </V1Card>
+          </UCard>
         </div>
-      </V1Card>
+      </UCard>
 
       <!-- Works Section -->
-      <V1Card tag="section" layout="none" variant="outer" padding="lg">
+      <UCard variant="neumorphic-outer">
         <h3 class="section-title">Notable Works</h3>
-        <V1Grid template="columns" gap="1.5rem" length="150px">
-          <V1Card
+        <V1Grid template="columns" gap="1.5rem" length="150px" tag="ul">
+          <UCard
             v-for="work in staff?.anime_staff_relations"
             :key="work.id"
-            layout="none"
-            variant="inner"
-            clickable
-            :href="`/${work.anime?.slug}`"
+            variant="neumorphic-inner"
+            as="li"
+            @click="$router.push(work.anime?.slug || '#')"
           >
             <V1Image src="/image/image-230x345.webp"
               :data-src="work.anime?.medium_cover_image_url || work.anime?.large_cover_image_url || '/image/image-230x345.webp'"
@@ -95,9 +91,9 @@
             </NuxtLink>
             <p class="work-role">{{ work.staff_role?.name }}</p>
             <!-- <p class="work-year">{{ work.staff_role?.name }}</p> -->
-          </V1Card>
+          </UCard>
         </V1Grid>
-      </V1Card>
+      </UCard>
     </template>
   </V1Container>
 </template>

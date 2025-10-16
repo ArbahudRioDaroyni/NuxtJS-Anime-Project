@@ -89,8 +89,10 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 figure {
+	min-width: v-bind('width ? width+"px" : "100%"');
 	width: v-bind('width ? width+"px" : "100%"');
-  height: v-bind('height ? height+"px" : "auto"');
+  min-height: v-bind('height ? height+"px" : "auto"');
+  height: auto;
 	margin: 0;
 	padding: 0;
 	line-height: 0;
@@ -111,7 +113,7 @@ figure {
 
 	.image {
 		width: 100%;
-		height: auto;
+		height: 100%;
 		display: block;
 		object-fit: cover;
 		object-position: center;

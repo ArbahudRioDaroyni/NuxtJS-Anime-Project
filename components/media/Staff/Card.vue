@@ -1,31 +1,32 @@
 <template>
   <V1Grid tag="ul" template="columns" length="400px">
-    <h2 class="col-span-full text-[1.5rem] font-bold">Staffs</h2>
-    <V1Card
+    <h2 class="col-span-full text-2xl font-bold">Staffs</h2>
+    <UCard
       v-for="(staff, index) in orderedStaffs"
       :key="`staff-${index}`"
-      :title="staff?.name"
-      variant="both"
-      clickable
-      :href="staff?.slug || '#'"
-      tag="li"
-      @click="trackClick"
+      :aria-label="`Anime staff: ${staff?.name}, Role: ${staff?.role}`"
+      variant="neumorphic-outline"
+      as="li"
+      :ui="{ body: 'flex flex-row gap-4 h-full' }"
+      class="group hover:cursor-pointer transition duration-300 ease-in-out hover:translate-0.5"
+      @click="$router.push(staff?.slug || '#')"
     >
       <V1Image
         :src="staff?.image"
         :alt="staff?.name"
         :width="72"
         :height="88"
+        class="basis-1/6 overflow-hidden rounded-md"
       />
-      <div>
-        <NuxtLink :to="staff?.slug || '#'">
+      <div class="basis-5/6 flex flex-col justify-between">
+        <NuxtLink :to="staff?.slug || '#'" class="transition duration-300 ease-in-out group-hover:text-primary">
           {{ staff?.name }}
         </NuxtLink>
-        <span class="card-subtitle">
+        <span class="text-sm opacity-80">
           {{ staff?.role }}
         </span>
       </div>
-    </V1Card>
+    </UCard>
   </V1Grid>
 </template>
 
@@ -36,10 +37,6 @@ const props = defineProps<{
   data?: AnimeStaffRelation[]
   countShow?: number
 }>()
-
-const trackClick = () => {
-  // console.log('Card interaction tracked')
-}
 
 const orderedStaffs = computed(() => {
   if (!props.data) return []

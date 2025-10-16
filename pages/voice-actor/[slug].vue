@@ -54,26 +54,33 @@
 
       <!-- Voice Acting Roles -->
       <section v-if="staff.anime_characters_voice_actor_relations?.length" class="voice-roles">
-        <h2>Voice Acting Roles</h2>
-        <V1Grid tag="ul" template="columns" gap="3rem 2rem" length="400px">
-          <V1Card
+        <h2 class="col-span-full text-2xl font-bold">Voice Acting Roles</h2>
+        <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <UCard
             v-for="(item, index) in staff.anime_characters_voice_actor_relations"
             :key="`character-${index}`"
-            :title="item?.character?.name"
             :aria-label="`Anime character: ${item?.character?.name}, Role: ${item.character_role?.name}, Voice actor: ${item?.anime?.title_romaji}`"
-            variant="both"
-            layout="twin"
-            tag="li"
+            variant="neumorphic-outline"
+            as="li"
+            :ui="{ body: 'flex flex-row gap-4 h-full' }"
+            class="hover:cursor-pointer transition duration-300 ease-in-out hover:translate-0.5"
           >
-            <div>
+            <div
+              class="basis-1/2 group flex flex-row gap-4 hover:cursor-pointer"
+              @click="$router.push(item?.character ? `/character/${item?.character?.id}-${item?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}` : '#')"
+            >
               <V1Image
-                src="/image/image-230x345.webp"
-                :data-src="item?.character?.medium_image_url || '/image/image-230x345.webp'"
+                data-src="/image/image-230x345.webp"
+                :src="item?.character?.medium_image_url || '/image/image-230x345.webp'"
                 :alt="item?.character?.name"
                 :width="72"
+                :height="88"
               />
-              <div>
-                <NuxtLink :to="`/character/${item?.character?.id}-${item?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`">
+              <div class="flex flex-col justify-between">
+                <NuxtLink
+                  :to="`/character/${item?.character?.id}-${item?.character?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`"
+                  class="transition duration-300 ease-in-out group-hover:text-primary"
+                >
                   {{ item?.character?.name }}
                 </NuxtLink>
                 <UBadge
@@ -81,27 +88,32 @@
                   :color="getGradientBadgeColor(item.character_role?.name || '')"
                   variant="solid"
                   size="md"
+                  class="w-min"
                 />
               </div>
             </div>
-            <div>
+            <div
+              class="basis-1/2 group flex flex-row-reverse gap-4 hover:cursor-pointer"
+              @click="$router.push(item?.anime ? '/'+item?.anime?.slug : '#')"
+            >
               <V1Image
-                src="/image/image-230x345.webp"
-                :data-src="item?.anime?.medium_cover_image_url || '/image/image-230x345.webp'"
+                data-src="/image/image-230x345.webp"
+                :src="item?.anime?.medium_cover_image_url || '/image/image-230x345.webp'"
                 :alt="item?.anime?.title_romaji"
                 :width="72"
+                :height="88"
               />
-              <div>
-                <NuxtLink :to="'/'+item?.anime?.slug">
+              <div class="flex flex-col justify-between flex-end text-right">
+                <NuxtLink :to="'/'+item?.anime?.slug" class="transition duration-300 ease-in-out group-hover:text-primary">
                   {{ item?.anime?.title_romaji }}
                 </NuxtLink>
-                <span class="card-subtitle">
+                <span class="text-sm opacity-80">
                   Subtitle
                 </span>
               </div>
             </div>
-          </V1Card>
-        </V1Grid>
+          </UCard>
+        </ul>
       </section>
 
       <!-- Back Link -->

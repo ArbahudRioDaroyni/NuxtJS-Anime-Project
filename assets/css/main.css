@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+@theme {
+  --text-tiny: 0.675rem; 
+}
+
 :root {
   --ui-primary: hsl(210, 100%, 35%);
   --ui-bg: hsl(0, 0%, 90%);

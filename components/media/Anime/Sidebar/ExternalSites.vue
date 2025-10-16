@@ -11,21 +11,21 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <V1Card v-if="externalSites && externalSites.length" variant="outer" layout="none">
-    <V1Card 
+  <UCard
+    v-if="externalSites && externalSites.length"
+    variant="neumorphic-outer"
+    :ui="{ body: 'p-3! grid gap-y-4' }"
+  >
+    <UCard 
       v-for="site in externalSites" 
       :key="site.external_site?.id" 
-      variant="inner"
-      layout="none"
-      clickable
+      variant="neumorphic-inner"
+      as="a"
       :href="site.url"
+      target="_blank"
+      rel="nofollow noopener noreferrer"
     >
-      <a 
-        :href="site.url" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        class="external-site-link"
-      >
+      <div class="flex align-middle gap-2">
         <V1Image
           v-if="site.external_site?.icon"
           :src="site.external_site?.icon"
@@ -36,16 +36,7 @@ withDefaults(defineProps<Props>(), {
         <span v-if="site.external_site?.name">
           {{ site.external_site.name }}
         </span>
-      </a>
-    </V1Card>
-  </V1Card>
+      </div>
+    </UCard>
+  </UCard>
 </template>
-
-<style scoped>
-.external-site-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-}
-</style>

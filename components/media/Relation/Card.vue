@@ -1,25 +1,28 @@
 <template>
   <V1Grid tag="ul" template="columns" length="400px">
-    <h2 class="col-span-full text-[1.5rem] font-bold">Relations</h2>
-    <V1Card
+    <h2 class="col-span-full text-2xl font-bold">Relations</h2>
+    <UCard
       v-for="(anime, index) in orderedRelations"
       :key="`relation-${index}`"
-      :title="anime?.name"
       :aria-label="`Related anime: ${anime?.name}, Relation type: ${anime?.relation_name}`"
-      variant="both"
-      clickable
-      :href="anime?.slug"
-      tag="li"
-      @click="trackClick"
+      variant="neumorphic-outline"
+      as="li"
+      :ui="{ body: 'flex flex-row gap-4 h-full' }"
+      class="group hover:cursor-pointer transition duration-300 ease-in-out hover:translate-0.5"
+      @click="$router.push(anime?.slug || '#')"
     >
       <V1Image
         :src="anime?.image"
         :alt="anime?.name"
         :width="72"
+        class="basis-1/6 rounded-md"
       />
 
-      <div>
-        <NuxtLink :to="anime?.slug">
+      <div class="basis-5/6 flex flex-col justify-between gap-2">
+        <NuxtLink
+          :to="anime?.slug"
+          class="min-h-10 font-semibold text-sm decoration-none line-clamp-2 text-ellipsis leading-5 max-h-10 transition duration-300 ease-in-out group-hover:text-primary"
+        >
           {{ anime?.name }}
         </NuxtLink>
         <UBadge
@@ -28,25 +31,26 @@
           :color="getGradientBadgeColor(anime?.relation_name)"
           variant="solid"
           size="md"
+          class="w-min"
         />
-        <div>
+        <div class="flex gap-2 items-center align-middle">
           <span 
             role="note"
             :aria-label="`Source: ${anime?.source_media_type_name}`"
-            style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; opacity: 0.8;"
+            class="text-tiny uppercase font-medium opacity-80 tracking-wider"
           >
             {{ anime?.source_media_type_name }}
           </span>
           <span 
             role="status"
             :aria-label="`Status: ${anime?.status_type_name}`"
-            style="font-weight: 500; font-size: 0.75rem; border-radius: 0.25rem; margin-left: 0.5rem;"
+            class="text-tiny font-medium ml-2"
           >
             {{ anime?.status_type_name }}
           </span>
         </div>
       </div>
-    </V1Card>
+    </UCard>
   </V1Grid>
 </template>
 
@@ -82,10 +86,6 @@ const getGradientBadgeColor = (type: string) => {
     default:
       return 'gradient-cloudy'
   }
-}
-
-const trackClick = () => {
-  // console.log('Card interaction tracked')
 }
 
 const orderedRelations = computed(() => {

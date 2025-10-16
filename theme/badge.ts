@@ -1,8 +1,10 @@
 /**
- * Custom Badge Theme
+ * Custom Badge Theme for Nuxt UI
  * Added a new color variant 'gradient-*' with gradient styles
  *
- * References: https://ui.nuxt.com/docs/getting-started/theme/components
+ * References:
+ * - https://ui.nuxt.com/docs/components/badge
+ * - https://ui.nuxt.com/docs/getting-started/theme/components
  */
 
 export default {
