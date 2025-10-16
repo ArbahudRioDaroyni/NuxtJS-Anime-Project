@@ -12,7 +12,7 @@
       />
     </UPageHero>
     <UContainer as="section" :class="[anime?.banner_image_url ? 'mt-8 mb-[7rem]' : 'my-[7rem]']">
-      <UPage>
+      <UPage :ui="{ root: 'lg:grid-cols-12', left: 'lg:col-span-3', center: 'lg:col-span-9' }">
         <template #left>
           <MediaAnimeSidebar :anime="anime" />
         </template>

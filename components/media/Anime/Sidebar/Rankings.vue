@@ -7,18 +7,18 @@ interface Props {
 // Default values for props
 withDefaults(defineProps<Props>(), {
   overallRank: '#82 highest rated all time',
-  popularityRank: '#12 most popular summer 2025'
+  popularityRank: '#22 most popular summer 2025'
 })
 </script>
 
 <template>
   <div class="rankings-container">
-    <UCard variant="neumorphic-outline" class="ranking-card">
+    <UBadge color="gradient-tranquil" size="lg" variant="subtle">
       ⭐ {{ overallRank }}
-    </UCard>
-    <UCard variant="neumorphic-outline" class="ranking-card">
+    </UBadge>
+    <UBadge color="gradient-disco" size="lg" variant="subtle">
       ❤️ {{ popularityRank }}
-    </UCard>
+    </UBadge>
   </div>
 </template>
 

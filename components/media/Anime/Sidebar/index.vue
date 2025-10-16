@@ -30,16 +30,15 @@
 
       <!-- Anime Details Grid -->
       <div class="details-grid">
-        <V1Card 
+        <UCard 
           v-for="(detail, index) in animeDetails" 
           :key="`${detail.label}-${index}`"
-          variant="inner"
-          class="detail-item"
-          :class="{ 'full-col': detail.fullWidth }"
+          variant="neumorphic-inner"
+          :ui="{ body: 'detail-item p-3!' + (detail.fullWidth ? ' full-col' : '') }"
         >
           <span class="label">{{ detail.label }}</span>
           <span class="value">{{ detail.value }}</span>
-        </V1Card>
+        </UCard>
       </div>
     </UCard>
 
@@ -171,7 +170,7 @@ const nextEpisodeCountdown = computed(() => {
 const externalSites = computed(() => props.anime?.anime_external_site_relations)
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .sidebar-container {
   // padding: 1rem;
   display: grid;
