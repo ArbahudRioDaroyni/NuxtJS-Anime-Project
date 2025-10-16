@@ -76,7 +76,7 @@ const orderedStaffs = computed(() => {
       return {
         id: staff?.id || null,
         name: staff?.name || 'Anonymous',
-        image: staff?.medium_image_url || '/image/image-230x345.webp',
+        image: staff?.medium_image_url || staff?.large_image_url || '/image/image-230x345.webp',
         role: relation.staff_role?.name || 'Not specified',
         slug: `/staff/${staff?.id}-${staff?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`
       }

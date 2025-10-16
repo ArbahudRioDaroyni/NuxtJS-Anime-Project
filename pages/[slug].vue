@@ -18,7 +18,7 @@
         </template>
 
         <UNavigationMenu :items="links" highlight class="-mx-1 flex-1 py-7 pt-0" />
-        <NuxtPage :data="anime" :slug="anime?.slug" />
+        <NuxtPage :data="anime" :idx="anime?.id" />
       </UPage>
     </UContainer>
   </UMain>

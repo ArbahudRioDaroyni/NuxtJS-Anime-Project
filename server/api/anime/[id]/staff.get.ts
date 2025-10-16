@@ -6,13 +6,15 @@ const prisma = getPrismaClient()
 
 export default defineEventHandler(async (event: H3Event): Promise<ResponseType> => {
   try {
-    const slug = getRouterParam(event, 'slug')
+    const id = getRouterParam(event, 'id')
+    const safeId = useNumberValidator(id, NaN, -1)
+    const isValidId = !isNaN(safeId) && safeId > 0
     
-    if (!slug) {
+    if (!isValidId) {
       return {
         success: false,
         code: 400,
-        message: 'Slug parameter is required',
+        message: 'ID parameter is required and must be a number greater than 0',
         length: 0,
         data: []
       }
@@ -24,10 +26,10 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     const limit = parseInt(query.limit as string) || 20
     const offset = (page - 1) * limit
 
-    // Get anime by slug
+    // Get staff for the anime
     const anime = await prisma.anime.findFirst({
       where: {
-        slug: slug,
+        id: safeId,
         deleted_at: null
       },
       select: {
@@ -42,18 +44,19 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         anime_staff_relations: {
           select: {
             id: true,
-            anime_id: true,
-            staff_id: true,
-            staff_role_id: true,
-            language: true,
-            version: true,
-            episodes: true,
-            openings: true,
-            endings: true,
-            promotions: true,
-            additional_info: true,
-            staff: true,
-            staff_role: true
+            staff: {
+              select: {
+                id: true,
+                name: true,
+                medium_image_url: true,
+                large_image_url: true
+              }
+            },
+            staff_role: {
+              select: {
+                name: true
+              }
+            }
           },
           take: limit,
           skip: offset
@@ -84,8 +87,8 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         hasPrev: page > 1,
         nextPage: page < totalPages ? page + 1 : null,
         prevPage: page > 1 ? page - 1 : null,
-        nextLink: page < totalPages ? `/api/anime/${slug}/staffs?page=${page + 1}&limit=${limit}` : null,
-        prevLink: page > 1 ? `/api/anime/${slug}/staffs?page=${page - 1}&limit=${limit}` : null
+        nextLink: page < totalPages ? `/api/anime/${safeId}/staffs?page=${page + 1}&limit=${limit}` : null,
+        prevLink: page > 1 ? `/api/anime/${safeId}/staffs?page=${page - 1}&limit=${limit}` : null
       }
     }
   } catch (e: unknown) {
