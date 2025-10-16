@@ -6,13 +6,15 @@ const prisma = getPrismaClient()
 
 export default defineEventHandler(async (event: H3Event): Promise<ResponseType> => {
   try {
-    const slug = getRouterParam(event, 'slug')
+    const id = getRouterParam(event, 'id')
+    const safeId = useNumberValidator(id, NaN, -1)
+    const isValidId = !isNaN(safeId) && safeId > 0
    
-    if (!slug) {
+    if (!isValidId) {
       return {
         success: false,
         code: 400,
-        message: 'Slug parameter is required',
+        message: 'ID parameter is required and must be a number greater than 0',
         length: 0,
         data: []
       }
@@ -24,10 +26,10 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     const limit = parseInt(query.limit as string) || 20
     const offset = (page - 1) * limit
 
-    // Get anime by slug with characters
+    // Get characters for the anime
     const anime = await prisma.anime.findFirst({
       where: {
-        slug: slug,
+        id: safeId,
         deleted_at: null
       },
       select: {
@@ -42,13 +44,29 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         anime_characters_voice_actor_relations: {
           select: {
             id: true,
-            anime_id: true,
-            character_id: true,
-            character_role_id: true,
-            voice_actor_id: true,
-            character: true,
-            voice_actor: true,
-            character_role: true
+            character: {
+              select: {
+                id: true,
+                name: true,
+                name_native: true,
+                medium_image_url: true,
+                large_image_url: true
+              }
+            },
+            voice_actor: {
+              select: {
+                id: true,
+                name: true,
+                name_native: true,
+                medium_image_url: true,
+                large_image_url: true
+              }
+            },
+            character_role: {
+              select: {
+                name: true
+              }
+            }
           },
           take: limit,
           skip: offset
@@ -79,8 +97,8 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         hasPrev: page > 1,
         nextPage: page < totalPages ? page + 1 : null,
         prevPage: page > 1 ? page - 1 : null,
-        nextLink: page < totalPages ? `/api/anime/${slug}/characters?page=${page + 1}&limit=${limit}` : null,
-        prevLink: page > 1 ? `/api/anime/${slug}/characters?page=${page - 1}&limit=${limit}` : null
+        nextLink: page < totalPages ? `/api/anime/${safeId}/characters?page=${page + 1}&limit=${limit}` : null,
+        prevLink: page > 1 ? `/api/anime/${safeId}/characters?page=${page - 1}&limit=${limit}` : null
       }
     }
   } catch (e: unknown) {

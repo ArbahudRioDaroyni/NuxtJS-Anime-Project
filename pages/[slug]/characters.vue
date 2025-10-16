@@ -29,14 +29,14 @@ import type { AnimeDetails } from '~/types/anime'
 
 interface Props {
   data?: AnimeDetails
-  slug?: AnimeDetails['slug']
+  idx?: AnimeDetails['id']
 }
 
 const props = defineProps<Props>()
 
 // Fetch function for infinite scroll
 const fetchCharacters = async (page: number, limit: number) => {
-  const response = await $fetch<ResponseType>(`/api/anime/${props.slug}/characters`, {
+  const response = await $fetch<ResponseType>(`/api/anime/${props.idx}/characters`, {
     query: { page, limit }
   })
   
