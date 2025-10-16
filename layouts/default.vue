@@ -1,5 +1,8 @@
 <template>
-  <LayoutDefault>
+  <div role="main">
+    <NuxtLoadingIndicator color="var(--ui-primary)" />
+    <RekaHeader />
     <slot />
-  </LayoutDefault>
+    <RekaFooter />
+  </div>
 </template>
