@@ -13,12 +13,12 @@ withDefaults(defineProps<Props>(), {
 
 <template>
   <div class="rankings-container">
-    <V1Card variant="both" class="ranking-card">
+    <UCard variant="neumorphic-outline" class="ranking-card">
       ⭐ {{ overallRank }}
-    </V1Card>
-    <V1Card variant="both" class="ranking-card">
+    </UCard>
+    <UCard variant="neumorphic-outline" class="ranking-card">
       ❤️ {{ popularityRank }}
-    </V1Card>
+    </UCard>
   </div>
 </template>
 

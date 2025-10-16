@@ -5,10 +5,9 @@
     <MediaStaffCard :data="staffs" />
     <section v-if="trailerUrl">
       <h2 class="overview-title">Trailer</h2>
-      <V1Card variant="inner">
-        <iframe
-          width="560"
-          height="315"
+      <UCard variant="neumorphic-inner">
+      <iframe
+          class="w-full aspect-video rounded-md"
           :src="trailerUrl"
           title="YouTube video player"
           frameborder="0"
@@ -16,7 +15,7 @@
           referrerpolicy="strict-origin-when-cross-origin"
           allowfullscreen
         />
-      </V1Card>
+      </UCard>
     </section>
   </div>
 </template>

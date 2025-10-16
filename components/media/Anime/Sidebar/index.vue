@@ -19,11 +19,14 @@
     <Rankings />
 
     <!-- Main Details Card -->
-    <V1Card class="card-details" variant="outer" padding="sm">
+    <UCard
+      variant="neumorphic-outer"
+      :ui="{ body: 'p-3! grid gap-y-4' }"
+    >
       <!-- Next Episode Countdown -->
-      <V1Card v-if="nextEpisodeCountdown" variant="inner" class="countdown">
+      <UCard v-if="nextEpisodeCountdown" variant="neumorphic-inner" class="countdown">
         {{ nextEpisodeCountdown }}
-      </V1Card>
+      </UCard>
 
       <!-- Anime Details Grid -->
       <div class="details-grid">
@@ -38,7 +41,7 @@
           <span class="value">{{ detail.value }}</span>
         </V1Card>
       </div>
-    </V1Card>
+    </UCard>
 
     <ExternalSites :external-sites="externalSites" class="card-details" />
   </aside>

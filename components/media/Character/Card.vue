@@ -1,24 +1,27 @@
 <template>
   <V1Grid tag="ul" template="columns" length="400px">
-    <h2 class="col-span-full text-[1.5rem] font-bold">Characters</h2>
-    <V1Card
+    <h2 class="col-span-full text-2xl font-bold">Characters</h2>
+    <UCard
       v-for="(item, index) in orderedCharacters"
       :key="`character-${index}`"
-      :title="item[0]?.name"
       :aria-label="`Anime character: ${item[0]?.name}, Role: ${item[0]?.character_role}, Voice actor: ${item[1]?.name}`"
-      variant="both"
-      layout="twin"
-      tag="li"
+      variant="neumorphic-outline"
+      as="li"
+      :ui="{ body: 'flex flex-row gap-4 h-full' }"
+      class="hover:cursor-pointer transition duration-300 ease-in-out hover:translate-0.5"
     >
-      <div>
+      <div
+        class="basis-1/2 group flex flex-row gap-4 hover:cursor-pointer"
+        @click="$router.push(item[0]?.slug || '#')"
+      >
         <V1Image
           :src="item[0]?.image"
           :alt="item[0]?.name"
           :width="72"
           :height="88"
         />
-        <div>
-          <NuxtLink :to="item[0]?.slug">
+        <div class="flex flex-col justify-between">
+          <NuxtLink :to="item[0]?.slug" class="transition duration-300 ease-in-out group-hover:text-primary">
             {{ item[0]?.name }}
           </NuxtLink>
           <UBadge
@@ -29,23 +32,26 @@
           />
         </div>
       </div>
-      <div>
+      <div
+        class="basis-1/2 group flex flex-row-reverse gap-4 hover:cursor-pointer"
+        @click="$router.push(item[1]?.slug || '#')"
+      >
         <V1Image
           :src="item[1]?.image"
           :alt="item[1]?.name"
           :width="72"
           :height="88"
         />
-        <div>
-          <NuxtLink :to="item[1]?.slug">
+        <div class="flex flex-col justify-between flex-end text-right">
+          <NuxtLink :to="item[1]?.slug" class="transition duration-300 ease-in-out group-hover:text-primary">
             {{ item[1]?.name }}
           </NuxtLink>
-          <span class="card-subtitle">
+          <span class="text-sm opacity-80">
             {{ item[1]?.subtitle }}
           </span>
         </div>
       </div>
-    </V1Card>
+    </UCard>
   </V1Grid>
 </template>
 

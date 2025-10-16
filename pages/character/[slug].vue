@@ -56,16 +56,19 @@
       <section v-if="character.anime_characters_voice_actor_relations?.length" class="voice-roles">
         <h2>Voice Acting Roles</h2>
         <V1Grid tag="ul" template="columns" gap="3rem 2rem" length="400px">
-          <V1Card
+          <UCard
             v-for="(item, index) in character.anime_characters_voice_actor_relations"
             :key="`voice_actor-${index}`"
-            :title="item?.voice_actor?.name"
-            :aria-label="`Voice actor: ${item?.voice_actor?.name}, Anime: ${item?.anime?.title_romaji}`"
-            variant="both"
-            layout="twin"
-            tag="li"
+            :aria-label="`Anime: ${item?.anime?.title_romaji}, Voice actor: ${item?.voice_actor?.name}`"
+            variant="neumorphic-outline"
+            as="li"
+            :ui="{ body: 'flex flex-row gap-4 h-full' }"
+            class="hover:cursor-pointer transition duration-300 ease-in-out hover:translate-0.5"
           >
-            <div>
+            <div
+              class="basis-1/2 group flex flex-row gap-4 hover:cursor-pointer"
+              @click="$router.push(item?.voice_actor ? `/voice_actor/${item?.voice_actor?.id}-${item?.voice_actor?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}` : '#')"
+            >
               <V1Image
                 v-if="item?.voice_actor?.medium_image_url"
                 :src="item?.voice_actor?.medium_image_url"
@@ -73,8 +76,11 @@
                 :width="72"
                 :height="88"
               />
-              <div>
-                <NuxtLink :to="`/voice_actor/${item?.voice_actor?.id}-${item?.voice_actor?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`">
+              <div class="flex flex-col justify-between">
+                <NuxtLink
+                  :to="`/voice_actor/${item?.voice_actor?.id}-${item?.voice_actor?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`"
+                  class="transition duration-300 ease-in-out group-hover:text-primary"
+                >
                   {{ item?.voice_actor?.name }}
                 </NuxtLink>
                 <UBadge
@@ -82,10 +88,14 @@
                   :color="getGradientBadgeColor(item.character_role?.name || '')"
                   variant="solid"
                   size="md"
+                  class="w-min"
                 />
               </div>
             </div>
-            <div>
+            <div
+              class="basis-1/2 group flex flex-row-reverse gap-4 hover:cursor-pointer"
+              @click="$router.push(item?.anime ? '/'+item?.anime?.slug : '#')"
+            >
               <V1Image
                 v-if="item?.anime?.medium_cover_image_url"
                 :src="item?.anime?.medium_cover_image_url"
@@ -93,16 +103,16 @@
                 :width="72"
                 :height="88"
               />
-              <div>
-                <NuxtLink :to="'/'+item?.anime?.slug">
+              <div class="flex flex-col justify-between flex-end text-right">
+                <NuxtLink :to="'/'+item?.anime?.slug" class="transition duration-300 ease-in-out group-hover:text-primary">
                   {{ item?.anime?.title_romaji }}
                 </NuxtLink>
-                <span class="card-subtitle">
+                <span class="text-sm opacity-80">
                   Subtitle
                 </span>
               </div>
             </div>
-          </V1Card>
+          </UCard>
         </V1Grid>
       </section>
 
