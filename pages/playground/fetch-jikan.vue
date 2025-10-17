@@ -33,6 +33,16 @@ const typeEnum = ['TV', 'TV_SHORT', 'Theatrical', 'Movie', 'OVA', 'Special', 'We
 const start = 20;
 
 const { data: animeData, pending, error } = await useFetch<JikanAnimeResponse>(`https://api.jikan.moe/v4/anime/${start}/full`)
+
+// Read anime-database.json and log to browser console
+const animeDB = await useAnimeReadJSON()
+if (import.meta.dev) {
+  useHead({ 
+    script: [
+      { innerHTML: `console.log(${JSON.stringify(animeDB, null, 2)})` }
+    ]
+  })
+}
 const slug = computed(() => generateSlug(animeData.value?.data?.title || 'unknown', animeData.value?.data?.type || 'Unknown', animeData.value?.data?.year || 0))
 const { data: anime } = useFetch('/api/anime/' + slug.value + '?search-by=slug', {
   key: `anime-${slug.value}`,
@@ -62,6 +72,15 @@ definePageMeta({
         <p class="text-gray-600 dark:text-gray-400">
           Testing Jikan API v4 - Anime ID: 20 (Naruto)
         </p>
+        
+        <!-- Database Status -->
+        <UBadge 
+          v-if="animeDB" 
+          :label="`✅ Anime Database Loaded (${animeDB.data.length} items) - Check Console`" 
+          color="success"
+          variant="soft"
+          size="lg"
+        />
       </div>
 
       <!-- Loading State -->
