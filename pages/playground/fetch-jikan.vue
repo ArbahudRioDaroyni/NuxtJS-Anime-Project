@@ -92,7 +92,7 @@ definePageMeta({
       <!-- Data Display -->
       <template v-else-if="animeData?.data">
         <!-- Anime Card -->
-        <UCard>
+        <UCard hidden>
           <template #header>
             <div class="flex items-start gap-4">
               <img 
@@ -145,7 +145,7 @@ definePageMeta({
         </UCard>
 
         <!-- Information Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" hidden>
           <!-- Basic Info -->
           <UCard>
             <template #header>
@@ -224,7 +224,7 @@ definePageMeta({
         </div>
 
         <!-- Genres & Themes -->
-        <UCard>
+        <UCard hidden>
           <template #header>
             <h3 class="text-xl font-semibold">
               🏷️ Genres & Themes
@@ -280,7 +280,7 @@ definePageMeta({
         </UCard>
 
         <!-- Studios & Producers -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" hidden>
           <!-- Studios -->
           <UCard>
             <template #header>
@@ -335,9 +335,22 @@ definePageMeta({
             class="max-h-96 overflow-auto"
           /> -->
 
-          <code>
-            <pre>{{ JSON.stringify(anime, null, 2) }}</pre>
-          </code>
+          <details>
+            <summary class="cursor-pointer text-blue-600 dark:text-blue-400 underline mb-3">
+              Original Data
+            </summary>
+            <code>
+              <pre>{{ JSON.stringify(anime, null, 2) }}</pre>
+            </code>
+          </details>
+          <details>
+            <summary class="cursor-pointer text-blue-600 dark:text-blue-400 underline mb-3">
+              API Jikan Anime Full Data
+            </summary>
+            <code>
+              <pre>{{ JSON.stringify(animeData, null, 2) }}</pre>
+            </code>
+          </details>
         </UCard>
       </template>
     </div>

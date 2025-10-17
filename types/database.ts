@@ -7,6 +7,7 @@ export interface ResponseType {
   message?: string
   length: number
   data: unknown[]
+  pagination?: Pagination
   meta?: {
     total?: number
     page?: number
@@ -23,6 +24,19 @@ export interface ResponseType {
     searchSuggestions?: string[]
     [key: string]: unknown
   }
+}
+
+export interface Pagination {
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+  hasNext: boolean
+  hasPrev: boolean
+  nextPage?: number | null
+  prevPage?: number | null
+  nextLink?: string | null
+  prevLink?: string | null
 }
 
 // Query parameters
