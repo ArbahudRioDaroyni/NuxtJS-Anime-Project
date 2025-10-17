@@ -43,7 +43,7 @@ const fetchCharacters = async (page: number, limit: number) => {
   return {
     success: response.success,
     data: response.data as AnimeCharacterVoiceActorRelation[],
-    meta: response.meta
+    pagination: response.pagination // Update: use pagination instead of meta
   }
 }
 

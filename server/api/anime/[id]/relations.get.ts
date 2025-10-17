@@ -10,7 +10,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     const id = getRouterParam(event, 'id')
     const safeId = useNumberValidator(id, NaN, -1)
     const isValidId = !isNaN(safeId) && safeId > 0
-    
+   
     if (!isValidId) {
       return {
         success: false,
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     const limit = parseInt(query.limit as string) || 20
     const offset = (page - 1) * limit
 
-    // Get staff for the anime
+    // Get relation for the anime
     const anime = await prisma.anime.findFirst({
       where: {
         id: safeId,
@@ -39,20 +39,19 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         title_romaji: true,
         _count: {
           select: {
-            anime_staff_relations: true
+            anime_relation_relations_as_anime: true
           }
         },
-        anime_staff_relations: {
+        anime_relation_relations_as_anime: {
           select: {
-            staff: {
+            reference_anime: {
               select: {
                 id: true,
-                name: true,
-                medium_image_url: true,
-                large_image_url: true
+                slug: true,
+                title_romaji: true
               }
             },
-            staff_role: {
+            reference_type: {
               select: {
                 name: true
               }
@@ -64,22 +63,22 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
       }
     })
 
-    const staff = anime?.anime_staff_relations || []
-    const staffLenght = staff?.length || 0
-    const totalCount = anime?._count.anime_staff_relations || 0
+    const characters = anime?.anime_relation_relations_as_anime || []
+    const charactersLenght = characters?.length || 0
+    const totalCount = anime?._count.anime_relation_relations_as_anime || 0
     const pagination = usePagination(
       page,
       limit,
       totalCount,
-      `/api/anime/${safeId}/staff`
+      `/api/anime/${safeId}/relations`
     )
 
     return {
       success: true,
       code: 200,
       message: 'Data retrieved successfully',
-      length: staffLenght,
-      data: staff,
+      length: charactersLenght,
+      data: characters,
       pagination,
       meta: {
         anime_id: anime?.id,

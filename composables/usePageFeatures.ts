@@ -19,7 +19,11 @@ export const useConsole = (raw: unknown) => {
  * @returns Object with data, loading state, and trigger ref
  */
 export function useInfiniteScroll<T>(
-  fetchFunction: (page: number, limit: number) => Promise<{ success: boolean; data?: T[]; meta?: { hasNext?: boolean } }>,
+  fetchFunction: (page: number, limit: number) => Promise<{ 
+    success: boolean
+    data?: T[]
+    pagination?: { hasNext?: boolean }
+  }>,
   options: {
     limit?: number
     rootMargin?: string
@@ -53,8 +57,8 @@ export function useInfiniteScroll<T>(
         const newData = response.data as T[]
         allData.value.push(...newData)
 
-        // Check if there are more pages
-        hasMore.value = response.meta?.hasNext || false
+        // Check if there are more pages (support both new and old structure)
+        hasMore.value = response.pagination?.hasNext || false
 
         if (hasMore.value) {
           currentPage.value++

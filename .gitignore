@@ -29,3 +29,6 @@ prisma/.env
 
 # Database
 database
+
+# Package lock files
+package-lock.json
