@@ -209,9 +209,11 @@ async function loadPart(part: number) {
           .toString()
           .toLowerCase()
           .trim()
+          .replace(/&/g, 'and')
           .replace(/\s+/g, '-')
           .replace(/[^a-z0-9-!.]/g, '')
           .replace(/-+/g, '-')
+          .replace(/^-+|-+$/g, '')
           .replace(/^-|-$/g, '')
         return {
           title: entry.title || 'Unknown Title',

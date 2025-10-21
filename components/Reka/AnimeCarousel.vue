@@ -1,10 +1,10 @@
 <template>
   <div class="relative w-full overflow-hidden">
     <!-- Left Edge Fade -->
-    <div class="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-default via-black/20 to-transparent z-10 pointer-events-none" />
+    <!-- <div class="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-default via-black/20 to-transparent z-10 pointer-events-none" /> -->
     
     <!-- Right Edge Fade -->
-    <div class="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-default via-black/20 to-transparent z-10 pointer-events-none" />
+    <!-- <div class="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-default via-black/20 to-transparent z-10 pointer-events-none" /> -->
     
     <!-- Carousel -->
     <UCarousel
@@ -29,7 +29,7 @@
       }"
       :ui="{
         viewport: 'overflow-visible',
-        item: 'px-2 basis-3/4',
+        item: 'px-2',
         prev: 'start-4 sm:start-6 hover:cursor-pointer transition-all duration-200',
         next: 'end-4 sm:end-6 hover:cursor-pointer transition-all duration-200',
         dots: 'bottom-6 gap-2',

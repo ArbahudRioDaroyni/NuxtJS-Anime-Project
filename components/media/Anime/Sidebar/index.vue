@@ -12,9 +12,6 @@
 
     <UDashboardSearchButton @click="isSearchOpen = true" />
 
-    <!-- Search Component -->
-    <CommonSearch />
-
     <!-- Rankings -->
     <Rankings />
 
