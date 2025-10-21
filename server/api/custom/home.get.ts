@@ -4,16 +4,6 @@ import { getPrismaClient } from '~/server/utils/prisma'
 
 const prisma = getPrismaClient()
 
-function generatePaginationURLs(baseURL: string, page: number, perPage: number, totalCount: number) {
-  const hasNext = (page * perPage) < totalCount;
-  const hasPrev = page > 1;
-  const nextPage = hasNext ? page + 1 : null;
-  const prevPage = hasPrev ? page - 1 : null;
-  const nextURL = hasNext ? `${baseURL}?page=${nextPage}&perPage=${perPage}` : null;
-  const prevURL = hasPrev ? `${baseURL}?page=${prevPage}&perPage=${perPage}` : null;
-  return { nextURL, prevURL, hasNext, hasPrev, nextPage, prevPage };
-}
-
 export default defineEventHandler(async (event: H3Event): Promise<ResponseType> => {
   try {
     const { safePerPage, safePage } = event.context
@@ -50,7 +40,12 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         title_english: true,
         title_native: true,
         medium_cover_image_url: true,
-        large_cover_image_url: true
+        large_cover_image_url: true,
+        banner_image_url: true,
+        trending: true,
+        year: true,
+        duration: true,
+        duration_unit: true,
       }
     });
 
@@ -64,7 +59,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         deleted_at: null,
         favorites: { gt: 0 }
       },
-      take: limit,
+      take: 6,
       orderBy: [
         { favorites: 'desc' },
         { updated_at: 'desc' }
@@ -85,7 +80,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         deleted_at: null,
         popularity: { gt: 0 }
       },
-      take: limit,
+      take: 6,
       orderBy: [
         { popularity: 'desc' },
         { updated_at: 'desc' }
@@ -96,17 +91,9 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         title_english: true,
         title_native: true,
         medium_cover_image_url: true,
-        large_cover_image_url: true
+        large_cover_image_url: true,
       }
     });
-
-    const baseURL = '/api/anime/home';
-    const pagination = generatePaginationURLs(
-      baseURL,
-      Number(safePage),
-      limit,
-      totalCount
-    );
 
     return {
       success: true,
@@ -118,7 +105,6 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
         page: Number(safePage),
         totalPages: Math.ceil(totalCount / limit),
         perPage: limit,
-        ...pagination,
         trending: {
           count: trendingAnime.length,
           data: trendingAnime
