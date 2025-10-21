@@ -36,7 +36,7 @@
         </NuxtLink>
       </UContainer>
 
-      <UContainer class="mb-6">
+      <UContainer>
         <!-- Anime Cards Grid -->
         <UPageGrid class="sm:grid-cols-4 lg:grid-cols-6">
           <UCard
@@ -77,7 +77,7 @@
         </NuxtLink>
       </UContainer>
 
-      <UContainer class="mb-6">
+      <UContainer>
         <!-- Anime Cards Grid -->
         <UPageGrid class="sm:grid-cols-4 lg:grid-cols-6">
           <UCard
