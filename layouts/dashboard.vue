@@ -81,13 +81,6 @@ const links = [[{
     open.value = false
   }
 }, {
-  label: 'Customers',
-  icon: 'i-lucide-users',
-  to: '/dashboard/customers',
-  onSelect: () => {
-    open.value = false
-  }
-}, {
   label: 'Settings',
   to: '/settings',
   icon: 'i-lucide-settings',
