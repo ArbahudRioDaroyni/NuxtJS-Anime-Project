@@ -1,15 +1,21 @@
-import prisma from '~/lib/prisma'
+import type { H3Event } from 'h3'
+import type { ResponseType } from '~/types/database'
+import { getPrismaClient } from '~/server/utils/prisma'
 
-export default defineEventHandler(async (event) => {
+const prisma = getPrismaClient()
+
+export default defineEventHandler(async (event: H3Event): Promise<ResponseType> => {
   try {
     const body = await readBody(event)
     const { slugs } = body
 
     if (!slugs || !Array.isArray(slugs)) {
       return {
-        status: 400,
+        success: false,
+        code: 400,
         message: 'Invalid slugs parameter',
-        data: null
+        length: 0,
+        data: []
       }
     }
 
@@ -23,18 +29,20 @@ export default defineEventHandler(async (event) => {
     })
 
     return {
-      status: 200,
-      message: 'Success',
+      success: true,
+      code: 200,
+      message: 'Checked anime existence successfully',
+      length: 0,
       data: existingAnime
     }
-
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    console.error('Check anime exists error:', error)
+  } catch (e: unknown) {
+    event.node.res.statusCode = 500
     return {
-      status: 500,
-      message: errorMessage,
-      data: null
+      success: false,
+      code: 500,
+      message: e instanceof Error ? e.message : 'An error occurred while retrieving anime.',
+      length: 0,
+      data: [],
     }
   }
 })

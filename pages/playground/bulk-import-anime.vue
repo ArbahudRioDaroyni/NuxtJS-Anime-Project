@@ -591,7 +591,7 @@ const compareWithDatabase = async () => {
   try {
     const slugs = csvData.value.map(row =>
       // (row.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-      useNewText2Slug(row.title_romaji || '', row.type || '', row.premiered?.split(' ')[1] || '')
+      useText2Slug(row.title_romaji || '', row.type || '', row.premiered?.split(' ')[1] || '')
     )
     
     const response = await $fetch('/api/admin/check-anime-exists', {
@@ -602,7 +602,7 @@ const compareWithDatabase = async () => {
     existingAnimeData.value = (response as unknown as { data?: AnimeDetails[] }).data || []
     
     comparisonData.value = csvData.value.map((csvRow) => {
-      const slug = useNewText2Slug(csvRow.title_romaji || '', csvRow.type || '', csvRow.premiered?.split(' ')[1] || '')
+      const slug = useText2Slug(csvRow.title_romaji || '', csvRow.type || '', csvRow.premiered?.split(' ')[1] || '')
       const dbData = existingAnimeData.value.find((a: AnimeDetails) => a.slug === slug)
       
       const changes: Comparison['changes'] = {}

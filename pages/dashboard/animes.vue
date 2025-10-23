@@ -18,7 +18,7 @@
         <UInput v-model="search" class="max-w-sm" placeholder="Search..." />
 
         <div class="flex flex-wrap items-center gap-1.5">
-          <DashboardDeleteModal 
+          <DashboardAnimesDeleteModal
             v-if="totalSelectedCount > 0"
             :count="totalSelectedCount" 
             title="anime"
@@ -37,7 +37,7 @@
                 </UKbd>
               </template>
             </UButton>
-          </DashboardDeleteModal>
+          </DashboardAnimesDeleteModal>
           
           <UModal 
             v-if="totalSelectedCount > 0"
@@ -321,15 +321,6 @@ async function deleteAnime(id: number, force = false) {
 
 // Bulk delete selected animes
 async function bulkDeleteAnimes(force = false) {
-  if (selectedAnimeIds.value.length === 0) {
-    toast.add({
-      title: 'Warning',
-      description: 'No animes selected',
-      color: 'warning'
-    })
-    return
-  }
-  
   isDeleting.value = true
   
   try {

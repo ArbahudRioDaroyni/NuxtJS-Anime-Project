@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { AnimeDetails } from '~/types/anime'
+import type { AnimeDetails, AnimeImportCSV } from '~/types/anime'
 import type { TableColumn } from '@nuxt/ui'
 
 interface Props {
   existingData?: AnimeDetails[]
-  newData?: AnimeDetails[]
+  newData?: AnimeImportCSV[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -12,51 +12,58 @@ const props = withDefaults(defineProps<Props>(), {
   newData: () => []
 })
 
-interface AnimeDetailsDiff extends AnimeDetails {
+interface AnimeDetailsDiff extends AnimeImportCSV {
   diff?: Partial<AnimeDetails>
 }
 
-const data = ref<AnimeDetailsDiff[]>(
-  props.existingData!.map((oldItem) => {
-    const newItem = props.newData!.find((n) => useNewText2Slug(n.title_romaji || '', n.type || '', n.premiered?.split(' ')[1] || '') === oldItem.slug)
-    const diff: Partial<AnimeDetails> = {...newItem}
-
+const data = computed<AnimeDetailsDiff[]>(() =>
+  props.existingData!.map((existing) => {
+    const newItem = props.newData!.find((n) => n.slug === existing.slug)
     return {
-      ...oldItem,
-      diff
-    }
+      ...existing,
+      diff: {
+        ...newItem
+      }
+    } as AnimeDetailsDiff
   })
 )
-
 // Generate columns dynamically based on keys in existingData
-const columns: TableColumn<AnimeDetailsDiff>[] = Object.keys(props.existingData?.[0] || {}).map((key) => {
-  return {
-    accessorKey: key,
-    header: key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
-    cell: ({ row }) => {
-      if (key === 'id') {
-        return `#${row.getValue(key)}`
+const columns = computed<TableColumn<AnimeDetailsDiff>[]>(() =>
+  Object.keys(props.existingData?.[0] || {}).map((key) => {
+    return {
+      accessorKey: key,
+      header: key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+      cell: ({ row }) => {
+        if (props.newData.length === 0) {
+          return row.getValue(key)
+        }
+        if (key === 'id') {
+          return `#${row.getValue(key)}`
+        }
+        if (key === 'slug') {
+          return row.getValue(key)
+        }
+        const originalVal = row.original[key as keyof AnimeImportCSV]
+        const diffVal = row.original.diff?.[key as keyof AnimeDetails]
+        const hasChanged = diffVal !== undefined && diffVal !== null && String(originalVal) !== String(diffVal)
+        return h('div', { class: 'flex flex-col gap-3' }, [
+          h('span', {
+            class: hasChanged ? 'text-highlighted' : ''
+          }, diffVal === undefined || diffVal === null ? '' : String(diffVal)),
+    
+          hasChanged
+            ? h('s', {
+                class: 'text-sm text-muted-foreground text-yellow-600'
+              }, String(originalVal))
+            : null
+        ])
       }
-      if (key === 'slug') {
-        return row.getValue(key)
-      }
-      const hasChanged = row.original[key as keyof AnimeDetails] !== row.original.diff?.[key as keyof AnimeDetails] && row.original.diff?.[key as keyof AnimeDetails] !== undefined
-      return h('div', { class: 'flex flex-col gap-3' }, [
-        h('span', {
-          class: hasChanged ? 'text-highlighted' : ''
-        }, String(row.original.diff?.[key as keyof AnimeDetails])),
-
-        hasChanged
-          ? h('s', {
-              class: 'text-sm text-muted-foreground text-yellow-600'
-            }, String(row.original[key as keyof AnimeDetails]))
-          : null
-      ])
     }
   }
-})
+)
+)
 </script>
 
 <template>
-  <UTable :data="data" :columns="columns" class="flex-1" />
+  <UTable sticky :data="data" :columns="columns" class="flex-1 max-h-[500px]" />
 </template>

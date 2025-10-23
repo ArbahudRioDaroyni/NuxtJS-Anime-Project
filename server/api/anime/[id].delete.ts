@@ -40,14 +40,25 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
 
     if (force) {
       // Hard delete - permanently remove from database
-      await prisma.anime.delete({
-        where: { id: safeId }
+      // Delete all related records first to avoid foreign key constraint violations
+      await prisma.$transaction(async (tx) => {
+        // Delete related records in order
+        await tx.anime_genre_relations.deleteMany({ where: { anime_id: safeId } })
+        await tx.anime_external_site_relations.deleteMany({ where: { anime_id: safeId } })
+        await tx.anime_tag_relations.deleteMany({ where: { anime_id: safeId } })
+        await tx.anime_studio_relations.deleteMany({ where: { anime_id: safeId } })
+        await tx.anime_characters_voice_actor_relations.deleteMany({ where: { anime_id: safeId } })
+        await tx.anime_staff_relations.deleteMany({ where: { anime_id: safeId } })
+        await tx.anime_relation_relations.deleteMany({ where: { anime_id: safeId } })
+        
+        // Finally, delete the anime itself
+        await tx.anime.delete({ where: { id: safeId } })
       })
 
       return {
         success: true,
         code: 200,
-        message: 'Anime permanently deleted',
+        message: 'Anime and all related data permanently deleted',
         length: 0,
         data: []
       }

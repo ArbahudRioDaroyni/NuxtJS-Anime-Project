@@ -82,7 +82,7 @@ export const useParseCSV = async (raw: string) => {
   }
 }
 
-export const useNewText2Slug = (title: string, type: string, year: string): string => {
+export const useText2Slug = (title: string, type: string, year: string): string => {
   if (!title) {
     console.log('Title is required')
     return ''
