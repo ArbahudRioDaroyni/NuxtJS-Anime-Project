@@ -5,7 +5,7 @@ withDefaults(defineProps<{
   description?: string
 }>(), {
   count: 0,
-  title: 'customer',
+  title: 'modal',
   description: 'Are you sure, this action cannot be undone.'
 })
 

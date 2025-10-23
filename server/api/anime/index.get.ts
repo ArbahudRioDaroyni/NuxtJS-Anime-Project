@@ -57,7 +57,13 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
             media_type: true,
             release_format: true,
             status_type: true,
-            season: true
+            season: true,
+            anime_genre_relations: {
+              include: { genre: true }
+            },
+            anime_studio_relations: {
+              include: { studio: true }
+            }
           }
         }),
       

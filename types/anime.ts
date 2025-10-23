@@ -13,7 +13,6 @@ import type {
   AnimeCharacterVoiceActorRelation,
   AnimeStaffRelation
 } from './relations'
-import type { ResponseType } from './database'
 
 export interface Anime {
   id: number
@@ -90,15 +89,10 @@ export interface AnimeCreateInput extends Partial<Omit<Anime, 'id'>> {
   genre_ids?: number[]
 }
 
-// Update type (partial of create input)
-export interface AnimeUpdateInput extends Partial<AnimeCreateInput> {
-  id: number
-}
-
-export interface AnimeResponse extends Omit<ResponseType, 'data'> {
-  data: AnimeDetails[] // Replace with specific type
-}
-
-export interface SingleAnimeResponse extends Omit<ResponseType, 'data'> {
-  data: AnimeDetails
+export interface AnimeImportCSV extends Partial<Omit<Anime, 'id'>> {
+  release_media_type_name?: string
+  release_format_name?: string
+  release_status_type_name?: string
+  source_media_type_name?: string
+  season_name?: string
 }
