@@ -162,31 +162,6 @@
               </UCard>
             </div>
 
-            <!-- Filter Options -->
-            <!-- <div class="flex gap-2">
-              <UButton
-                :color="comparisonFilter === 'all' ? 'primary' : 'neutral'"
-                :variant="comparisonFilter === 'all' ? 'solid' : 'soft'"
-                @click="comparisonFilter = 'all'"
-              >
-                All ({{ csvRecordsCount }})
-              </UButton>
-              <UButton
-                :color="comparisonFilter === 'new' ? 'primary' : 'neutral'"
-                :variant="comparisonFilter === 'new' ? 'solid' : 'soft'"
-                @click="comparisonFilter = 'new'"
-              >
-                New Only ({{ newAnimesRecordsCount }})
-              </UButton>
-              <UButton
-                :color="comparisonFilter === 'existing' ? 'primary' : 'neutral'"
-                :variant="comparisonFilter === 'existing' ? 'solid' : 'soft'"
-                @click="comparisonFilter = 'existing'"
-              >
-                Existing ({{ comparisonResult.existingRecords }})
-              </UButton>
-            </div> -->
-
             <RekaTableComparison
               :existing-data="tableExistingData"
               :new-data="tableNewData"
@@ -202,164 +177,13 @@
               <p class="text-sm text-gray-500">
                 Processing data to database...
               </p>
+              <p class="text-sm text-gray-500">
+                {{ importResponse ? importResponse.message : 'Please wait...' }}
+              </p>
+              <p class="text-sm text-gray-500">
+                {{ importResponse ? importResponse.length + ' records imported successfully.' : '' }}
+              </p>
             </div>
-
-            <pre class="w-full"><code>{{ importResponse }}</code></pre>
-
-            <!-- Stats Overview -->
-            <!-- <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <UCard>
-                <div class="text-center">
-                  <div class="text-3xl font-bold text-blue-600">
-                    {{ stats.total }}
-                  </div>
-                  <div class="text-sm text-gray-500 mt-1">
-                    Total Records
-                  </div>
-                </div>
-              </UCard>
-              
-              <UCard>
-                <div class="text-center">
-                  <div class="text-3xl font-bold text-green-600">
-                    {{ stats.processed }}
-                  </div>
-                  <div class="text-sm text-gray-500 mt-1">
-                    Processed
-                  </div>
-                </div>
-              </UCard>
-              
-              <UCard>
-                <div class="text-center">
-                  <div class="text-3xl font-bold text-red-600">
-                    {{ stats.failed }}
-                  </div>
-                  <div class="text-sm text-gray-500 mt-1">
-                    Failed
-                  </div>
-                </div>
-              </UCard>
-              
-              <UCard>
-                <div class="text-center">
-                  <div class="text-3xl font-bold text-purple-600">
-                    {{ stats.progress }}%
-                  </div>
-                  <div class="text-sm text-gray-500 mt-1">
-                    Progress
-                  </div>
-                </div>
-              </UCard>
-            </div> -->
-
-            <!-- Progress Bar -->
-            <!-- <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium">Import Progress</span>
-                <span class="text-sm text-gray-500">{{ stats.processed }} / {{ stats.total }}</span>
-              </div>
-              <UProgress :value="stats.progress" :max="100" size="lg" />
-            </div> -->
-
-            <!-- Action Buttons -->
-            <!-- <div class="flex gap-3 justify-center">
-              <UButton
-                v-if="isImporting"
-                color="error"
-                size="lg"
-                variant="soft"
-                @click="stopImport"
-              >
-                <UIcon name="i-heroicons-stop" class="mr-2" />
-                Stop Import
-              </UButton>
-
-              <UButton
-                v-if="!isImporting && stats.progress === 100"
-                color="primary"
-                size="lg"
-                @click="resetAll"
-              >
-                <UIcon name="i-heroicons-arrow-path" class="mr-2" />
-                Import New File
-              </UButton>
-            </div> -->
-
-            <!-- Import Logs -->
-            <!-- <div v-if="logs.length > 0" class="space-y-2">
-              <div class="flex items-center justify-between mb-2">
-                <h3 class="font-semibold">
-                  Import Logs
-                </h3>
-                <UButton
-                  size="xs"
-                  color="neutral"
-                  variant="ghost"
-                  @click="clearLogs"
-                >
-                  Clear Logs
-                </UButton>
-              </div>
-              
-              <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 max-h-64 overflow-y-auto space-y-2">
-                <div
-                  v-for="(log, index) in logs"
-                  :key="index"
-                  class="flex items-start gap-2 text-sm"
-                >
-                  <UIcon
-                    :name="log.type === 'error' ? 'i-heroicons-x-circle' : log.type === 'success' ? 'i-heroicons-check-circle' : 'i-heroicons-information-circle'"
-                    :class="{
-                      'text-red-500': log.type === 'error',
-                      'text-green-500': log.type === 'success',
-                      'text-blue-500': log.type === 'info'
-                    }"
-                    class="mt-0.5 flex-shrink-0"
-                  />
-                  <div class="flex-1">
-                    <span class="text-gray-600 dark:text-gray-400">
-                      {{ log.time }}
-                    </span>
-                    <span class="ml-2">{{ log.message }}</span>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-
-            <!-- Error Details -->
-            <!-- <UCard v-if="errors.length > 0" class="bg-red-50 dark:bg-red-950">
-              <template #header>
-                <div class="flex items-center justify-between">
-                  <h3 class="font-semibold text-red-700 dark:text-red-300">
-                    Errors ({{ errors.length }})
-                  </h3>
-                  <UButton
-                    size="xs"
-                    color="error"
-                    variant="ghost"
-                    @click="clearErrors"
-                  >
-                    Clear Errors
-                  </UButton>
-                </div>
-              </template>
-              
-              <div class="space-y-2 max-h-48 overflow-y-auto">
-                <div
-                  v-for="(error, index) in errors"
-                  :key="index"
-                  class="text-sm p-2 bg-white dark:bg-gray-800 rounded"
-                >
-                  <div class="font-medium text-red-700 dark:text-red-400">
-                    {{ error.anime }}
-                  </div>
-                  <div class="text-gray-600 dark:text-gray-400 text-xs mt-1">
-                    {{ error.error }}
-                  </div>
-                </div>
-              </div>
-            </UCard> -->
           </div>
         </div>
       </UCard>
@@ -372,28 +196,29 @@ import type { TimelineItem } from '@nuxt/ui'
 import type { AnimeDetails, AnimeImportCSV } from '~/types/anime'
 import type { ResponseType } from '~/types/database'
 
-// interface CSVRow {
-//   [key: string]: string
-// }
-
 const isLoading = ref(false)
 const uploadedFile = ref<File | null>(null)
+const batchSize = ref(10)
+
 const currentStep = ref(1)
 const stepColor = computed(() => {
   if (currentStep.value === 4) return 'primary'
   if (currentStep.value === 4) return 'success'
   return 'primary'
 })
-const batchSize = ref(10)
+
 const csvRecords = ref<AnimeImportCSV[]>([])
 const csvRecordsCount = computed(() => csvRecords.value.length)
 const existingAnimesRecords = ref<AnimeDetails[]>([])
 const existingAnimesRecordsCount = computed(() => existingAnimesRecords.value.length)
 const newAnimesRecords = ref<AnimeImportCSV[]>([])
 const newAnimesRecordsCount = computed(() => newAnimesRecords.value.length)
-const tableExistingData = ref<unknown>([])
-const tableNewData = ref<unknown>([])
+
+const tableExistingData = ref<AnimeDetails[]>([])
+const tableNewData = ref<AnimeImportCSV[]>([])
+
 const importResponse = ref<ResponseType | null>(null)
+
 const items = ref<TimelineItem[]>([
   {
     title: 'Upload CSV',
@@ -467,15 +292,12 @@ const compareWithDatabase = async () => {
 
 const handleComparisonFilter = (filter: 'all' | 'new' | 'existing') => {
   if (filter === 'all') {
-    console.log('Filter selected:', filter)
-    tableExistingData.value = csvRecords.value
-    tableNewData.value = []
+    tableExistingData.value = newAnimesRecords.value
+    tableNewData.value = csvRecords.value
   } else if (filter === 'new') {
-    console.log('Filter selected:', filter)
     tableExistingData.value = newAnimesRecords.value
     tableNewData.value = []
   } else if (filter === 'existing') {
-    console.log('Filter selected:', filter)
     tableExistingData.value = existingAnimesRecords.value
     tableNewData.value = csvRecords.value
   }

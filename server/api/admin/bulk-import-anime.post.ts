@@ -1,8 +1,9 @@
 import type { H3Event } from 'h3'
 import type { ResponseType } from '~/types/database'
+import type { PrismaClient } from '@prisma/client'
 // import type { AnimeImportCSV } from '~/types/anime'
 import { getPrismaClient } from '~/server/utils/prisma'
-import type { PrismaClient } from '@prisma/client'
+import { validateRecordAgainstModel } from '~/server/utils/validation'
 
 const prisma = getPrismaClient()
 
@@ -22,32 +23,54 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     }
 
     const model = (prisma as PrismaClient)['anime' as keyof PrismaClient]?.fields;
-
     const validRecords: Record<string, unknown>[] = []
-    const invalidRecords: Array<{ record: Record<string, unknown>; error: string }> = []
+    const invalidFields: string[] = []
+    const recordCount = records.length
+    let successCount = 0
+
     for (const record of records) {
-      const validRecord: Record<string, unknown> = {}
-      for (const [key, value] of Object.entries(record)) {
-        if (model && key in model) {
-          validRecord[key] = value
-        } else {
-          invalidRecords.push({ record, error: key })
-        }
+      const { valid, data, errors } = validateRecordAgainstModel(record, model)
+      if (!valid) {
+        invalidFields.push(...errors)
       }
-      validRecords.push(validRecord)
+
+      validRecords.push(data)
+    }
+
+    for (const field of validRecords) {
+      const _anime = await prisma.anime.upsert({
+        where: { slug: String(field.slug) },
+        create: {
+          slug: String(field.slug),
+          title_romaji: String(field.title_romaji),
+          title_english: field.title_english ? String(field.title_english) : null,
+          title_native: field.title_native ? String(field.title_native) : null,
+          score: field.score != null && field.score !== '' ? parseFloat(String(field.score)) : null,
+          rank: field.rank != null && field.rank !== '' ? parseInt(String(field.rank), 10) : null,
+        },
+        update: {
+          title_romaji: String(field.title_romaji),
+          title_english: field.title_english ? String(field.title_english) : null,
+          title_native: field.title_native ? String(field.title_native) : null,
+          score: field.score != null && field.score !== '' ? parseFloat(String(field.score)) : null,
+          rank: field.rank != null && field.rank !== '' ? parseInt(String(field.rank), 10) : null,
+        }
+      })
+
+      successCount++
     }
 
     return {
       success: true,
       code: 200,
       message: 'Import validation completed.',
-      length: 0,
+      length: successCount,
       data: records,
       meta: {
         model: model,
         validRecords,
-        invalidRecords: invalidRecords,
-        invalidFields: [...new Set(invalidRecords.map(ir => ir.error))],
+        // invalidRecords,
+        invalidFields: [...new Set(invalidFields)],
       }
     }
   } catch (e: unknown) {
