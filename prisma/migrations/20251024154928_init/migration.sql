@@ -133,6 +133,7 @@ CREATE TABLE "external_sites" (
     "name" TEXT NOT NULL,
     "icon" TEXT,
     "language" TEXT,
+    "base_url" TEXT,
 
     CONSTRAINT "external_sites_pkey" PRIMARY KEY ("id")
 );
@@ -364,9 +365,6 @@ CREATE UNIQUE INDEX "tag_categories_name_key" ON "tag_categories"("name");
 
 -- CreateIndex
 CREATE INDEX "idx_tag_categories_name" ON "tag_categories"("name");
-
--- CreateIndex
-CREATE UNIQUE INDEX "voice_actors_name_key" ON "voice_actors"("name");
 
 -- CreateIndex
 CREATE INDEX "idx_voice_actors_name" ON "voice_actors"("name");

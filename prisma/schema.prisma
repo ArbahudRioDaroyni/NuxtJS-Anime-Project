@@ -88,6 +88,8 @@ model anime {
   thumbnail_image_url                         String? // @db.VarChar(255)
   banner_image_url                            String? // @db.VarChar(255)
   color_image                                 String? // @db.Char(7) // hex format e.g., '#FFFFFF'
+  rank                                        Int?
+  score                                       Float?
   arithmetic_geometric_mean_score             Float?
   arithmetic_harmonic_mean                    Float?
   arithmetic_mean_score                       Float?
