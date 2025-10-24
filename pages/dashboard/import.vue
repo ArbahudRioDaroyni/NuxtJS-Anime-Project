@@ -204,6 +204,8 @@
               </p>
             </div>
 
+            <pre class="w-full"><code>{{ importResponse }}</code></pre>
+
             <!-- Stats Overview -->
             <!-- <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
               <UCard>
@@ -389,8 +391,9 @@ const existingAnimesRecords = ref<AnimeDetails[]>([])
 const existingAnimesRecordsCount = computed(() => existingAnimesRecords.value.length)
 const newAnimesRecords = ref<AnimeImportCSV[]>([])
 const newAnimesRecordsCount = computed(() => newAnimesRecords.value.length)
-const tableExistingData = ref([])
-const tableNewData = ref([])
+const tableExistingData = ref<unknown>([])
+const tableNewData = ref<unknown>([])
+const importResponse = ref<ResponseType | null>(null)
 const items = ref<TimelineItem[]>([
   {
     title: 'Upload CSV',
@@ -452,8 +455,7 @@ const compareWithDatabase = async () => {
       existingAnimesRecords.value = []
     }
 
-    tableExistingData.value = existingAnimesRecords.value
-    tableNewData.value = csvRecords.value
+    handleComparisonFilter('existing')
     currentStep.value = 3
   } catch (error) {
     console.error('Error comparing with database:', error)
@@ -481,7 +483,6 @@ const handleComparisonFilter = (filter: 'all' | 'new' | 'existing') => {
 
 const startImport = async () => {
   currentStep.value = 4
-  alert('Import started! (Functionality not yet implemented)')
 
   const response = await $fetch<ResponseType>('/api/admin/bulk-import-anime', {
     method: 'POST',
@@ -491,6 +492,7 @@ const startImport = async () => {
   })
 
   console.log('Import response:', response)
+  importResponse.value = response
 }
 
 definePageMeta({
