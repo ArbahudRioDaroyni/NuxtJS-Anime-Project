@@ -198,7 +198,7 @@ import type { ResponseType } from '~/types/database'
 
 const isLoading = ref(false)
 const uploadedFile = ref<File | null>(null)
-const batchSize = ref(10)
+const batchSize = ref(20)
 
 const currentStep = ref(1)
 const stepColor = computed(() => {
@@ -249,7 +249,9 @@ const parseCSV = async () => {
 
     csvRecords.value = (data!.slice(0, batchSize.value) ?? []) as unknown as AnimeImportCSV[] // Limit to first 50 rows for preview
     csvRecords.value.forEach((record: AnimeImportCSV) => {
-      record.slug = useText2Slug(record.title_romaji || '', record.release_format_name || '', record.year || '')
+      record.slug = useText2Slug(record.title_romaji || '', record.release_format_name || '', String(record.year ?? ''))
+      const rawDuration = record.duration ?? ''
+      record.duration = useDurationToMinutes(String(rawDuration).replace(' per ep', '').trim()) || 0
     })
     currentStep.value = 2
   } catch (error) {

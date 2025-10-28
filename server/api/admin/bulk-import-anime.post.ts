@@ -25,7 +25,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
     const model = (prisma as PrismaClient)['anime' as keyof PrismaClient]?.fields;
     const validRecords: Record<string, unknown>[] = []
     const invalidFields: string[] = []
-    const recordCount = records.length
+    const _recordCount = records.length
     let successCount = 0
 
     for (const record of records) {
@@ -47,6 +47,11 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
           title_native: field.title_native ? String(field.title_native) : null,
           score: field.score != null && field.score !== '' ? parseFloat(String(field.score)) : null,
           rank: field.rank != null && field.rank !== '' ? parseInt(String(field.rank), 10) : null,
+          year: field.year != null && field.year !== '' ? String(field.year) : null,
+          episodes: field.episodes != null && field.episodes !== '' ? parseInt(String(field.episodes), 10) : null,
+          duration: field.duration != null && field.duration !== '' ? Number(field.duration) : null,
+          duration_unit: 'm',
+          created_at: new Date(),
         },
         update: {
           title_romaji: String(field.title_romaji),
@@ -54,6 +59,11 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
           title_native: field.title_native ? String(field.title_native) : null,
           score: field.score != null && field.score !== '' ? parseFloat(String(field.score)) : null,
           rank: field.rank != null && field.rank !== '' ? parseInt(String(field.rank), 10) : null,
+          year: field.year != null && field.year !== '' ? String(field.year) : null,
+          episodes: field.episodes != null && field.episodes !== '' ? parseInt(String(field.episodes), 10) : null,
+          duration: field.duration != null && field.duration !== '' ? Number(field.duration) : null,
+          duration_unit: 'm',
+          updated_at: new Date(),
         }
       })
 
