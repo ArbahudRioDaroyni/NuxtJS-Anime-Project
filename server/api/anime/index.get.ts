@@ -46,13 +46,13 @@ export default defineEventHandler(async (event: H3Event): Promise<ResponseType> 
           select: fields,
           take: limit,
           skip: offset,
-          orderBy: { created_at: 'desc' }
+          orderBy: { updated_at: 'asc' }
         }) :
         prisma.anime.findMany({
           where: whereClause,
           take: limit,
           skip: offset,
-          orderBy: { created_at: 'desc' },
+          orderBy: { updated_at: 'asc' },
           include: {
             media_type: true,
             release_format: {
