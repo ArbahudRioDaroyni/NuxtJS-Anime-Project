@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import type { AnimeMetadata } from '~/types/metadata'
 
 const open = ref(false)
 const loading = ref(false)
@@ -124,16 +125,6 @@ const state = reactive<Partial<Schema>>({
   genre_ids: [],
   test: undefined
 })
-
-// Define the expected metadata type
-type AnimeMetadata = {
-  mediaTypes: { id: number; name: string }[];
-  releaseFormats: { id: number; name: string; stands_for?: string }[];
-  statusTypes: { id: number; name: string }[];
-  seasons: { id: number; name: string }[];
-  studios: { id: number; name: string }[];
-  genres: { id: number; name: string }[];
-};
 
 type MetadataResponse = {
   data: AnimeMetadata[];

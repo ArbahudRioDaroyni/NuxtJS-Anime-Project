@@ -91,7 +91,7 @@
               </div>
             </div>
             <!-- CSV Data Table -->
-            <UTable sticky :data="csvRecords.slice(0, 50)" class="flex-1 max-h-[400px]" />
+            <UTable sticky :data="csvRecords" class="flex-1 max-h-[400px]" />
           </div>
 
           <!-- STEP 3: Compare with Database -->
@@ -195,10 +195,11 @@
 import type { TimelineItem } from '@nuxt/ui'
 import type { AnimeDetails, AnimeImportCSV } from '~/types/anime'
 import type { ResponseType } from '~/types/database'
+import type { AnimeMetadata } from '~/types/metadata'
 
 const isLoading = ref(false)
 const uploadedFile = ref<File | null>(null)
-const batchSize = ref(20)
+const batchSize = ref(10)
 
 const currentStep = ref(1)
 const stepColor = computed(() => {
@@ -238,6 +239,26 @@ const items = ref<TimelineItem[]>([
   }
 ])
 
+// If the API returns an object with `data` containing the metadata, declare it as such
+type MetadataResponse = {
+  data: AnimeMetadata[];
+};
+// make useLazyFetch return the MetadataResponse so responsesMetadata.value?.data is typed as AnimeMetadata
+const { data: responsesMetadata } = await useLazyFetch<MetadataResponse>(`/api/anime/metadata`)
+
+// Ensure computed returns a well-typed AnimeMetadata with empty arrays as fallback
+// const metadata = computed<AnimeMetadata[]>(() => responsesMetadata.value)
+const metadata = computed<MetadataResponse>(() => {
+  return responsesMetadata.value || { data: [{
+    mediaTypes: [],
+    releaseFormats: [],
+    statusTypes: [],
+    seasons: [],
+    studios: [],
+    genres: []
+  }] }
+})
+
 const parseCSV = async () => {
   if (!uploadedFile.value) return
   
@@ -249,9 +270,22 @@ const parseCSV = async () => {
 
     csvRecords.value = (data!.slice(0, batchSize.value) ?? []) as unknown as AnimeImportCSV[] // Limit to first 50 rows for preview
     csvRecords.value.forEach((record: AnimeImportCSV) => {
-      record.slug = useText2Slug(record.title_romaji || '', record.release_format_name || '', String(record.year ?? ''))
       const rawDuration = record.duration ?? ''
+      const sourceMediaTypeId = metadata.value.data[0]!.mediaTypes.find(
+        (type: { name: string }) => type.name.toLowerCase() === (record.source_media_type_name || '').toLowerCase()
+      )?.id
+      const releaseFormatId = metadata.value.data[0]!.releaseFormats.find(
+        (format: { name: string; }) => format.name.toLowerCase() === (record.release_format_name || '').toLowerCase()
+      )?.id
+      const seasonId = metadata.value.data[0]!.seasons.find(
+        (season: { name: string; }) => season.name.toLowerCase() === (record.season_name || '').toLowerCase()
+      )?.id
+
+      record.slug = useText2Slug(record.title_romaji || '', record.release_format_name || '', String(record.year ?? ''))
       record.duration = useDurationToMinutes(String(rawDuration).replace(' per ep', '').trim()) || 0
+      record.source_media_type_id = sourceMediaTypeId || undefined
+      record.release_format_id = releaseFormatId || undefined
+      record.season_id = seasonId || undefined
     })
     currentStep.value = 2
   } catch (error) {

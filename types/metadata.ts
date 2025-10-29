@@ -120,3 +120,12 @@ export interface StaffRole {
   name: string
   description?: string
 }
+
+export interface AnimeMetadata {
+  mediaTypes: ReleaseMediaType[]
+  releaseFormats: ReleaseFormat[]
+  statusTypes: ReleaseStatusType[]
+  seasons: Season[]
+  studios: Studio[]
+  genres: Genre[]
+}
