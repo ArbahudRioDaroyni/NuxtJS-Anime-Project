@@ -101,11 +101,24 @@ export const useText2Slug = (title: string, type: string, year: string): string 
     return ''
   }
 
-  const validType = type || 'unknown'
-  const validYear = year || 'unknown'
+  const validType = type || ''
+  const validYear = year || ''
 
-  const raw = `${title}-${validType}-${validYear}`
-  return raw
+  // const raw = `${title}-${validType}-${validYear}`
+  // const raw = `${title}`
+  let rawSlug = title;
+
+  if (validType && rawSlug.includes(validType)) {
+    rawSlug = rawSlug.replace(validType, '').trim()
+  }
+  
+  if (validYear && rawSlug.includes(validYear.toLowerCase())) {
+    rawSlug = rawSlug.replace(validYear, '').trim()
+  }
+
+  rawSlug = `${rawSlug}-${validType}-${validYear}`.trim()
+
+  rawSlug = rawSlug
     .toString()
     .toLowerCase() // Convert to lowercase
     .replace(/&/g, 'and') // Replace & with 'and'
@@ -113,6 +126,14 @@ export const useText2Slug = (title: string, type: string, year: string): string 
     .replace(/[^a-z0-9!.-]+/g, '') // Replace invalid chars with hyphen
     .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
     .replace(/^-|-$/g, '') // Trim hyphens from start and end
+  // const finalSlug = [...new Set(rawSlug.split('-'))].join('-') // Remove duplicate hyphens
+
+  if (!rawSlug) {
+    console.log('Generated slug is empty')
+    return ''
+  }
+
+  return rawSlug
 }
 
 /**
