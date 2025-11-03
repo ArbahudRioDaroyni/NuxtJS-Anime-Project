@@ -102,7 +102,7 @@
                   Comparison Results
                 </h3>
                 <p class="text-sm text-gray-500">
-                  {{ newAnimesRecordsCount }} new • 
+                  {{ csvNewAnimesRecordsCount }} new • 
                   {{ existingAnimesRecordsCount }} existing (will be updated)
                 </p>
               </div>
@@ -131,7 +131,7 @@
               <UCard class="cursor-pointer hover:bg-gray-50" @click="handleComparisonFilter('new')">
                 <div class="text-center">
                   <div class="text-3xl font-bold text-green-600">
-                    {{ newAnimesRecordsCount }}
+                    {{ csvNewAnimesRecordsCount }}
                   </div>
                   <div class="text-sm text-gray-500 mt-1">
                     New Records
@@ -199,7 +199,7 @@ import type { AnimeMetadata } from '~/types/metadata'
 
 const isLoading = ref(false)
 const uploadedFile = ref<File | null>(null)
-const batchSize = ref(10)
+const batchSize = ref(500)
 
 const currentStep = ref(1)
 const stepColor = computed(() => {
@@ -212,8 +212,10 @@ const csvRecords = ref<AnimeImportCSV[]>([])
 const csvRecordsCount = computed(() => csvRecords.value.length)
 const existingAnimesRecords = ref<AnimeDetails[]>([])
 const existingAnimesRecordsCount = computed(() => existingAnimesRecords.value.length)
-const newAnimesRecords = ref<AnimeImportCSV[]>([])
-const newAnimesRecordsCount = computed(() => newAnimesRecords.value.length)
+const csvExistingAnimesRecords = ref<AnimeImportCSV[]>([])
+const csvExistingAnimesRecordsCount = computed(() => csvExistingAnimesRecords.value.length)
+const csvNewAnimesRecords = ref<AnimeImportCSV[]>([])
+const csvNewAnimesRecordsCount = computed(() => csvNewAnimesRecords.value.length)
 
 const tableExistingData = ref<AnimeDetails[]>([])
 const tableNewData = ref<AnimeImportCSV[]>([])
@@ -308,7 +310,8 @@ const compareWithDatabase = async () => {
     })
 
     const animes = response.data as AnimeDetails[] | undefined
-    newAnimesRecords.value = csvRecords.value.filter(record => !animes?.some(a => a.slug === record.slug))
+    csvNewAnimesRecords.value = csvRecords.value.filter(record => !animes?.some(a => a.slug === record.slug))
+    csvExistingAnimesRecords.value = csvRecords.value.filter(record => animes?.some(a => a.slug === record.slug))
 
     if (Array.isArray(animes)) {
       existingAnimesRecords.value = animes
@@ -328,10 +331,10 @@ const compareWithDatabase = async () => {
 
 const handleComparisonFilter = (filter: 'all' | 'new' | 'existing') => {
   if (filter === 'all') {
-    tableExistingData.value = newAnimesRecords.value
+    tableExistingData.value = csvNewAnimesRecords.value
     tableNewData.value = csvRecords.value
   } else if (filter === 'new') {
-    tableExistingData.value = newAnimesRecords.value
+    tableExistingData.value = csvNewAnimesRecords.value
     tableNewData.value = []
   } else if (filter === 'existing') {
     tableExistingData.value = existingAnimesRecords.value
@@ -342,10 +345,13 @@ const handleComparisonFilter = (filter: 'all' | 'new' | 'existing') => {
 const startImport = async () => {
   currentStep.value = 4
 
+  // console.log('Starting import for anime records:', csvExistingAnimesRecords.value)
+  // console.log('Starting import for records:', csvRecords.value)
+
   const response = await $fetch<ResponseType>('/api/admin/bulk-import-anime', {
     method: 'POST',
     body: {
-      records: csvRecords.value
+      records: csvExistingAnimesRecords.value
     }
   })
 
