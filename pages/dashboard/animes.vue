@@ -166,18 +166,6 @@
             </tbody>
           </table>
         </template>
-
-        <template #actions-cell="{ row }">
-          <UDropdownMenu :items="getRowItems(row)" :content="{ align: 'end' }">
-            <UButton
-              icon="i-lucide-ellipsis-vertical"
-              color="neutral"
-              variant="ghost"
-              class="ml-auto"
-              aria-label="Actions"
-            />
-          </UDropdownMenu>
-        </template>
       </UTable>
 
       <div class="flex flex-wrap items-center justify-between gap-1.5">
@@ -226,6 +214,7 @@ const UAvatar = resolveComponent('UAvatar')
 const UCheckbox = resolveComponent('UCheckbox')
 const UButton = resolveComponent('UButton')
 const UBadge = resolveComponent('UBadge')
+const UDropdownMenu = resolveComponent('UDropdownMenu')
 
 const toast = useToast()
 const table = useTemplateRef('table')
@@ -487,10 +476,10 @@ const columns: TableColumn<AnimeDetails>[] = [
       const statusName = (statusType?.name || 'Unknown') as 'TV' | 'OVA' | 'Special' | 'Movie' | 'ONA' | 'Web' | 'Theatrical' | 'TV Short' | 'Music' | 'Unknown'
 
       const color = {
-        TV: 'primary' as const,
-        OVA: 'secondary' as const,
+        TV: 'gradient-disco' as const,
+        OVA: 'gradient-cactus' as const,
         Special: 'neutral' as const,
-        Movie: 'error' as const,
+        Movie: 'gradient-maldives' as const,
         ONA: 'success' as const,
         Web: 'warning' as const,
         Theatrical: 'info' as const,
@@ -513,7 +502,31 @@ const columns: TableColumn<AnimeDetails>[] = [
     }
   },
   {
-    id: 'actions'
+    id: 'actions',
+    cell: ({ row }) => {
+      return h(
+        'div',
+        { class: 'text-right' },
+        h(
+          UDropdownMenu,
+          {
+            content: {
+              align: 'end'
+            },
+            items: getRowItems(row),
+            'aria-label': 'Actions dropdown'
+          },
+          () =>
+            h(UButton, {
+              icon: 'i-lucide-ellipsis-vertical',
+              color: 'neutral',
+              variant: 'ghost',
+              class: 'ml-auto',
+              'aria-label': 'Actions dropdown'
+            })
+        )
+      )
+    }
   }
 ]
 
