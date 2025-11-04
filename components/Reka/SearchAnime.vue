@@ -6,6 +6,7 @@ import { refDebounced } from '@vueuse/core'
 
 const searchTerm = ref('')
 const debouncedSearch = refDebounced(searchTerm, 500)
+const isOpen = ref(false)
 
 const toast = useToast()
 
@@ -30,7 +31,10 @@ const formattedAnimes = computed(() => {
     avatar: {
       src: anime.thumbnail_image_url || anime.medium_cover_image_url || anime.large_cover_image_url || '/image/image-230x345.webp'
     },
-    to: `/${anime.slug}`
+    to: `/${anime.slug}`,
+    onSelect() {
+      isOpen.value = false
+    }
   })) || []
   const searchSuggestions = searchTerm.value
     ? responses.value?.meta?.searchSuggestions?.map((suggestion: string) => ({
@@ -63,7 +67,7 @@ const formattedAnimes = computed(() => {
 </script>
 
 <template>
-  <UModal>
+  <UModal v-model:open="isOpen">
     <UButton icon="i-lucide-search" size="md" color="neutral" variant="ghost" />
 
     <template #content>
