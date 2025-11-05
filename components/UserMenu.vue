@@ -5,19 +5,42 @@ defineProps<{
   collapsed?: boolean
 }>()
 
+const authStore = useAuthStore()
+const toast = useToast()
 const colorMode = useColorMode()
 const appConfig = useAppConfig()
 
 const colors = ['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose']
 const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone']
 
-const user = ref({
-  name: 'Benjamin Canac',
+const user = computed(() => ({
+  name: authStore.user?.name || authStore.user?.email || 'Guest',
   avatar: {
     src: 'https://github.com/benjamincanac.png',
-    alt: 'Benjamin Canac'
+    alt: authStore.user?.name || 'User'
   }
-})
+}))
+
+async function handleLogout() {
+  try {
+    await authStore.logout()
+    toast.add({
+      title: 'Logged out',
+      description: 'You have been successfully logged out',
+      color: 'success',
+      icon: 'i-lucide-log-out'
+    })
+    
+    // Hard redirect to login
+    window.location.href = '/auth/login'
+  } catch (error) {
+    toast.add({
+      title: 'Logout Failed',
+      description: error instanceof Error ? error.message : 'Something went wrong',
+      color: 'error'
+    })
+  }
+}
 
 const items = computed<DropdownMenuItem[][]>(() => ([[{
   type: 'label',
@@ -147,7 +170,8 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
   target: '_blank'
 }, {
   label: 'Log out',
-  icon: 'i-lucide-log-out'
+  icon: 'i-lucide-log-out',
+  onSelect: handleLogout
 }]]))
 </script>
 
