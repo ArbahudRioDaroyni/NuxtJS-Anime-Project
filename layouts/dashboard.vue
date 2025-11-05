@@ -1,6 +1,7 @@
 <template>
   <UDashboardGroup unit="rem">
     <NuxtLoadingIndicator color="var(--ui-primary)" />
+
     <UDashboardSidebar
       id="default"
       v-model:open="open"
@@ -54,9 +55,48 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 
 const route = useRoute()
 const toast = useToast()
+const authStore = useAuthStore()
 
 const open = ref(false)
 const searchTerm = ref('')
+
+// Check auth on mount
+onMounted(async () => {
+  authStore.restoreAuth()
+  
+  if (!authStore.isLoggedIn) {
+    try {
+      await authStore.fetchUser()
+    } catch {
+      // Redirect to login if not authenticated
+      window.location.href = '/auth/login'
+    }
+  }
+})
+
+// Cookie consent check on mount
+onMounted(() => {
+  const cookie = useCookie('cookie-consent')
+  if (cookie.value !== 'accepted') {
+    toast.add({
+      title: 'We use first-party cookies to enhance your experience on our website.',
+      duration: 0,
+      close: false,
+      actions: [{
+        label: 'Accept',
+        color: 'neutral',
+        variant: 'outline',
+        onClick: () => {
+          cookie.value = 'accepted'
+        }
+      }, {
+        label: 'Opt out',
+        color: 'neutral',
+        variant: 'ghost'
+      }]
+    })
+  }
+})
 
 const links = [[{
   label: 'Home',
@@ -139,29 +179,4 @@ const groups = computed(() => [{
     target: '_blank'
   }]
 }])
-
-onMounted(async () => {
-  const cookie = useCookie('cookie-consent')
-  if (cookie.value === 'accepted') {
-    return
-  }
-
-  toast.add({
-    title: 'We use first-party cookies to enhance your experience on our website.',
-    duration: 0,
-    close: false,
-    actions: [{
-      label: 'Accept',
-      color: 'neutral',
-      variant: 'outline',
-      onClick: () => {
-        cookie.value = 'accepted'
-      }
-    }, {
-      label: 'Opt out',
-      color: 'neutral',
-      variant: 'ghost'
-    }]
-  })
-})
 </script>

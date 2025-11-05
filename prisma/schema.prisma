@@ -362,3 +362,25 @@ model anime_staff_relations {
 
   @@map("anime_staff_relations") // Maps the model to the 'anime_staff_relations' table in the database
 }
+
+model user {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password_hash String
+  name          String?
+  role          String         @default("user")
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  sessions      user_session[]
+}
+
+model user_session {
+  id            String    @id @default(cuid())
+  user_id       String
+  token         String    @unique
+  last_login_at DateTime?
+  created_at    DateTime  @default(now())
+  expires_at    DateTime
+
+  user user @relation(fields: [user_id], references: [id])
+}
