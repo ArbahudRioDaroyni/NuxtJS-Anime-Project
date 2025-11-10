@@ -59,11 +59,8 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
       icon: 'i-lucide-check-circle'
     })
 
-    // Wait a bit for the toast to show
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    // Hard redirect to ensure navigation works
-    window.location.href = '/dashboard/animes'
+    // Redirect to dashboard
+    await navigateTo('/dashboard/animes')
     
   } catch (error: unknown) {
     let errorMessage = 'Something went wrong'

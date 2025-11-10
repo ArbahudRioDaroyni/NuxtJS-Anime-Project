@@ -31,8 +31,8 @@ async function handleLogout() {
       icon: 'i-lucide-log-out'
     })
     
-    // Hard redirect to login
-    window.location.href = '/auth/login'
+    // Redirect to login
+    await navigateTo('/auth/login')
   } catch (error) {
     toast.add({
       title: 'Logout Failed',

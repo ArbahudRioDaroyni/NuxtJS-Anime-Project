@@ -69,7 +69,7 @@ onMounted(async () => {
       await authStore.fetchUser()
     } catch {
       // Redirect to login if not authenticated
-      window.location.href = '/auth/login'
+      await navigateTo('/auth/login')
     }
   }
 })
