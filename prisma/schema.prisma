@@ -363,12 +363,32 @@ model anime_staff_relations {
   @@map("anime_staff_relations") // Maps the model to the 'anime_staff_relations' table in the database
 }
 
+model test {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password_hash String
+  name          String?
+  avatar        String? // Avatar URL for user profile
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+}
+
+// // User Role Enum - Role hierarchy (lowest number = highest access)
+// enum UserRole {
+//   SUPER_USER // Level 1: Full access + user management
+//   ADMIN // Level 2: Dashboard access + CRUD operations
+//   MEMBER // Level 3: Enhanced features + content interaction
+//   USER // Level 4: Basic read access
+// }
+
 model user {
   id            String         @id @default(cuid())
   email         String         @unique
   password_hash String
   name          String?
-  role          String         @default("user")
+  avatar        String? // Avatar URL for user profile
+  role          String         @default("USER") // Role with hierarchy
+  // user_role     UserRole       @default(USER) // Role with hierarchy
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   sessions      user_session[]

@@ -37,7 +37,9 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 
-const items = ref<NavigationMenuItem[][]>([
+const authStore = useAuthStore()
+
+const items = computed<NavigationMenuItem[][]>(() => [
 	[
 		{
 			label: 'Anime',
@@ -152,6 +154,12 @@ const items = ref<NavigationMenuItem[][]>([
 			icon: 'i-lucide-book-open-text',
 			to: '/'
 		},
+		// Dashboard link - only for Admin+
+		...(authStore.canViewDashboard ? [{
+			label: 'Dashboard',
+			icon: 'i-lucide-layout-dashboard',
+			to: '/dashboard/animes'
+		}] : [])
 	],
 	[
 		{

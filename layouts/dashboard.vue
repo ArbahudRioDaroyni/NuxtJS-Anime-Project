@@ -56,6 +56,7 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 const route = useRoute()
 const toast = useToast()
 const authStore = useAuthStore()
+const { roleLabel, roleIcon } = useRoleBadge()
 
 const open = ref(false)
 const searchTerm = ref('')
@@ -70,7 +71,19 @@ onMounted(async () => {
     } catch {
       // Redirect to login if not authenticated
       await navigateTo('/auth/login')
+      return
     }
+  }
+  
+  // Check if user has admin role or higher
+  if (!authStore.canViewDashboard) {
+    toast.add({
+      title: 'Access Denied',
+      description: 'You need Admin role or higher to access dashboard',
+      color: 'error',
+      icon: 'i-lucide-shield-alert'
+    })
+    await navigateTo('/')
   }
 })
 
@@ -152,7 +165,18 @@ const links = [[{
       open.value = false
     }
   }]
-}], [{
+},
+// Super User only features
+...(authStore.isSuperUserRole ? [{
+  label: 'Admin Tools',
+  icon: roleIcon.value,
+  to: '/dashboard/admin',
+  badge: roleLabel.value,
+  onSelect: () => {
+    open.value = false
+  }
+}] : [])
+], [{
   label: 'Feedback',
   icon: 'i-lucide-message-circle',
   to: 'https://github.com/nuxt-ui-templates/dashboard',

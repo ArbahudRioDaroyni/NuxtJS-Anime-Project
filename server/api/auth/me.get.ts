@@ -9,7 +9,16 @@ export default defineEventHandler(async (event) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string }
-    const user = await prisma.user.findUnique({ where: { id: decoded.userId } })
+    const user = await prisma.user.findUnique({ 
+      where: { id: decoded.userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatar: true,
+        role: true
+      }
+    })
     if (!user) throw createError({ statusCode: 401, message: 'User not found' })
     return { user }
   } catch {
