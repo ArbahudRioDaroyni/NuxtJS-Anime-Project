@@ -1,11 +1,8 @@
 import { defineStore } from 'pinia'
+import type { UserRole, User as AuthUser } from '~/types/auth'
+import { hasRole, isAdmin, isSuperUser, canAccessDashboard, parseUserRole } from '~/types/auth'
 
-interface User {
-  id: string
-  email: string
-  name: string | null
-  role: string
-}
+type User = AuthUser
 
 interface AuthState {
   user: User | null
@@ -22,14 +19,31 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     currentUser: (state) => state.user,
-    isLoggedIn: (state) => state.isAuthenticated && !!state.user
+    isLoggedIn: (state) => state.isAuthenticated && !!state.user,
+    userRole: (state): UserRole | null => state.user?.role || null,
+    
+    // Role checking getters
+    isAdminUser: (state) => state.user ? isAdmin(state.user.role) : false,
+    isSuperUserRole: (state) => state.user ? isSuperUser(state.user.role) : false,
+    canViewDashboard: (state) => state.user ? canAccessDashboard(state.user.role) : false,
+    
+    // General role checker
+    hasMinimumRole: (state) => {
+      return (requiredRole: UserRole) => {
+        return state.user ? hasRole(state.user.role, requiredRole) : false
+      }
+    }
   },
 
   actions: {
     async fetchUser() {
       this.isLoading = true
       try {
-        const { user } = await $fetch<{ user: User }>('/api/auth/me')
+        const response = await $fetch<{ user: User }>('/api/auth/me')
+        const user = {
+          ...response.user,
+          role: parseUserRole(response.user.role)
+        }
         this.user = user
         this.isAuthenticated = true
         return user
@@ -45,10 +59,14 @@ export const useAuthStore = defineStore('auth', {
     async login(email: string, password: string) {
       this.isLoading = true
       try {
-        const { user } = await $fetch<{ user: User }>('/api/auth/login', {
+        const response = await $fetch<{ user: User }>('/api/auth/login', {
           method: 'POST',
           body: { email, password }
         })
+        const user = {
+          ...response.user,
+          role: parseUserRole(response.user.role)
+        }
         this.user = user
         this.isAuthenticated = true
         

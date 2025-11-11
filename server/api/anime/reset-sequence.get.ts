@@ -3,7 +3,10 @@ import { getPrismaClient } from '~/server/utils/prisma'
 
 const prisma = getPrismaClient()
 
-export default defineEventHandler(async (_event: H3Event) => {
+export default defineEventHandler(async (event: H3Event) => {
+  // Require Super User role only
+  await requireSuperUser(event)
+  
   try {
     // Reset anime sequence
     await prisma.$executeRawUnsafe(`

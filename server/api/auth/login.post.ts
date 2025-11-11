@@ -22,5 +22,13 @@ export default defineEventHandler(async (event) => {
     path: '/'
   })
 
-  return { user: { id: user.id, email: user.email, name: user.name } }
+  return { 
+    user: { 
+      id: user.id, 
+      email: user.email, 
+      name: user.name,
+      avatar: user.avatar,
+      role: user.role
+    } 
+  }
 })

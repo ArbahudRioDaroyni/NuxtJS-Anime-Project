@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // Restore auth from localStorage
   authStore.restoreAuth()
 
-  // Protected routes (dashboard)
+  // Protected routes (dashboard) - requires Admin or higher
   const protectedRoutes = ['/dashboard']
   const isProtectedRoute = protectedRoutes.some(route => to.path.startsWith(route))
 
@@ -20,14 +20,23 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return navigateTo('/dashboard/animes')
   }
 
-  // If accessing protected routes while not logged in
-  if (isProtectedRoute && !authStore.isLoggedIn) {
-    // Try to fetch user first
-    try {
-      await authStore.fetchUser()
-    } catch {
-      // If fetch fails, redirect to login
-      return navigateTo('/auth/login')
+  // If accessing protected routes
+  if (isProtectedRoute) {
+    // Check if logged in
+    if (!authStore.isLoggedIn) {
+      // Try to fetch user first
+      try {
+        await authStore.fetchUser()
+      } catch {
+        // If fetch fails, redirect to login
+        return navigateTo('/auth/login')
+      }
+    }
+    
+    // Check if user has admin role or higher
+    if (!authStore.canViewDashboard) {
+      // User is logged in but doesn't have permission
+      return navigateTo('/')
     }
   }
 })

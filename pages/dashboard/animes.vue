@@ -6,7 +6,7 @@
           <UDashboardSidebarCollapse />
         </template>
 
-        <template #right>
+        <template v-if="authStore.isAdminUser" #right>
           <DashboardAnimesAddModal />
         </template>
       </UDashboardNavbar>
@@ -19,7 +19,7 @@
 
         <div class="flex flex-wrap items-center gap-1.5">
           <DashboardAnimesDeleteModal
-            v-if="totalSelectedCount > 0"
+            v-if="totalSelectedCount > 0 && authStore.isAdminUser"
             :count="totalSelectedCount" 
             title="anime"
             @confirm="bulkDeleteAnimes(false)"
@@ -40,7 +40,7 @@
           </DashboardAnimesDeleteModal>
           
           <UModal 
-            v-if="totalSelectedCount > 0"
+            v-if="totalSelectedCount > 0 && authStore.isAdminUser"
             v-model:open="showPermanentDeleteConfirm"
             title="Permanent Delete Confirmation"
             :description="`Are you sure you want to permanently delete ${totalSelectedCount} anime(s)? This action cannot be undone.`"
@@ -217,6 +217,7 @@ const UBadge = resolveComponent('UBadge')
 const UDropdownMenu = resolveComponent('UDropdownMenu')
 
 const toast = useToast()
+const authStore = useAuthStore()
 const table = useTemplateRef('table')
 const search = ref('')
 const globalFilter = ref('')
@@ -561,6 +562,7 @@ function getRowItems(row: Row<AnimeDetails>) {
     {
       label: 'Edit anime',
       icon: 'i-lucide-pencil',
+      disabled: !authStore.isAdminUser,
       onSelect() {
         selectedAnimeForEdit.value = row.original
         showEditModal.value = true
@@ -573,6 +575,7 @@ function getRowItems(row: Row<AnimeDetails>) {
       label: 'Delete anime (soft)',
       icon: 'i-lucide-trash',
       color: 'warning',
+      disabled: !authStore.isAdminUser,
       onSelect() {
         deleteAnime(row.original.id, false)
       }
@@ -581,6 +584,7 @@ function getRowItems(row: Row<AnimeDetails>) {
       label: 'Delete anime (permanent)',
       icon: 'i-lucide-trash-2',
       color: 'error',
+      disabled: !authStore.isAdminUser,
       onSelect() {
         if (window.confirm(`Are you sure you want to permanently delete "${row.original.title_english || row.original.title_romaji}"? This action cannot be undone.`)) {
           deleteAnime(row.original.id, true)

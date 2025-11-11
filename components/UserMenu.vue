@@ -9,6 +9,7 @@ const authStore = useAuthStore()
 const toast = useToast()
 const colorMode = useColorMode()
 const appConfig = useAppConfig()
+const { roleLabel, roleColor } = useRoleBadge()
 
 const colors = ['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose']
 const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone']
@@ -45,7 +46,9 @@ async function handleLogout() {
 const items = computed<DropdownMenuItem[][]>(() => ([[{
   type: 'label',
   label: user.value.name,
-  avatar: user.value.avatar
+  avatar: user.value.avatar,
+  chip: roleLabel.value,
+  slot: 'chip'
 }], [{
   label: 'Profile',
   icon: 'i-lucide-user'
@@ -56,9 +59,16 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
   label: 'Settings',
   icon: 'i-lucide-settings',
   to: '/settings'
-}], [{
-  label: 'Theme',
-  icon: 'i-lucide-palette',
+}], [
+  // Dashboard link - only for Admin+
+  ...(authStore.canViewDashboard ? [{
+    label: 'Dashboard',
+    icon: 'i-lucide-layout-dashboard',
+    to: '/dashboard/animes'
+  }] : []),
+  {
+    label: 'Theme',
+    icon: 'i-lucide-palette',
   children: [{
     label: 'Primary',
     slot: 'chip',
@@ -199,12 +209,22 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
 
     <template #chip-leading="{ item }">
       <span
+        v-if="(item as any).chip && item.slot !== 'chip'"
         :style="{
           '--chip-light': `var(--color-${(item as any).chip}-500)`,
           '--chip-dark': `var(--color-${(item as any).chip}-400)`
         }"
         class="ms-0.5 size-2 rounded-full bg-(--chip-light) dark:bg-(--chip-dark)"
       />
+      <!-- Role badge in label -->
+      <UBadge
+        v-else-if="item.slot === 'chip'"
+        :color="roleColor"
+        size="xs"
+        class="ml-auto"
+      >
+        {{ (item as any).chip }}
+      </UBadge>
     </template>
   </UDropdownMenu>
 </template>

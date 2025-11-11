@@ -7,6 +7,9 @@ import { validateAnimeUpdate, sanitizeInput } from '~/server/utils/animeValidati
 const prisma = getPrismaClient()
 
 export default defineEventHandler(async (event: H3Event): Promise<ResponseType> => {
+  // Require Admin role or higher
+  await requireAdmin(event)
+  
   try {
     const id = getRouterParam(event, 'id')
     const safeId = Number(id)

@@ -1,0 +1,10 @@
+/*
+  Warnings:
+
+  - The `role` column on the `user` table would be dropped and recreated. This will lead to data loss if there is data in the column.
+
+*/
+-- AlterTable
+ALTER TABLE "user" ADD COLUMN     "user_role" "UserRole" NOT NULL DEFAULT 'USER',
+DROP COLUMN "role",
+ADD COLUMN     "role" TEXT NOT NULL DEFAULT 'user';
