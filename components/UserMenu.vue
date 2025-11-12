@@ -17,7 +17,7 @@ const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone']
 const user = computed(() => ({
   name: authStore.user?.name || authStore.user?.email || 'Guest',
   avatar: {
-    src: 'https://github.com/benjamincanac.png',
+    src: authStore.user?.avatar || '',
     alt: authStore.user?.name || 'User'
   }
 }))
@@ -45,9 +45,9 @@ async function handleLogout() {
 
 const items = computed<DropdownMenuItem[][]>(() => ([[{
   type: 'label',
-  label: user.value.name,
+  label: roleLabel.value,
   avatar: user.value.avatar,
-  chip: roleLabel.value,
+  chip: roleColor.value,
   slot: 'chip'
 }], [{
   label: 'Profile',
@@ -208,23 +208,15 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
     />
 
     <template #chip-leading="{ item }">
-      <span
-        v-if="(item as any).chip && item.slot !== 'chip'"
-        :style="{
-          '--chip-light': `var(--color-${(item as any).chip}-500)`,
-          '--chip-dark': `var(--color-${(item as any).chip}-400)`
-        }"
-        class="ms-0.5 size-2 rounded-full bg-(--chip-light) dark:bg-(--chip-dark)"
-      />
-      <!-- Role badge in label -->
-      <UBadge
-        v-else-if="item.slot === 'chip'"
-        :color="roleColor"
-        size="xs"
-        class="ml-auto"
-      >
-        {{ (item as any).chip }}
-      </UBadge>
+      <div class="inline-flex items-center justify-center shrink-0 size-5">
+        <span
+          class="rounded-full ring ring-bg bg-(--chip-light) dark:bg-(--chip-dark) size-2"
+          :style="{
+            '--chip-light': `var(--color-${(item as any).chip}-500)`,
+            '--chip-dark': `var(--color-${(item as any).chip}-400)`
+          }"
+        />
+      </div>
     </template>
   </UDropdownMenu>
 </template>
